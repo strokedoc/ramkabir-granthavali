@@ -1,0 +1,6 @@
+# The scanned source PDFs are too large for GitHub (~378MB) and stay local.
+*.pdf
+# OCR work dirs
+extraction/*/img/
+extraction/*/script-check/
+.DS_Store

@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#f6efe3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#161008" media="(prefers-color-scheme: dark)">
+<meta name="description" content="રામકબીર સંપ્રદાયના ગ્રંથો — Ram Kabir sampraday scriptures for the family">
+<title>રામકબીર ગ્રંથાવલિ</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Noto+Serif+Gujarati:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <header id="topbar">
+    <button id="back-btn" class="icon-btn" aria-label="પાછળ" hidden>‹</button>
+    <div id="topbar-title">
+      <span class="ornament">॥</span>
+      <h1 id="topbar-text">રામકબીર ગ્રંથાવલિ</h1>
+      <span class="ornament">॥</span>
+    </div>
+    <div id="topbar-actions">
+      <button id="font-minus" class="icon-btn" aria-label="નાના અક્ષર" hidden>A−</button>
+      <button id="font-plus" class="icon-btn" aria-label="મોટા અક્ષર" hidden>A+</button>
+      <button id="theme-btn" class="icon-btn" aria-label="થીમ બદલો">◐</button>
+    </div>
+  </header>
+
+  <main id="view" tabindex="-1"></main>
+
+  <nav id="bottomnav" aria-label="મુખ્ય">
+    <a href="#/" data-nav="library"><span class="nav-glyph">❧</span><span>ગ્રંથો</span></a>
+    <a href="#/saar" data-nav="saar"><span class="nav-glyph">✦</span><span>સાર</span></a>
+    <a href="#/search" data-nav="search"><span class="nav-glyph">શોધ</span><span>Search</span></a>
+    <a href="#/bookmarks" data-nav="bookmarks"><span class="nav-glyph">✻</span><span>નિશાની</span></a>
+  </nav>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

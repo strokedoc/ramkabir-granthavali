@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ramkabir-app",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8734", "-d", "/Users/harsh/RamKabir/app"],
+      "port": 8734
+    }
+  ]
+}

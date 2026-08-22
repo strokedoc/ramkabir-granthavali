@@ -1,0 +1,287 @@
+/* ॥ રામકબીર ગ્રંથાવલિ ॥ — a digital gutka.
+   Aged paper, maroon & saffron, gold hairlines. */
+
+:root {
+  --paper: #f6efe3;
+  --paper-deep: #efe4d0;
+  --ink: #2b1d12;
+  --ink-soft: #6b5a48;
+  --maroon: #8c2f1b;
+  --saffron: #c96f2a;
+  --gold: #c9a86a;
+  --gold-faint: #c9a86a55;
+  --card: #fbf6ec;
+  --shadow: 0 2px 14px rgba(80, 50, 20, 0.10);
+  --mark-bg: #f2d9a755;
+  --gu-size: 1.0;   /* reader font scale, JS-controlled */
+}
+
+[data-theme="dark"] {
+  --paper: #161008;
+  --paper-deep: #1f1710;
+  --ink: #e9dcc3;
+  --ink-soft: #a8977c;
+  --maroon: #e0804f;
+  --saffron: #e0a04f;
+  --gold: #8a744e;
+  --gold-faint: #8a744e55;
+  --card: #211910;
+  --shadow: 0 2px 14px rgba(0, 0, 0, 0.5);
+  --mark-bg: #7a5c2455;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  font-family: "Noto Serif Gujarati", "Fraunces", serif;
+  background: var(--paper);
+  background-image: radial-gradient(ellipse 120% 60% at 50% -10%, var(--paper-deep), transparent 60%);
+  color: var(--ink);
+  min-height: 100dvh;
+  line-height: 1.7;
+}
+
+#app { display: flex; flex-direction: column; min-height: 100dvh; }
+
+/* ---------- top bar ---------- */
+#topbar {
+  position: sticky; top: 0; z-index: 20;
+  display: flex; align-items: center; gap: 0.4rem;
+  padding: calc(env(safe-area-inset-top) + 0.5rem) 0.75rem 0.5rem;
+  background: color-mix(in srgb, var(--paper) 88%, transparent);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--gold-faint);
+}
+#topbar-title {
+  flex: 1; min-width: 0;
+  display: flex; align-items: baseline; justify-content: center; gap: 0.5rem;
+}
+#topbar-title .ornament { color: var(--gold); font-size: 0.9rem; }
+#topbar-text {
+  font-size: 1.05rem; font-weight: 600; color: var(--maroon);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  letter-spacing: 0.02em;
+}
+#topbar-actions { display: flex; gap: 0.25rem; }
+.icon-btn {
+  font-family: "Fraunces", serif;
+  border: 1px solid var(--gold-faint); border-radius: 0.5rem;
+  background: transparent; color: var(--ink);
+  min-width: 2.2rem; height: 2.2rem; padding: 0 0.45rem;
+  font-size: 0.95rem; cursor: pointer;
+}
+.icon-btn:active { background: var(--gold-faint); }
+#back-btn { font-size: 1.6rem; line-height: 1; }
+
+/* ---------- main view ---------- */
+#view {
+  flex: 1; width: 100%; max-width: 46rem; margin: 0 auto;
+  padding: 1rem 1rem calc(env(safe-area-inset-bottom) + 5.5rem);
+  outline: none;
+}
+
+/* page-load reveal */
+.reveal > * { animation: rise 0.45s cubic-bezier(0.2, 0.7, 0.3, 1) both; }
+.reveal > *:nth-child(2) { animation-delay: 0.05s; }
+.reveal > *:nth-child(3) { animation-delay: 0.10s; }
+.reveal > *:nth-child(4) { animation-delay: 0.15s; }
+.reveal > *:nth-child(5) { animation-delay: 0.20s; }
+.reveal > *:nth-child(n+6) { animation-delay: 0.25s; }
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .reveal > * { animation: none; } }
+
+/* ---------- library ---------- */
+.hero {
+  text-align: center; padding: 1.2rem 0 1.6rem;
+}
+.hero .invocation {
+  color: var(--saffron); font-size: 0.85rem; letter-spacing: 0.25em; text-transform: uppercase;
+  font-family: "Fraunces", serif;
+}
+.hero h2 { font-size: 1.7rem; font-weight: 700; color: var(--maroon); margin: 0.2rem 0; }
+.hero .rule {
+  width: 7rem; margin: 0.8rem auto 0; border: 0;
+  border-top: 1px solid var(--gold); position: relative; overflow: visible;
+}
+.hero .rule::after {
+  content: "✻"; color: var(--gold); position: absolute; top: -0.75em; left: 50%;
+  transform: translateX(-50%); background: var(--paper); padding: 0 0.5em; font-size: 0.8rem;
+}
+
+.pinned-row { display: flex; gap: 0.7rem; margin-bottom: 1rem; }
+.pinned-chip {
+  flex: 1; display: flex; align-items: center; gap: 0.6rem;
+  text-decoration: none; color: inherit;
+  background: linear-gradient(135deg, var(--card), var(--paper-deep));
+  border: 1px solid var(--gold); border-radius: 0.75rem;
+  padding: 0.7rem 0.9rem; box-shadow: var(--shadow);
+}
+.pinned-chip .pin-glyph { color: var(--saffron); font-size: 1.3rem; }
+.pinned-chip strong { color: var(--maroon); font-size: 1.02rem; font-weight: 600; }
+.pinned-chip small { color: var(--ink-soft); font-family: "Fraunces", serif; font-size: 0.72rem; }
+.pinned-chip:active { transform: scale(0.98); }
+
+.continue-card, .book-card {
+  display: block; text-decoration: none; color: inherit;
+  background: var(--card); border: 1px solid var(--gold-faint);
+  border-top: 3px double var(--gold);
+  border-radius: 0.75rem; box-shadow: var(--shadow);
+  padding: 1rem 1.1rem; margin-bottom: 0.9rem;
+  transition: transform 0.15s ease;
+}
+.book-card:active, .continue-card:active { transform: scale(0.985); }
+.book-card h3 { color: var(--maroon); font-size: 1.2rem; font-weight: 600; }
+.book-card .sub {
+  color: var(--ink-soft); font-size: 0.85rem; font-family: "Fraunces", serif;
+  margin-top: 0.15rem;
+}
+.book-card .meta { color: var(--saffron); font-size: 0.8rem; margin-top: 0.4rem; }
+.continue-card { border-left: 4px solid var(--saffron); }
+.continue-card .label {
+  font-family: "Fraunces", serif; font-size: 0.75rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--saffron);
+}
+
+/* ---------- table of contents ---------- */
+.toc-item {
+  display: flex; gap: 0.8rem; align-items: baseline;
+  padding: 0.8rem 0.4rem; text-decoration: none; color: inherit;
+  border-bottom: 1px dashed var(--gold-faint);
+}
+.toc-item .n {
+  font-family: "Fraunces", serif; color: var(--saffron);
+  min-width: 2rem; text-align: right; font-size: 0.9rem;
+}
+.toc-item .t { flex: 1; font-size: 1.05rem; }
+.toc-item .pg { color: var(--ink-soft); font-size: 0.75rem; font-family: "Fraunces", serif; }
+.toc-item:active { background: var(--mark-bg); }
+
+/* ---------- reader ---------- */
+.reader { font-size: calc(1.12rem * var(--gu-size)); line-height: 1.95; }
+.reader .section-head {
+  text-align: center; margin: 0.6rem 0 1.4rem;
+}
+.reader .section-head h2 { color: var(--maroon); font-size: 1.25em; font-weight: 700; }
+.reader .section-head .deco { color: var(--gold); letter-spacing: 0.4em; font-size: 0.85em; }
+.reader .block { white-space: pre-wrap; margin-bottom: 1.15em; overflow-wrap: break-word; }
+.reader .pageref {
+  text-align: center; color: var(--ink-soft); font-size: 0.68em;
+  font-family: "Fraunces", serif; letter-spacing: 0.15em;
+  margin: 1.6em 0; user-select: none;
+}
+.reader .pageref::before, .reader .pageref::after { content: " — "; color: var(--gold); }
+
+.reader-nav {
+  display: flex; justify-content: space-between; gap: 0.8rem; margin-top: 2rem;
+}
+.reader-nav a, .pill-btn {
+  font-family: inherit; text-decoration: none; text-align: center;
+  color: var(--maroon); background: var(--card);
+  border: 1px solid var(--gold-faint); border-radius: 2rem;
+  padding: 0.55rem 1.1rem; font-size: 0.95rem; cursor: pointer;
+  flex: 1; max-width: 48%;
+}
+.bookmark-row { text-align: center; margin: 1.2rem 0 0; }
+#bm-toggle {
+  background: transparent; border: 1px solid var(--gold); color: var(--saffron);
+  border-radius: 2rem; padding: 0.5rem 1.4rem; font-size: 0.95rem; cursor: pointer;
+  font-family: inherit;
+}
+#bm-toggle.on { background: var(--saffron); color: var(--paper); border-color: var(--saffron); }
+
+/* ---------- search ---------- */
+.search-wrap { position: sticky; top: 3.4rem; z-index: 10; padding: 0.3rem 0 0.6rem; background: var(--paper); }
+#search-input {
+  width: 100%; font-family: inherit; font-size: 1.05rem;
+  padding: 0.75rem 1rem; color: var(--ink);
+  background: var(--card); border: 1px solid var(--gold); border-radius: 0.75rem;
+  outline: none;
+}
+#search-input:focus { box-shadow: 0 0 0 3px var(--gold-faint); }
+.search-hint { color: var(--ink-soft); font-size: 0.85rem; padding: 0.5rem 0.2rem; }
+.result {
+  display: block; text-decoration: none; color: inherit;
+  padding: 0.8rem 0.4rem; border-bottom: 1px dashed var(--gold-faint);
+}
+.result .where { color: var(--saffron); font-size: 0.8rem; font-family: "Fraunces", serif; }
+.result .snip { font-size: 0.98rem; margin-top: 0.2rem; }
+.result mark { background: var(--mark-bg); color: inherit; border-radius: 2px; padding: 0 2px; }
+
+/* ---------- saar (essence) ---------- */
+.pearl-card {
+  display: block; text-decoration: none; color: inherit;
+  background: linear-gradient(150deg, var(--card), var(--paper-deep));
+  border: 1px solid var(--gold); border-left: 4px solid var(--maroon);
+  border-radius: 0.75rem; box-shadow: var(--shadow);
+  padding: 1rem 1.1rem; margin-bottom: 0.9rem;
+}
+.pearl-card .label {
+  font-family: "Fraunces", serif; font-size: 0.72rem; letter-spacing: 0.18em;
+  text-transform: uppercase; color: var(--saffron);
+}
+.pearl-card .pearl-verse {
+  font-size: 1.12rem; color: var(--maroon); margin: 0.45rem 0 0.3rem; line-height: 1.8;
+}
+.pearl-card .pearl-title { color: var(--ink-soft); font-size: 0.82rem; }
+.pearl-card:active { transform: scale(0.985); }
+
+.sub-en { color: var(--ink-soft); font-family: "Fraunces", serif; font-size: 0.75em; margin-top: 0.2rem; }
+.unit-verse {
+  white-space: pre-wrap; text-align: center;
+  font-size: 1.12em; line-height: 2.05; color: var(--maroon);
+  border-top: 1px solid var(--gold-faint); border-bottom: 1px solid var(--gold-faint);
+  padding: 1.1em 0.4em; margin: 1.2em 0 0.7em;
+}
+.translit {
+  text-align: center; color: var(--ink-soft); font-family: "Fraunces", serif;
+  font-style: italic; font-size: 0.78em; line-height: 1.7; margin-bottom: 0.8em;
+}
+.src-link { text-align: center; font-size: 0.8em; margin-bottom: 1.4em; }
+.src-link a { color: var(--saffron); text-decoration: none; border-bottom: 1px dashed var(--gold); }
+.saar-h {
+  font-size: 0.78em; letter-spacing: 0.22em; color: var(--saffron);
+  margin: 1.4em 0 0.5em; font-weight: 600;
+}
+.gloss { display: flex; flex-direction: column; gap: 0.35em; }
+.gloss-item { display: flex; gap: 0.8em; align-items: baseline; font-size: 0.9em; }
+.g-word { color: var(--maroon); font-weight: 600; min-width: 6.5em; }
+.g-mean { color: var(--ink-soft); font-family: "Fraunces", serif; font-size: 0.88em; }
+.story-p { font-family: "Fraunces", serif; font-size: 0.88em; line-height: 1.75; margin-bottom: 0.9em; }
+.story-p.muted { color: var(--ink-soft); font-style: italic; }
+.theme-intro { font-family: "Fraunces", serif; color: var(--ink-soft); font-size: 0.95rem; padding: 0.4rem 0.2rem 1rem; line-height: 1.7; }
+.reflect {
+  background: var(--mark-bg); border-left: 3px solid var(--saffron);
+  border-radius: 0 0.5rem 0.5rem 0;
+  padding: 0.9em 1em; margin: 1.6em 0; font-size: 0.95em; line-height: 1.8;
+}
+.caveat { color: var(--ink-soft); font-size: 0.65em; font-family: "Fraunces", serif; text-align: center; margin-top: 2em; }
+
+/* ---------- empty states ---------- */
+.empty {
+  text-align: center; color: var(--ink-soft); padding: 3rem 1rem;
+}
+.empty .glyph { font-size: 2rem; color: var(--gold); display: block; margin-bottom: 0.6rem; }
+
+/* ---------- bottom nav ---------- */
+#bottomnav {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 20;
+  display: flex; justify-content: space-around;
+  background: color-mix(in srgb, var(--card) 92%, transparent);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid var(--gold-faint);
+  padding: 0.45rem 0 calc(env(safe-area-inset-bottom) + 0.45rem);
+}
+#bottomnav a {
+  display: flex; flex-direction: column; align-items: center; gap: 0.1rem;
+  text-decoration: none; color: var(--ink-soft); font-size: 0.72rem;
+  min-width: 4.5rem; padding: 0.15rem 0; border-radius: 0.5rem;
+}
+#bottomnav a .nav-glyph { font-size: 1.05rem; line-height: 1.2; }
+#bottomnav a.active { color: var(--maroon); }
+#bottomnav a.active .nav-glyph { color: var(--saffron); }
+
+@media (min-width: 700px) {
+  #topbar-text { font-size: 1.2rem; }
+  .reader { font-size: calc(1.22rem * var(--gu-size)); }
+}

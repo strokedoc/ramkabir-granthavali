@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#8c2f1b"/>
+  <circle cx="256" cy="256" r="176" fill="none" stroke="#c9a86a" stroke-width="10"/>
+  <circle cx="256" cy="256" r="156" fill="none" stroke="#c9a86a" stroke-width="3"/>
+  <text x="256" y="300" font-family="Noto Serif Gujarati, Kohinoor Gujarati, serif" font-size="150" fill="#f6efe3" text-anchor="middle" font-weight="600">રામ</text>
+  <text x="256" y="180" font-size="60" fill="#c96f2a" text-anchor="middle">॥</text>
+  <text x="256" y="400" font-size="60" fill="#c96f2a" text-anchor="middle">॥</text>
+</svg>

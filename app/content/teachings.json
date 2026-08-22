@@ -1,0 +1,183 @@
+{
+  "version": 1,
+  "note": "સાર — teaching units derived from the books. Every verse is quoted verbatim from the extracted, image-verified text. Interpretations follow the tradition's own commentary (Samagam) wherever it exists. See tools/TEACHINGS_GUIDE.md for how to add units.",
+  "story": {
+    "title_gu": "આપણી વાત",
+    "title_en": "Our Story — who we are",
+    "body_en": [
+      "In the fifteenth century, in Kashi, a weaver named Kabir sang something dangerous and simple: God is one, beyond every form, and no ritual, caste, or scripture-recitation can reach Him — only love can. Tradition holds Kabir as the disciple of the Vaishnav teacher Ramanand, and from that meeting of streams — Ram's devotion and Kabir's fearless plainness — our path takes its name: રામકબીર.",
+      "Kabir's teaching travelled to Gujarat. In the 1470s, at Patan, two figures organized it into a living community: Shri Padmanabhji and Dhanraj Pandya, whom we remember as અધ્યારુજી મહારાજ. The kirtans Adhyaruji composed — the Ganpati no Ras, the Vani, the Dhols — are the very ones this app carries, still sung five and a half centuries later.",
+      "Two centuries after that, the flame was carried by સદ્ગુરુ શ્રી જીવણજી મહારાજ (1649–1737). After twenty-three years of seeking he met his guru, Gopaldas, and on Sharad Purnima of 1688 the ઉદા પરંપરા emerged. The Patidar families who followed this path stopped observing caste rules at the thali — they ate together, with everyone. Other Patels called them 'જુદા' — different. જુદા became ઉદા, and what began as a taunt was worn as a badge: ઉદા ભક્ત. Different, on purpose, for bhakti's sake.",
+      "Jivanji Maharaj settled at Puniyad, near Dabhoi, which remains a dham of the parampara. His sakhis and Adhyaruji's kirtans together form our Parayan. The Samagam of Shree Haridas Nadiyada explains the path's philosophy; Sant Darshan tells the lives of its saints. From the villages of South Gujarat the community travelled — to Africa and Fiji, to England and America — carrying pothis, building mandirs, and singing the same Vani in every new country.",
+      "The sakhi below — from the જીવણદાસજીકી સાખી in this app — is the tradition telling its own origin. Read the village names slowly: this is not mythology from far away. This is your family's own address."
+    ],
+    "anchor_verse": "कानम पे करुणा करी । प्रगटे गाहेज गाम ॥\nशाहपुरे समागम करी । आये है पुनियाद धाम ॥૧॥\nकणबी कुळ ओधारवा । जीवण लीया अवतार ॥\nकृष्णदास पे कृपा सुणी । धना हुवा तैयार ॥૨॥\nएसे सद्गुरु जीवण भये । भवके बंधन छोड ॥૪॥\nउदित धरम उदा कहै । रामकबीरका नाम ॥૫॥",
+    "anchor_meaning_en": "Showing karuna on the Kanam region, he appeared at Gahej village; holding samagam at Shahpura, he came to Puniyad dham. To uplift the Kanbi families, Jivan took avatar… Such a Sadguru Jivan came to be — releasing the bonds of worldly existence. The Uda dharma arose, they say, bearing Ram-Kabir's name.",
+    "anchor_source": { "book": "jivandas-sakhi", "section": 1, "page_label": "પા. ૧૬૪" },
+    "caveat_en": "Dates and lineage follow the community's own tradition (Sadguru Shree Jivanji Maharaj Memorial Foundation)."
+  },
+  "themes": [
+    {
+      "id": "vani",
+      "title_gu": "વાણી અને નામ",
+      "title_en": "The Divine Word",
+      "intro_en": "The Vani — 'પરબ્રહ્મ વાણી રે…' — is the composition our family sings most. These three pearls walk through what it actually says, verse by verse.",
+      "units": [
+        {
+          "id": "vani-wedding",
+          "title_gu": "વાણી પરણી",
+          "title_en": "When the voice weds the Divine",
+          "verse_gu": "પરબ્રહ્મ વાણી રે પરણી એ । બ્રહ્માંડ જય જયકાર રે ॥\nચાર ખાણ હવી નિર્મલી । ભાગ્યો મોહ સંસાર રે ॥૧॥",
+          "verse_translit": "Parbrahm vani re parni e, brahmand jay jaykar re; chaar khaan havi nirmali, bhagyo moh sansar re.",
+          "source": { "book": "kirtan-gujarati", "section": 7, "page_label": "પા. ૨૧", "alt_book": "kirtan-english", "alt_section": 6 },
+          "gloss": [
+            { "word": "પરણી", "meaning": "wedded, married" },
+            { "word": "ચાર ખાણ", "meaning": "the four sources of birth — egg-born, womb-born, moisture-born, seed-sprouted; i.e. all living beings" },
+            { "word": "મોહ", "meaning": "infatuation, blind attachment" }
+          ],
+          "meaning_en": "The kirtan opens with a marriage: the voice is wedded to Parabrahma. Not 'the voice praises' or 'the voice describes' — wedded. And the moment that union happens, the whole universe answers with jaykar, all four kinds of living beings become pure, and the grip of attachment breaks.",
+          "why_en": "This is why our tradition's central act is singing, not silent study. In Adhyaruji's image, bhajan is not a report about God — it IS the union. The mouth that sings the Vani is, in that moment, married to what it sings.",
+          "reflect_en": "My voice weds whatever it repeats every day. What does it repeat most — and what would change if the first words of my morning were these?"
+        },
+        {
+          "id": "vani-everyone",
+          "title_gu": "સહુ મુગતું",
+          "title_en": "Liberation is for everyone",
+          "verse_gu": "લેખાં તે વાલ્યાં જમ તણાં । ઊઠીયા નરક વેહેપાર રે ॥\nબંધન છૂટ્યાં રે જીવનાં । સહુ મુગતું હોએ આવાર રે ॥૨॥\nમુકતા સૌ સ્થાવર જંગમ । મુકતા સુર નર નાગ રે ॥\nમુકતા સપ્ત ઋષિ નવગ્રહે । મુકતા મુનિવર જાગ રે ॥૩॥",
+          "verse_translit": "Lekha te valyan jam tana, uthiya narak vehepar re; bandhan chhutya re jivana, sahu mugtu hoe aavar re. Mukta sau sthavar jangam, mukta sur nar nag re…",
+          "source": { "book": "kirtan-gujarati", "section": 7, "page_label": "પા. ૨૧", "alt_book": "kirtan-english", "alt_section": 6 },
+          "gloss": [
+            { "word": "લેખાં", "meaning": "account-books, ledgers (of karma)" },
+            { "word": "જમ", "meaning": "Yama, lord of death" },
+            { "word": "સ્થાવર જંગમ", "meaning": "the unmoving (trees, mountains) and the moving (creatures)" }
+          ],
+          "meaning_en": "When the Vani sounds, Yama closes his ledgers — hell's business shuts down for lack of customers. And notice who gets freed: not the singer alone. Trees and animals, gods, humans, serpents, the seven rishis, the nine planets — everything, still and moving, is liberated together.",
+          "why_en": "In this path, mukti is never a private prize. That is why kirtan is sung in sabha, together, and why the Uda tradition insisted on one thali for everyone: a liberation that excludes anyone isn't the one Adhyaruji sang about.",
+          "reflect_en": "Do I treat my spiritual life as a personal account to settle — or as something my whole ઘર, and everything around it, shares in?"
+        },
+        {
+          "id": "vani-ochhav",
+          "title_gu": "ઘેર ઘેર ઓચ્છવ",
+          "title_en": "Devotion sounds like celebration",
+          "verse_gu": "હરિ હર બ્રહ્મા આનંદિયા । ઘેર ઘેર ઓચ્છવ હોય રે ॥\nઉલટ હોય રે અતિ ઘણો । ગાઈસું વાણીનો નાહો રે ॥૪॥",
+          "verse_translit": "Hari Har Brahma aanandiya, gher gher ochchhav hoy re; ulat hoy re ati ghano, gaisu vanino naho re.",
+          "source": { "book": "kirtan-gujarati", "section": 7, "page_label": "પા. ૨૧", "alt_book": "kirtan-english", "alt_section": 6 },
+          "gloss": [
+            { "word": "ઓચ્છવ", "meaning": "utsav — a festival of kirtan" },
+            { "word": "ઉલટ", "meaning": "overflowing eagerness, joy that spills" },
+            { "word": "નાહો", "meaning": "નાથ — the Lord (of the Vani)" }
+          ],
+          "meaning_en": "Vishnu, Shiva and Brahma themselves rejoice; every single home becomes a festival. The proof that the Word has arrived is not solemnity — it is ઉલટ, joy too big to hold in, and the resolve: 'I will sing the Lord of this Vani.'",
+          "why_en": "This verse is the seed of our Occhav tradition — the festival kirtans, as on Sharad Purnima, the very night the Uda parampara began. In this path, celebration is not a break from devotion; it is devotion's evidence.",
+          "reflect_en": "When bhakti visits our home, does it look like a duty being performed — or like an ochhav breaking out?"
+        }
+      ]
+    },
+    {
+      "id": "true-bhakti",
+      "title_gu": "સાચી ભક્તિ",
+      "title_en": "Devotion, not rank",
+      "intro_en": "The most radical thing our tradition ever did was at the dinner thali. This path explains why — in the tradition's own words.",
+      "units": [
+        {
+          "id": "charan-41",
+          "title_gu": "તું વિના સહુ રડવડે",
+          "title_en": "Caste and stage cannot save",
+          "verse_gu": "આશ્રમે દર્શને વર્ણે જે ભોલવ્યા ।\nતું વિના સહુ એ રડવડાએ ॥૪૧॥",
+          "verse_translit": "Aashrame darshane varne je bholavya, tu vina sahu e radvadae.",
+          "source": { "book": "kirtan-gujarati", "section": 18, "page_label": "વેદપુરાણ, ચરણ ૪૧" },
+          "gloss": [
+            { "word": "આશ્રમ", "meaning": "stage of life (student, householder, renunciant…)" },
+            { "word": "દર્શન", "meaning": "school of philosophy" },
+            { "word": "વર્ણ", "meaning": "caste rank" },
+            { "word": "રડવડે", "meaning": "wanders lost, weeping" }
+          ],
+          "meaning_en": "Whoever put their trust in life-stage, in philosophical schooling, in caste — all of them, says Adhyaruji, wander lost without You. Identity is not a boat. Learning is not a boat. Birth is certainly not a boat. Only devotion crosses.",
+          "why_en": "This is not our interpretation — it is the Samagam's own. On its opening pages the Samagam quotes exactly this charan to explain why ઉદા ભક્તો do not observe varnashram at meals: 'અધ્યારુજીના વેદ પુરાણના ૪૧મા ચરણને બતાવીને કહે છે કે ઉદા ભક્તો વર્ણાશ્રમમાં માનતા નથી.' One verse, and a community stopped ranking people at the thali. That verse is the charter of the Uda name.",
+          "reflect_en": "Which credential of mine — degree, surname, seniority — do I quietly treat as a boat?"
+        }
+      ]
+    },
+    {
+      "id": "sant-sangat",
+      "title_gu": "સંત અને સંગત",
+      "title_en": "Saints and company",
+      "intro_en": "Sant Darshan opens its very cover with two sakhis about what a saint is and why company matters more than effort. They set the lens for every life story in that book.",
+      "units": [
+        {
+          "id": "four-for-others",
+          "title_gu": "ચારો ધારી દેહ",
+          "title_en": "Four things live for others",
+          "verse_gu": "સરવર તરુવર સંતજન । ચોથા બરસૈ મેહ ॥\nપરમારથ કે કારનૈ । ચારો ધારી દેહ ॥",
+          "verse_translit": "Sarvar taruvar santjan, chotha barsai meh; parmarath ke kaarnai, chaaro dhari deh.",
+          "source": { "book": "sant-darshan", "section": 0, "page_label": "મુખપૃષ્ઠ" },
+          "gloss": [
+            { "word": "સરવર", "meaning": "lake" },
+            { "word": "તરુવર", "meaning": "tree" },
+            { "word": "મેહ", "meaning": "rain-cloud" },
+            { "word": "પરમારથ", "meaning": "the highest good of others" }
+          ],
+          "meaning_en": "A lake, a tree, a saint, and the rain: four things that take a body at all only for the sake of others. The lake doesn't drink its own water; the tree doesn't eat its own fruit; the cloud doesn't keep its rain. That is the definition of a sant.",
+          "why_en": "Sant Darshan prints this on its cover — it is the measuring rod for every saint's life told inside. The tradition's test of holiness is not miracles or austerity; it is whether a life quenches other people's thirst.",
+          "reflect_en": "What did my deh do for someone who can't repay me — today?"
+        },
+        {
+          "id": "sangat",
+          "title_gu": "સંત સંગત બિન",
+          "title_en": "Without satsang, no arrival",
+          "verse_gu": "રામ ભક્તિ સબ કો કરે । બ્રહ્મા શંકર શેષ ॥\nસંત સંગત બિન જીવણા । દુર્લભ હરિકા દેશ ॥",
+          "verse_translit": "Ram bhakti sab ko kare, Brahma Shankar Shesh; sant sangat bin Jivna, durlabh Harika desh.",
+          "source": { "book": "sant-darshan", "section": 0, "page_label": "મુખપૃષ્ઠ" },
+          "gloss": [
+            { "word": "શેષ", "meaning": "Shesh-nag, the cosmic serpent" },
+            { "word": "દુર્લભ", "meaning": "out of reach, hard to attain" },
+            { "word": "હરિકા દેશ", "meaning": "Hari's country — the state of union with God" }
+          ],
+          "meaning_en": "Everyone does Ram-bhakti — even Brahma, Shankar and Shesh do. Devotion itself is not the rare ingredient. But without the company of sants, O Jivan, Hari's country stays out of reach. The rare thing is not effort; it is company.",
+          "why_en": "This is why the unit of practice in our tradition is the gathered sabha — the parayan circle, the bhajan mandali — and never the lone achiever. The path is walked in company or not at all.",
+          "reflect_en": "Honestly listed: who is my સંગત — the five people whose company shapes what I love?"
+        }
+      ]
+    },
+    {
+      "id": "guru",
+      "title_gu": "ગુરુ",
+      "title_en": "The Guru",
+      "intro_en": "Two pearls: what the guru IS in this tradition, and how — very concretely, with village names — grace arrived at our own doorstep.",
+      "units": [
+        {
+          "id": "guru-swarup",
+          "title_gu": "પરબ્રહ્મ સ્વરૂપ",
+          "title_en": "The Guru is the Divine's own form",
+          "verse_gu": "બૂડી હું જમ ધણી વહુણી । સલૂણી એ ॥\nતે સમે સમરિયા સ્વામી । સોભાગ્ય સલૂણી એ ॥૧૫॥\nગુરૂઓ એ પ્રભુ પરબ્રહ્મ સ્વરૂપ । સલૂણી એ ॥\nઅખિલ ભુવન તણો ઈશ । સોભાગ્ય સલૂણી એ ॥૧૬॥",
+          "verse_translit": "Budi hun jam dhani vahuni, saluni e; te same samariya Swami, sobhagya saluni e. Guruo e Prabhu Parbrahm swarup, saluni e; akhil bhuvan tano Ish, sobhagya saluni e.",
+          "source": { "book": "kirtan-gujarati", "section": 20, "page_label": "પૃથ્વી ધોળ, પા. ૭૮" },
+          "gloss": [
+            { "word": "બૂડી", "meaning": "drowning" },
+            { "word": "જમ ધણી વહુણી", "meaning": "with Yama as master, without my Lord — i.e. death closing in" },
+            { "word": "સલૂણી / સોભાગ્ય", "meaning": "the dhol's refrain — 'O graceful one / O fortunate one'" }
+          ],
+          "meaning_en": "The soul speaks: I was drowning, death already my master — and in exactly that moment I remembered the Swami. Then the declaration: the Guru is Parabrahma's own form, the Lord of all worlds. Not God's messenger, not God's employee — God's own shape, appearing at the drowning-point.",
+          "why_en": "This is the tradition's answer to 'why a guru at all?' — because at the moment you are actually drowning, an idea of God cannot reach into the water. A form can. This is the reverence behind every 'સદ્ગુરુ' in our books.",
+          "reflect_en": "At my last real drowning-point, what did I actually reach for?"
+        },
+        {
+          "id": "grace-address",
+          "title_gu": "કરુણાનું સરનામું",
+          "title_en": "Grace with an address",
+          "verse_gu": "कानम पे करुणा करी । प्रगटे गाहेज गाम ॥\nशाहपुरे समागम करी । आये है पुनियाद धाम ॥૧॥\nकणबी कुळ ओधारवा । जीवण लीया अवतार ॥૨॥",
+          "verse_translit": "Kanam pe karuna kari, pragate Gahej gaam; Shahpure samagam kari, aaye hai Puniyad dhaam. Kanbi kul odharva, Jivan liya avtaar.",
+          "source": { "book": "jivandas-sakhi", "section": 1, "page_label": "પા. ૧૬૪" },
+          "gloss": [
+            { "word": "कानम / Kanam", "meaning": "the Kanam region of south Gujarat" },
+            { "word": "ओधारवा", "meaning": "to uplift, to carry across" },
+            { "word": "कणबी कुळ", "meaning": "the Kanbi (Patidar) families — our own lineage" }
+          ],
+          "meaning_en": "Most scriptures speak of grace in general. This sakhi gives it a map reference: karuna on Kanam, appearing at Gahej village, samagam at Shahpura, arrival at Puniyad dham — and the purpose stated outright: to uplift the Kanbi families. Jivanji's avatar, says the sakhi, was for us, by name.",
+          "why_en": "Every family in this app descends from the કુળ this verse names. The Uda name, the Ramkabir naam, the books you are reading — the sakhi's own last line says where they came from: 'उदित धरम उदा कहै, रामकबीरका नाम.' Gratitude, in this tradition, has an address.",
+          "reflect_en": "If grace reached my family with village names attached — what is my generation's part of the sentence?"
+        }
+      ]
+    }
+  ]
+}

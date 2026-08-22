@@ -1,0 +1,140 @@
+{
+  "book": "samagam-purvardh",
+  "toc_found": false,
+  "page_offset_note": "A table of contents (અનુક્રમણિકા) IS present on txt pages 12-13, but it does NOT belong to this book. Scan pages 2-15 are the front matter of a DIFFERENT title — 'શ્રી પદ્મનાભજી-અધ્યારુજીના કીર્તન' (see title page on txt p.2) — bound/assembled into this scan behind the correct Samagam cover (txt p.1). That TOC lists 32 kirtans (ગણપતિનો રાસ, વિનતિ, બીડું, કડવું, ધોળ, રાસ, અર્જુન ગીતા …) with printed pages running to 365, matching ShreePadmanabhjiAdhyarujiKirtan_Gujarati.pdf (365 pp). None of those titles occurs anywhere in this book's body. So the sections below were derived by reading the body, not from the TOC. PAGE OFFSET: printed page number = txt file number minus 15, constant with no discontinuity across the whole body (txt 0016 = printed ૧ … txt 0358 = printed ૩૪૩); verified by reading the printed folio on every body page. Chapter boundaries were confirmed by rendering the PDF pages and reading the printed headings visually (tesseract renders the display heading font as Latin gibberish). Corroboration: txt p.61 states in prose that માયાબ્રહ્મનો ભેલ is the opening પ્રકરણ and that the Samagam proper begins with the પ્રાગટ્ય પ્રકરણ. The volume ends mid-topic at printed 343 (continues in Samagam Uttarardh).",
+  "sections": [
+    {
+      "idx": 1,
+      "title_gu": "સમાગમ - ગુજરાતી ભાવાર્થ",
+      "start_page": 1,
+      "end_page": 1,
+      "type": "prose"
+    },
+    {
+      "idx": 2,
+      "title_gu": "શ્રી પદ્મનાભજી-અધ્યારુજીના કીર્તન",
+      "start_page": 2,
+      "end_page": 3,
+      "type": "prose"
+    },
+    {
+      "idx": 3,
+      "title_gu": "બે બોલ",
+      "start_page": 4,
+      "end_page": 6,
+      "type": "mixed"
+    },
+    {
+      "idx": 4,
+      "title_gu": "અથ કિમ્",
+      "start_page": 7,
+      "end_page": 10,
+      "type": "mixed"
+    },
+    {
+      "idx": 5,
+      "title_gu": "॥ આરતી ॥",
+      "start_page": 11,
+      "end_page": 11,
+      "type": "verse"
+    },
+    {
+      "idx": 6,
+      "title_gu": "અનુક્રમણિકા",
+      "start_page": 12,
+      "end_page": 13,
+      "type": "prose"
+    },
+    {
+      "idx": 7,
+      "title_gu": "॥ શ્રી પદ્મનાભજી અધ્યારુજીનાં કીર્તન ॥",
+      "start_page": 14,
+      "end_page": 15,
+      "type": "mixed"
+    },
+    {
+      "idx": 8,
+      "title_gu": "માયાબ્રહ્મનો ભેલ",
+      "start_page": 16,
+      "end_page": 60,
+      "type": "mixed"
+    },
+    {
+      "idx": 9,
+      "title_gu": "પ્રાગટ્ય",
+      "start_page": 61,
+      "end_page": 64,
+      "type": "mixed"
+    },
+    {
+      "idx": 10,
+      "title_gu": "આકાર નિરાકાર સમન્વય",
+      "start_page": 65,
+      "end_page": 85,
+      "type": "mixed"
+    },
+    {
+      "idx": 11,
+      "title_gu": "મોરલી મનોહર પરમેશ્વર",
+      "start_page": 86,
+      "end_page": 150,
+      "type": "mixed"
+    },
+    {
+      "idx": 12,
+      "title_gu": "વચન એજ પરમેશ્વર",
+      "start_page": 151,
+      "end_page": 207,
+      "type": "mixed"
+    },
+    {
+      "idx": 13,
+      "title_gu": "સદ્ગુરુ પ્રમાણ",
+      "start_page": 208,
+      "end_page": 251,
+      "type": "mixed"
+    },
+    {
+      "idx": 14,
+      "title_gu": "માળવા પ્રયાણ તથા ગુરુ વિયોગ",
+      "start_page": 252,
+      "end_page": 263,
+      "type": "mixed"
+    },
+    {
+      "idx": 15,
+      "title_gu": "હિમાલય–કૃપાનાથને વિનતી",
+      "start_page": 264,
+      "end_page": 277,
+      "type": "mixed"
+    },
+    {
+      "idx": 16,
+      "title_gu": "નારણદાસ ઉપર કૃપા",
+      "start_page": 278,
+      "end_page": 289,
+      "type": "mixed"
+    },
+    {
+      "idx": 17,
+      "title_gu": "ગોપાલદાસ સંત દાસને માલાતિલક",
+      "start_page": 290,
+      "end_page": 309,
+      "type": "mixed"
+    },
+    {
+      "idx": 18,
+      "title_gu": "સમીયાલા – ગુજરાતમાં ઓચ્છવ",
+      "start_page": 310,
+      "end_page": 329,
+      "type": "mixed"
+    },
+    {
+      "idx": 19,
+      "title_gu": "વિષ્ણુ ભક્તિ",
+      "start_page": 330,
+      "end_page": 358,
+      "type": "mixed"
+    }
+  ]
+}
