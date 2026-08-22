@@ -1,18 +1,18 @@
 {
   "version": 1,
-  "note": "સાર — teaching units derived from the books. Every verse is quoted verbatim from the extracted, image-verified text. Interpretations follow the tradition's own commentary (Samagam) wherever it exists. See tools/TEACHINGS_GUIDE.md for how to add units.",
+  "note": "સાર — teaching units derived from the books. Every quoted verse has been checked word-for-word against the printed page image (spellings follow the print, including its older orthography like છૂટચાં and its typesetting quirks like દુલર્ભ). Interpretations follow the tradition's own commentary (Samagam) wherever it exists. See tools/TEACHINGS_GUIDE.md for how to add units.",
   "story": {
     "title_gu": "આપણી વાત",
     "title_en": "Our Story — who we are",
     "body_en": [
       "In the fifteenth century, in Kashi, a weaver named Kabir sang something dangerous and simple: God is one, beyond every form, and no ritual, caste, or scripture-recitation can reach Him — only love can. Tradition holds Kabir as the disciple of the Vaishnav teacher Ramanand, and from that meeting of streams — Ram's devotion and Kabir's fearless plainness — our path takes its name: રામકબીર.",
       "Kabir's teaching travelled to Gujarat. In the 1470s, at Patan, two figures organized it into a living community: Shri Padmanabhji and Dhanraj Pandya, whom we remember as અધ્યારુજી મહારાજ. The kirtans Adhyaruji composed — the Ganpati no Ras, the Vani, the Dhols — are the very ones this app carries, still sung five and a half centuries later.",
-      "Two centuries after that, the flame was carried by સદ્ગુરુ શ્રી જીવણજી મહારાજ (1649–1737). After twenty-three years of seeking he met his guru, Gopaldas, and on Sharad Purnima of 1688 the ઉદા પરંપરા emerged. The Patidar families who followed this path stopped observing caste rules at the thali — they ate together, with everyone. Other Patels called them 'જુદા' — different. જુદા became ઉદા, and what began as a taunt was worn as a badge: ઉદા ભક્ત. Different, on purpose, for bhakti's sake.",
+      "Two centuries after that, the flame was carried by સદ્ગુરુ શ્રી જીવણજી મહારાજ (1649–1737). After long years of seeking he met his guru, Gopaldas, in 1683, and on Sharad Purnima of 1688 the ઉદા પરંપરા emerged. The Patidar families who followed this path stopped observing caste rules at the thali — they ate together, with everyone. Other Patels called them 'જુદા' — different. જુદા became ઉદા, and what began as a taunt was worn as a badge: ઉદા ભક્ત. Different, on purpose, for bhakti's sake.",
       "Jivanji Maharaj settled at Puniyad, near Dabhoi, which remains a dham of the parampara. His sakhis and Adhyaruji's kirtans together form our Parayan. The Samagam of Shree Haridas Nadiyada explains the path's philosophy; Sant Darshan tells the lives of its saints. From the villages of South Gujarat the community travelled — to Africa and Fiji, to England and America — carrying pothis, building mandirs, and singing the same Vani in every new country.",
       "The sakhi below — from the જીવણદાસજીકી સાખી in this app — is the tradition telling its own origin. Read the village names slowly: this is not mythology from far away. This is your family's own address."
     ],
-    "anchor_verse": "कानम पे करुणा करी । प्रगटे गाहेज गाम ॥\nशाहपुरे समागम करी । आये है पुनियाद धाम ॥૧॥\nकणबी कुळ ओधारवा । जीवण लीया अवतार ॥\nकृष्णदास पे कृपा सुणी । धना हुवा तैयार ॥૨॥\nएसे सद्गुरु जीवण भये । भवके बंधन छोड ॥૪॥\nउदित धरम उदा कहै । रामकबीरका नाम ॥૫॥",
-    "anchor_meaning_en": "Showing karuna on the Kanam region, he appeared at Gahej village; holding samagam at Shahpura, he came to Puniyad dham. To uplift the Kanbi families, Jivan took avatar… Such a Sadguru Jivan came to be — releasing the bonds of worldly existence. The Uda dharma arose, they say, bearing Ram-Kabir's name.",
+    "anchor_verse": "कानम पे करुणा करी । प्रगटे गाहेज गाम ॥\nशाहपरे समागम करी । आये है पुनियाद धाम ॥१॥\nकणबी कुळ ओधारवा । जीवण लीया अवतार ॥\nकृष्णदास पे कृपा सुणी । धना हुवा तैयार ॥२॥\nभरम भोजाको तोडवा । केशव करवा सहाय ॥\nरामबाईके दुःख फेडवा । द्वापरसे कलजुग आय ॥३॥\nसंत गोपालको शरण दीया । पहोचे मनके कोड ॥\nएसे सद्गुरु जीवण भये । भवके बंधन छोड ॥४॥\nनाना गोपाल के संग चले । आये पुनियाद धाम ॥\nउदित धरम उदा कहै । रामकबीरका नाम ॥५॥",
+    "anchor_meaning_en": "Showing karuna on the Kanam region, he appeared at Gahej village; holding samagam at Shahpara, he came to Puniyad dham. To uplift the Kanbi families, Jivan took avatar; hearing of his kripa on Krishnadas, Dhana became ready. To break Bhoja's delusion, to aid Keshav, to end Rambai's sorrows, he came as Dwapar turned to Kaliyug. He gave saint Gopal refuge and the heart's longings were fulfilled — such a Sadguru Jivan came to be, releasing the bonds of worldly existence. Walking with Nana Gopal he came to Puniyad dham; the Uda dharma arose, they say, bearing Ram-Kabir's name.",
     "anchor_source": { "book": "jivandas-sakhi", "section": 1, "page_label": "પા. ૧૬૪" },
     "caveat_en": "Dates and lineage follow the community's own tradition (Sadguru Shree Jivanji Maharaj Memorial Foundation)."
   },
@@ -43,7 +43,7 @@
           "id": "vani-everyone",
           "title_gu": "સહુ મુગતું",
           "title_en": "Liberation is for everyone",
-          "verse_gu": "લેખાં તે વાલ્યાં જમ તણાં । ઊઠીયા નરક વેહેપાર રે ॥\nબંધન છૂટ્યાં રે જીવનાં । સહુ મુગતું હોએ આવાર રે ॥૨॥\nમુકતા સૌ સ્થાવર જંગમ । મુકતા સુર નર નાગ રે ॥\nમુકતા સપ્ત ઋષિ નવગ્રહે । મુકતા મુનિવર જાગ રે ॥૩॥",
+          "verse_gu": "લેખાં તે વાલ્યાં જમ તણાં । ઊઠીયા નરક વેહેપાર રે ॥\nબંધન છૂટચાં રે જીવનાં । સહું મુગતું હોએ આવાર રે ॥૨॥\nમુકતા સૌ સ્થાવર જંગમ । મુકતા સુર નર નાગ રે ॥\nમુકતા સપ્ત ઋષિ નવગ્રહે । મુકતા મુનિવર જાગ રે ॥૩॥",
           "verse_translit": "Lekha te valyan jam tana, uthiya narak vehepar re; bandhan chhutya re jivana, sahu mugtu hoe aavar re. Mukta sau sthavar jangam, mukta sur nar nag re…",
           "source": { "book": "kirtan-gujarati", "section": 7, "page_label": "પા. ૨૧", "alt_book": "kirtan-english", "alt_section": 6 },
           "gloss": [
@@ -108,8 +108,8 @@
           "id": "four-for-others",
           "title_gu": "ચારો ધારી દેહ",
           "title_en": "Four things live for others",
-          "verse_gu": "સરવર તરુવર સંતજન । ચોથા બરસૈ મેહ ॥\nપરમારથ કે કારનૈ । ચારો ધારી દેહ ॥",
-          "verse_translit": "Sarvar taruvar santjan, chotha barsai meh; parmarath ke kaarnai, chaaro dhari deh.",
+          "verse_gu": "સરવર તરુવર સંતજન । ચૌથા બરસૈ મેહ ॥\nપરમારથ કે કારનૈ । ચારો ધારી દેહ ॥૩॥",
+          "verse_translit": "Sarvar taruvar santjan, chautha barsai meh; parmarath ke kaarnai, chaaro dhari deh.",
           "source": { "book": "sant-darshan", "section": 0, "page_label": "મુખપૃષ્ઠ" },
           "gloss": [
             { "word": "સરવર", "meaning": "lake" },
@@ -125,12 +125,12 @@
           "id": "sangat",
           "title_gu": "સંત સંગત બિન",
           "title_en": "Without satsang, no arrival",
-          "verse_gu": "રામ ભક્તિ સબ કો કરે । બ્રહ્મા શંકર શેષ ॥\nસંત સંગત બિન જીવણા । દુર્લભ હરિકા દેશ ॥",
+          "verse_gu": "રામ ભક્તિ સબ કો કરે । બ્રહ્મા શંકર શેષ ॥\nસંત સંગત બિન જીવણા । દુલર્ભ હરિકા દેશ ॥૨॥",
           "verse_translit": "Ram bhakti sab ko kare, Brahma Shankar Shesh; sant sangat bin Jivna, durlabh Harika desh.",
           "source": { "book": "sant-darshan", "section": 0, "page_label": "મુખપૃષ્ઠ" },
           "gloss": [
             { "word": "શેષ", "meaning": "Shesh-nag, the cosmic serpent" },
-            { "word": "દુર્લભ", "meaning": "out of reach, hard to attain" },
+            { "word": "દુલર્ભ", "meaning": "દુર્લભ — out of reach, hard to attain (the cover's typesetting transposes the conjunct)" },
             { "word": "હરિકા દેશ", "meaning": "Hari's country — the state of union with God" }
           ],
           "meaning_en": "Everyone does Ram-bhakti — even Brahma, Shankar and Shesh do. Devotion itself is not the rare ingredient. But without the company of sants, O Jivan, Hari's country stays out of reach. The rare thing is not effort; it is company.",
@@ -165,8 +165,8 @@
           "id": "grace-address",
           "title_gu": "કરુણાનું સરનામું",
           "title_en": "Grace with an address",
-          "verse_gu": "कानम पे करुणा करी । प्रगटे गाहेज गाम ॥\nशाहपुरे समागम करी । आये है पुनियाद धाम ॥૧॥\nकणबी कुळ ओधारवा । जीवण लीया अवतार ॥૨॥",
-          "verse_translit": "Kanam pe karuna kari, pragate Gahej gaam; Shahpure samagam kari, aaye hai Puniyad dhaam. Kanbi kul odharva, Jivan liya avtaar.",
+          "verse_gu": "कानम पे करुणा करी । प्रगटे गाहेज गाम ॥\nशाहपरे समागम करी । आये है पुनियाद धाम ॥१॥\nकणबी कुळ ओधारवा । जीवण लीया अवतार ॥\nकृष्णदास पे कृपा सुणी । धना हुवा तैयार ॥२॥",
+          "verse_translit": "Kanam pe karuna kari, pragate Gahej gaam; Shahpare samagam kari, aaye hai Puniyad dhaam. Kanbi kul odharva, Jivan liya avtaar; Krishnadas pe kripa suni, Dhana huva taiyar.",
           "source": { "book": "jivandas-sakhi", "section": 1, "page_label": "પા. ૧૬૪" },
           "gloss": [
             { "word": "कानम / Kanam", "meaning": "the Kanam region of south Gujarat" },

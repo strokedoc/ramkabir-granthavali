@@ -1,6 +1,6 @@
 /* Service worker: offline-first gutka.
    App shell precached; content JSON + fonts cached on first use. */
-const VERSION = "v2";
+const VERSION = "v3";
 const SHELL = ["./", "index.html", "styles.css", "app.js", "manifest.json", "icons/icon.svg"];
 
 self.addEventListener("install", e => {
