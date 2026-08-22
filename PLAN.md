@@ -60,8 +60,14 @@ to present the kirtans to non-adhikari; Harsh decided an open family link is fin
       split into "અધ્યારુજીનાં કીર્તન" (38) + "વૈષ્ણવ જીવણદાસજીકી સાખી" (26);
       sant-darshan 96 (TOC had 4 page errors, corrected against page images)
 - [x] App now has 6 books (was 5 — the sakhi work was a discovery)
-- [ ] Verse-page fidelity pass in flight: pages 177–365 re-OCRing as Hindi
-      (Devanagari sakhi text); 8 Opus agents doing image-grounded correction
-      of Gujarati verse pages 23–176. OCR text stays the fallback.
-- [ ] My spot-check of corrected pages vs images; rebuild; deploy
-      (unlisted, noindex — decided)
+- [x] Verse fidelity DONE: entire kirtan+sakhi volume (pages 23–365, 343 pages)
+      image-ground-corrected by Opus agents; spot-checked by Fable against
+      page images (p43, p100, p250). Devanagari pages re-OCR'd as Hindi first.
+- [x] સાર (Essence) teaching layer: 8 pearls / 4 themes + Our Story +
+      Today's Pearl; authoring pipeline in tools/TEACHINGS_GUIDE.md
+- [x] DEPLOYED: https://strokedoc.github.io/ramkabir-granthavali/
+      (GitHub Pages via Actions; repo strokedoc/ramkabir-granthavali;
+      push to main = redeploy; bump sw.js VERSION each content change)
+- [ ] Harsh: read-through of સાર pearl wording before wide family sharing
+- [ ] Later (optional): verse-quote correction inside Samagam volumes;
+      sub-headings pass for Samagam ch. 13/17; more pearls (વેદપુરાણ theme)
