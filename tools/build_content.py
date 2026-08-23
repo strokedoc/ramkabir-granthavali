@@ -50,12 +50,51 @@ def page_text(book_id, n):
             return p.read_text(encoding="utf-8", errors="replace")
     return ""
 
+def load_splits(src):
+    """extraction/<src>/splits.json — sub-page section starts.
+    {"<page>": {"before": <heading line>} | {"after": <prev's last line>},
+     optional "replace": <clean heading>}. Needles are matched fuzzily
+    (letters only) against the page's lines."""
+    p = EXT / src / "splits.json"
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+
+def _norm_line(s):
+    return re.sub(r"[^઀-૿ऀ-ॿA-Za-z]", "", s)
+
+def split_page(text, sp):
+    """Return (head, tail) of a page's text per its split spec; (None, None) if
+    the needle can't be found (caller falls back to unsplit)."""
+    lines = text.split("\n")
+    mode = "before" if "before" in sp else "after"
+    needle = _norm_line(sp[mode])
+    k = next((i for i, ln in enumerate(lines)
+              if needle and (needle in _norm_line(ln) or
+                             (len(_norm_line(ln)) >= 6 and _norm_line(ln) in needle))), None)
+    if k is None:
+        return None, None
+    cut = k if mode == "before" else k + 1
+    head = "\n".join(lines[:cut]).rstrip()
+    tail_lines = lines[cut:]
+    extras = [_norm_line(x) for x in sp.get("extra_heading_lines", [])]
+    if extras:
+        tail_lines = [ln for ln in tail_lines if _norm_line(ln) not in extras]
+    head, tail = head, "\n".join(tail_lines).strip()
+    if "replace" in sp and tail:
+        if mode == "before":
+            tl = tail.split("\n")
+            tl[0] = sp["replace"]
+            tail = "\n".join(tl)
+        else:
+            tail = sp["replace"] + "\n" + tail
+    return head, tail
+
 def build_gujarati(book):
     src = book.get("src", book["id"])
     sec_file = EXT / src / "sections.json"
     txt_dir = EXT / src / "txt"
     if not sec_file.exists() or not txt_dir.exists():
         return None
+    splits = load_splits(src)
     spec = json.loads(sec_file.read_text(encoding="utf-8"))
     n_pages = len(list(txt_dir.glob("page-*.txt")))
     specs = spec["sections"]
@@ -71,12 +110,30 @@ def build_gujarati(book):
     if "idx_range" in book and specs:
         n_pages = specs[-1]["end_page"] - specs[0]["start_page"] + 1
     sections = []
-    for s in specs:
+    for si, s in enumerate(specs):
         blocks = []
         for pg in range(s["start_page"], s["end_page"] + 1):
             t = page_text(src, pg).strip()
+            sp = splits.get(str(pg))
+            if sp and t:
+                head, tail = split_page(t, sp)
+                if head is not None:
+                    # page's own section keeps the tail; an earlier section
+                    # sharing this page keeps the head
+                    t = tail if pg == s["start_page"] else head
+                else:
+                    print(f"  ! split needle not found on p{pg} ({book['id']})")
             if t:
                 blocks.append({"page": pg, "text": t})
+        # spill-over: next section starts mid-page on the page after ours —
+        # its head belongs to us
+        nxt = str(s["end_page"] + 1)
+        if nxt in splits and (si + 1 == len(specs) or specs[si + 1]["start_page"] == s["end_page"] + 1):
+            full = page_text(src, int(nxt)).strip()
+            if full:
+                head, _ = split_page(full, splits[nxt])
+                if head and head.strip():
+                    blocks.append({"page": int(nxt), "text": head.strip()})
         title = s.get("title_gu") or s.get("title") or f"વિભાગ {s['idx']}"
         sections.append({"title": title.strip(), "page_start": s["start_page"], "blocks": blocks})
     return dict(book, pages=n_pages, sections=sections)

@@ -1,119 +1,119 @@
 {
-  "book": "samagam-uttarardh",
-  "toc_found": false,
-  "page_offset_note": "NO table of contents anywhere in this scan (no અનુક્રમણિકા page; grep of all 403 OCR files finds the word only once, inside body prose on p.145 in a different sense). WRONG-BOOK FRONT MATTER: NOT present in this volume. Unlike Samagam Purvardh (whose scan carried a cover plus ~14 pages of the Adhyaruji Kirtan volume), this PDF has no cover, no title page and no preface at all — txt page-0001 opens mid-discussion, continuing the વિષ્ણુ ભક્તિ topic on which Purvardh broke off (Purvardh ended at its printed 343). PAGE OFFSET: printed folio = txt file number, offset 0, constant with no discontinuity. Verified by machine-reading the standalone Gujarati numeral on the last line of every page: txt 0001 = printed ૧ … txt 0403 = printed ૪૦૩ (395 of 403 pages carry a clean folio; the 8 misses are OCR dropouts, and the one mismatch, txt 169 read as '૧૦૯', is a single-glyph OCR error). PDF page count (403) equals txt file count (403), 1:1. METHOD: chapter boundaries were NOT taken from text. Headings in this book are set in a distinctive rounded display typeface that tesseract mangles, and — unlike Purvardh — they sit INLINE mid-page, not on a fresh page, with no page break and often no extra leading. Every page was rendered from the PDF and analysed geometrically (line segmentation + centering + glyph height + horizontal stroke run-length); every candidate line was then read visually from the rendered image. The 16 display-font headings below are the complete set found by that sweep. Sections start on the page that carries the heading, so a section's first page also contains the tail of the previous section. NOT treated as chapters (deliberately): verse/raga labels in the same or similar display font (॥સારંગ॥, ॥રામકલી॥, ॥કવિત॥, ॥સાખી॥, 'ફરસુરામનું કવિત' p.322, 'શબ્દ' p.208), and bold same-size question headings inside a chapter (e.g. '॥સ્ત્રી-ભરથારના એક ગુરુ॥' p.252, 'પૃથ્વીનું મંડાણ…' p.293-294, 'ગંગાજુની ઉત્પતિ…' p.308, 'અશ્વમેધ જગન કરવાની વિધિ…' p.320 — all sub-questions of the શાહુકાર ચોર chapter). CORROBORATION from body prose: p.116 names the ઉદા-વૈષ્ણવ-પ્રગટ chapter, p.140 'આ પ્રકરણ બાદ…' at the ગુરુ ચોર break, p.185 'નિત્ય પ્રલયના પ્રકરણમાં', p.312 'શાહુકાર ચોરના પ્રકરણમાં', p.330 'પ્રેત ભોજન અને અનીન ભક્તના પ્રકરણના અંતે', p.374/380 'સ્વધામ પધાર્યાનું પ્રકરણ… છેલ્લું પ્રકરણ છે'. The book closes on p.403 with ॥ઇતિ શ્રી સ્વધામ પધાર્યા તે સમો સંપૂર્ણ॥ and ॥સમાગમ સંપૂર્ણ॥. FLAGGED / LOWER CONFIDENCE: (a) 'વિષ્ણુ ભક્તિ' is printed twice, on p.1 (lower half) and again on p.2 (middle); the two adjacent occurrences are merged into one section 1 covering pp.1-114, and p.1's opening lines are really the spill-over from Purvardh. (b) 'નિત્ય પ્રલય' (p.185) is a single page — the next display heading, 'કુબ્જા', is at the very top of p.186; both may be sub-topics of one larger chapter. (c) 'બૂડિયા' (p.248) sits on the last line of its page, so its text starts on p.249. (d) The two long stretches without any display heading — pp.2-114 (વિષ્ણુ ભક્તિ) and pp.266-329 (શાહુકાર ચોર, a numbered question series) — were re-swept twice at lower thresholds and by inter-line-gap analysis with no further heading found, but they are the places where a missed boundary would most likely hide.",
-  "sections": [
-    {
-      "idx": 1,
-      "title_gu": "વિષ્ણુ ભક્તિ",
-      "start_page": 1,
-      "end_page": 114,
-      "type": "mixed"
-    },
-    {
-      "idx": 2,
-      "title_gu": "કર્મકાંડરહિત ઉદા વૈષ્ણવ પ્રગટ કર્યા કર્મ માર્ગ મૂકાવી અનન્ય માર્ગ ઉદા વૈષ્ણવોનો પ્રગટ કીધો તે",
-      "start_page": 115,
-      "end_page": 139,
-      "type": "mixed"
-    },
-    {
-      "idx": 3,
-      "title_gu": "ગુરુ ચોર",
-      "start_page": 140,
-      "end_page": 150,
-      "type": "mixed"
-    },
-    {
-      "idx": 4,
-      "title_gu": "સાકર અન્ન",
-      "start_page": 151,
-      "end_page": 184,
-      "type": "mixed"
-    },
-    {
-      "idx": 5,
-      "title_gu": "॥ નિત્ય પ્રલય ॥",
-      "start_page": 185,
-      "end_page": 185,
-      "type": "mixed"
-    },
-    {
-      "idx": 6,
-      "title_gu": "કુબ્જા",
-      "start_page": 186,
-      "end_page": 194,
-      "type": "mixed"
-    },
-    {
-      "idx": 7,
-      "title_gu": "કોની સાથે વેર ન બાંધવું",
-      "start_page": 195,
-      "end_page": 198,
-      "type": "mixed"
-    },
-    {
-      "idx": 8,
-      "title_gu": "જગત(માયા)ના બ્રહ્મ",
-      "start_page": 199,
-      "end_page": 224,
-      "type": "mixed"
-    },
-    {
-      "idx": 9,
-      "title_gu": "॥ ભોજા ગુજર ઉદ્ધાર ॥",
-      "start_page": 225,
-      "end_page": 237,
-      "type": "mixed"
-    },
-    {
-      "idx": 10,
-      "title_gu": "॥ દ્વારકા કૃપાનાથના સાનિધ્યમાં ॥",
-      "start_page": 238,
-      "end_page": 247,
-      "type": "mixed"
-    },
-    {
-      "idx": 11,
-      "title_gu": "બૂડિયા",
-      "start_page": 248,
-      "end_page": 259,
-      "type": "mixed"
-    },
-    {
-      "idx": 12,
-      "title_gu": "દ્વારકામાં પીપાજીનું મંદિર",
-      "start_page": 260,
-      "end_page": 265,
-      "type": "mixed"
-    },
-    {
-      "idx": 13,
-      "title_gu": "॥ શાહુકાર ચોર ॥",
-      "start_page": 266,
-      "end_page": 329,
-      "type": "mixed"
-    },
-    {
-      "idx": 14,
-      "title_gu": "વૈકુંઠ",
-      "start_page": 330,
-      "end_page": 358,
-      "type": "mixed"
-    },
-    {
-      "idx": 15,
-      "title_gu": "સ્ત્રી-દોષ નિવારણ",
-      "start_page": 359,
-      "end_page": 380,
-      "type": "mixed"
-    },
-    {
-      "idx": 16,
-      "title_gu": "સ્વધામ પધાર્યાનો સમાગમ",
-      "start_page": 381,
-      "end_page": 403,
-      "type": "mixed"
-    }
-  ]
+ "book": "samagam-uttarardh",
+ "toc_found": false,
+ "page_offset_note": "NO table of contents anywhere in this scan (no અનુક્રમણિકા page; grep of all 403 OCR files finds the word only once, inside body prose on p.145 in a different sense). WRONG-BOOK FRONT MATTER: NOT present in this volume. Unlike Samagam Purvardh (whose scan carried a cover plus ~14 pages of the Adhyaruji Kirtan volume), this PDF has no cover, no title page and no preface at all — txt page-0001 opens mid-discussion, continuing the વિષ્ણુ ભક્તિ topic on which Purvardh broke off (Purvardh ended at its printed 343). PAGE OFFSET: printed folio = txt file number, offset 0, constant with no discontinuity. Verified by machine-reading the standalone Gujarati numeral on the last line of every page: txt 0001 = printed ૧ … txt 0403 = printed ૪૦૩ (395 of 403 pages carry a clean folio; the 8 misses are OCR dropouts, and the one mismatch, txt 169 read as '૧૦૯', is a single-glyph OCR error). PDF page count (403) equals txt file count (403), 1:1. METHOD: chapter boundaries were NOT taken from text. Headings in this book are set in a distinctive rounded display typeface that tesseract mangles, and — unlike Purvardh — they sit INLINE mid-page, not on a fresh page, with no page break and often no extra leading. Every page was rendered from the PDF and analysed geometrically (line segmentation + centering + glyph height + horizontal stroke run-length); every candidate line was then read visually from the rendered image. The 16 display-font headings below are the complete set found by that sweep. Sections start on the page that carries the heading, so a section's first page also contains the tail of the previous section. NOT treated as chapters (deliberately): verse/raga labels in the same or similar display font (॥સારંગ॥, ॥રામકલી॥, ॥કવિત॥, ॥સાખી॥, 'ફરસુરામનું કવિત' p.322, 'શબ્દ' p.208), and bold same-size question headings inside a chapter (e.g. '॥સ્ત્રી-ભરથારના એક ગુરુ॥' p.252, 'પૃથ્વીનું મંડાણ…' p.293-294, 'ગંગાજુની ઉત્પતિ…' p.308, 'અશ્વમેધ જગન કરવાની વિધિ…' p.320 — all sub-questions of the શાહુકાર ચોર chapter). CORROBORATION from body prose: p.116 names the ઉદા-વૈષ્ણવ-પ્રગટ chapter, p.140 'આ પ્રકરણ બાદ…' at the ગુરુ ચોર break, p.185 'નિત્ય પ્રલયના પ્રકરણમાં', p.312 'શાહુકાર ચોરના પ્રકરણમાં', p.330 'પ્રેત ભોજન અને અનીન ભક્તના પ્રકરણના અંતે', p.374/380 'સ્વધામ પધાર્યાનું પ્રકરણ… છેલ્લું પ્રકરણ છે'. The book closes on p.403 with ॥ઇતિ શ્રી સ્વધામ પધાર્યા તે સમો સંપૂર્ણ॥ and ॥સમાગમ સંપૂર્ણ॥. FLAGGED / LOWER CONFIDENCE: (a) 'વિષ્ણુ ભક્તિ' is printed twice, on p.1 (lower half) and again on p.2 (middle); the two adjacent occurrences are merged into one section 1 covering pp.1-114, and p.1's opening lines are really the spill-over from Purvardh. (b) 'નિત્ય પ્રલય' (p.185) is a single page — the next display heading, 'કુબ્જા', is at the very top of p.186; both may be sub-topics of one larger chapter. (c) 'બૂડિયા' (p.248) sits on the last line of its page, so its text starts on p.249. (d) The two long stretches without any display heading — pp.2-114 (વિષ્ણુ ભક્તિ) and pp.266-329 (શાહુકાર ચોર, a numbered question series) — were re-swept twice at lower thresholds and by inter-line-gap analysis with no further heading found, but they are the places where a missed boundary would most likely hide.",
+ "sections": [
+  {
+   "idx": 1,
+   "title_gu": "વિષ્ણુ ભક્તિ",
+   "start_page": 1,
+   "end_page": 114,
+   "type": "mixed"
+  },
+  {
+   "idx": 2,
+   "title_gu": "કર્મકાંડરહિત ઉદા વૈષ્ણવ પ્રગટ કર્યા કર્મ માર્ગ મૂકાવી અનન્ય માર્ગ ઉદા વૈષ્ણવોનો પ્રગટ કીધો તે",
+   "start_page": 115,
+   "end_page": 139,
+   "type": "mixed"
+  },
+  {
+   "idx": 3,
+   "title_gu": "ગુરુ ચોર",
+   "start_page": 140,
+   "end_page": 150,
+   "type": "mixed"
+  },
+  {
+   "idx": 4,
+   "title_gu": "સાકર અન્ન",
+   "start_page": 151,
+   "end_page": 184,
+   "type": "mixed"
+  },
+  {
+   "idx": 5,
+   "title_gu": "॥ નિત્ય પ્રલય ॥",
+   "start_page": 185,
+   "end_page": 185,
+   "type": "mixed"
+  },
+  {
+   "idx": 6,
+   "title_gu": "કુબ્જા",
+   "start_page": 186,
+   "end_page": 194,
+   "type": "mixed"
+  },
+  {
+   "idx": 7,
+   "title_gu": "કોની સાથે વેર ન બાંધવું",
+   "start_page": 195,
+   "end_page": 198,
+   "type": "mixed"
+  },
+  {
+   "idx": 8,
+   "title_gu": "જગત(માયા)ના બ્રહ્મ",
+   "start_page": 199,
+   "end_page": 224,
+   "type": "mixed"
+  },
+  {
+   "idx": 9,
+   "title_gu": "॥ ભોજા ગુજર ઉદ્ધાર ॥",
+   "start_page": 225,
+   "end_page": 237,
+   "type": "mixed"
+  },
+  {
+   "idx": 10,
+   "title_gu": "॥ દ્વારકા કૃપાનાથના સાનિધ્યમાં ॥",
+   "start_page": 238,
+   "end_page": 247,
+   "type": "mixed"
+  },
+  {
+   "idx": 11,
+   "title_gu": "બૂડિયા",
+   "start_page": 248,
+   "end_page": 259,
+   "type": "mixed"
+  },
+  {
+   "idx": 12,
+   "title_gu": "દ્વારકામાં પીપાજીનું મંદીર",
+   "start_page": 260,
+   "end_page": 265,
+   "type": "mixed"
+  },
+  {
+   "idx": 13,
+   "title_gu": "॥ શાહુકાર ચોર ॥",
+   "start_page": 266,
+   "end_page": 329,
+   "type": "mixed"
+  },
+  {
+   "idx": 14,
+   "title_gu": "વૈકુંઠ",
+   "start_page": 330,
+   "end_page": 358,
+   "type": "mixed"
+  },
+  {
+   "idx": 15,
+   "title_gu": "સ્ત્રી-દોષ નિવારણ",
+   "start_page": 359,
+   "end_page": 380,
+   "type": "mixed"
+  },
+  {
+   "idx": 16,
+   "title_gu": "સ્વધામ પધાર્યાનો સમાગમ",
+   "start_page": 381,
+   "end_page": 403,
+   "type": "mixed"
+  }
+ ]
 }
