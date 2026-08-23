@@ -67,9 +67,14 @@ def split_page(text, sp):
     lines = text.split("\n")
     mode = "before" if "before" in sp else "after"
     needle = _norm_line(sp[mode])
-    k = next((i for i, ln in enumerate(lines)
-              if needle and (needle in _norm_line(ln) or
-                             (len(_norm_line(ln)) >= 6 and _norm_line(ln) in needle))), None)
+    if not needle:
+        return None, None
+    # exact line match wins; fuzzy containment only as fallback
+    k = next((i for i, ln in enumerate(lines) if _norm_line(ln) == needle), None)
+    if k is None:
+        k = next((i for i, ln in enumerate(lines)
+                  if needle in _norm_line(ln) or
+                     (len(_norm_line(ln)) >= 6 and _norm_line(ln) in needle)), None)
     if k is None:
         return None, None
     cut = k if mode == "before" else k + 1
@@ -109,31 +114,61 @@ def build_gujarati(book):
         specs = [merged] + rest
     if "idx_range" in book and specs:
         n_pages = specs[-1]["end_page"] - specs[0]["start_page"] + 1
+    # a page may carry 1..n split points (n+1 parts); part 0 belongs to the
+    # section arriving from the previous page, part i to the i-th section
+    # that STARTS on the page (in spec order)
+    def page_parts(pg):
+        sp = splits.get(str(pg))
+        if not sp:
+            return None
+        sps = sp if isinstance(sp, list) else [sp]
+        rest = page_text(src, pg).strip()
+        parts = []
+        for one in sps:
+            head, tail = split_page(rest, one)
+            if head is None:
+                print(f"  ! split needle not found on p{pg} ({book['id']})")
+                return None
+            parts.append(head)
+            rest = tail
+        parts.append(rest)
+        return parts
+
+    starters = {}  # page -> ordered spec indices starting there
+    for i, s in enumerate(specs):
+        starters.setdefault(s["start_page"], []).append(i)
+
+    def n_splits(pg):
+        sp = splits.get(str(pg))
+        return 0 if sp is None else (len(sp) if isinstance(sp, list) else 1)
+
     sections = []
     for si, s in enumerate(specs):
         blocks = []
         for pg in range(s["start_page"], s["end_page"] + 1):
-            t = page_text(src, pg).strip()
-            sp = splits.get(str(pg))
-            if sp and t:
-                head, tail = split_page(t, sp)
-                if head is not None:
-                    # page's own section keeps the tail; an earlier section
-                    # sharing this page keeps the head
-                    t = tail if pg == s["start_page"] else head
-                else:
-                    print(f"  ! split needle not found on p{pg} ({book['id']})")
-            if t:
+            parts = page_parts(pg)
+            if parts is None:
+                t = page_text(src, pg).strip()
+            elif pg == s["start_page"]:
+                # k splits, m starters: k==m → part 0 belongs to the section
+                # arriving from the previous page; k==m-1 → the first starter
+                # opens the page top, so starter i takes part i
+                m = len(starters[pg])
+                off = 1 if len(parts) - 1 == m else 0
+                t = parts[off + starters[pg].index(si)]
+            else:
+                t = parts[0]
+            # skip blocks that are pure punctuation/frame artifacts or a bare folio
+            if t and _norm_line(t):
                 blocks.append({"page": pg, "text": t})
-        # spill-over: next section starts mid-page on the page after ours —
-        # its head belongs to us
-        nxt = str(s["end_page"] + 1)
-        if nxt in splits and (si + 1 == len(specs) or specs[si + 1]["start_page"] == s["end_page"] + 1):
-            full = page_text(src, int(nxt)).strip()
-            if full:
-                head, _ = split_page(full, splits[nxt])
-                if head and head.strip():
-                    blocks.append({"page": int(nxt), "text": head.strip()})
+        # spill-over: a section starts mid-page on the page after ours —
+        # that page's part 0 belongs to us (only when no starter owns the top)
+        nxt = s["end_page"] + 1
+        if str(nxt) in splits and n_splits(nxt) == len(starters.get(nxt, [])) and \
+           (si + 1 == len(specs) or specs[si + 1]["start_page"] == nxt):
+            parts = page_parts(nxt)
+            if parts and _norm_line(parts[0]):
+                blocks.append({"page": nxt, "text": parts[0].strip()})
         title = s.get("title_gu") or s.get("title") or f"વિભાગ {s['idx']}"
         sections.append({"title": title.strip(), "page_start": s["start_page"], "blocks": blocks})
     return dict(book, pages=n_pages, sections=sections)

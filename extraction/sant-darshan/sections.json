@@ -1,700 +1,700 @@
 {
-  "book": "sant-darshan",
-  "toc_found": true,
-  "page_offset_note": "Printed TOC (અનુક્રમણિકા) on txt pages 5-8, 94 entries. Offset is constant: txt page = printed folio + 8 (folio 1 = txt 9, folio 168 = txt 176); verified against printed folio numbers at ~40 points across the book, no plate shift. Page numbers here are txt file numbers and come from the BODY headings verified by rendering the PDF, not from the TOC: three TOC folios are wrong (કૃષ્ણા દર્શન printed 34, actually folio 38 = txt 46; કાશી printed 118, actually 119 = txt 127, which pushes અમદાવાદ/જેસલમેર to folio 120 = txt 128; દ્વારકા printed 161, actually 162 = txt 170; બરેલી printed 163, actually 164 = txt 172). 5 sections are not in the TOC: 4 front-matter sections plus the part-title on txt 121. IMPORTANT: at 15 boundaries two chapters genuinely begin on the SAME page (second heading is mid-page), so those pages are the end_page of one section and the start_page of the next - the only overlaps in the file. Otherwise ranges are contiguous and disjoint over 1-176.",
-  "sections": [
-    {
-      "idx": 1,
-      "title_gu": "સંત દર્શન",
-      "start_page": 1,
-      "end_page": 2,
-      "type": "front_matter"
-    },
-    {
-      "idx": 2,
-      "title_gu": "અર્પણ પત્રિકા",
-      "start_page": 3,
-      "end_page": 3,
-      "type": "front_matter"
-    },
-    {
-      "idx": 3,
-      "title_gu": "સદ્‌ગુરુના બાલગોપાલ :",
-      "start_page": 4,
-      "end_page": 4,
-      "type": "front_matter"
-    },
-    {
-      "idx": 4,
-      "title_gu": "અનુક્રમણિકા",
-      "start_page": 5,
-      "end_page": 8,
-      "type": "front_matter"
-    },
-    {
-      "idx": 5,
-      "title_gu": "જ્ઞાનીજી",
-      "start_page": 9,
-      "end_page": 18,
-      "type": "prose"
-    },
-    {
-      "idx": 6,
-      "title_gu": "પ્રાગટ્ય",
-      "start_page": 19,
-      "end_page": 20,
-      "type": "prose"
-    },
-    {
-      "idx": 7,
-      "title_gu": "વૈષ્ણવ ગોપાલદાસને સદ્ગુરુ પ્રમાણ્યા",
-      "start_page": 21,
-      "end_page": 23,
-      "type": "prose"
-    },
-    {
-      "idx": 8,
-      "title_gu": "હરમા બા પર જીવણજી મહારાજની કૃપા",
-      "start_page": 24,
-      "end_page": 25,
-      "type": "prose"
-    },
-    {
-      "idx": 9,
-      "title_gu": "જગન્નાથપુરીમાં ભાવ સમાધિ",
-      "start_page": 26,
-      "end_page": 27,
-      "type": "prose"
-    },
-    {
-      "idx": 10,
-      "title_gu": "ભગવાન જગન્નાથ સાથે વાર્તાલાપ",
-      "start_page": 28,
-      "end_page": 29,
-      "type": "prose"
-    },
-    {
-      "idx": 11,
-      "title_gu": "હિમાલય ઉપરથી ભારત દર્શન",
-      "start_page": 30,
-      "end_page": 30,
-      "type": "prose"
-    },
-    {
-      "idx": 12,
-      "title_gu": "ભક્તોની કસોટી",
-      "start_page": 31,
-      "end_page": 33,
-      "type": "prose"
-    },
-    {
-      "idx": 13,
-      "title_gu": "શાહપુરામાં અનન્ય વૈષ્ણવ ઉદા ધર્મનો માર્ગ દૃઢાવ્યો",
-      "start_page": 34,
-      "end_page": 34,
-      "type": "prose"
-    },
-    {
-      "idx": 14,
-      "title_gu": "શાહપુરામાં સંત સમાગમ",
-      "start_page": 35,
-      "end_page": 37,
-      "type": "prose"
-    },
-    {
-      "idx": 15,
-      "title_gu": "અરીઠા - વાલ પાપડી",
-      "start_page": 38,
-      "end_page": 38,
-      "type": "prose"
-    },
-    {
-      "idx": 16,
-      "title_gu": "ભોજા ગુર્જરનો ઉદ્ધાર",
-      "start_page": 39,
-      "end_page": 45,
-      "type": "prose"
-    },
-    {
-      "idx": 17,
-      "title_gu": "કૃષ્ણા દર્શન",
-      "start_page": 46,
-      "end_page": 47,
-      "type": "prose"
-    },
-    {
-      "idx": 18,
-      "title_gu": "વૈષ્ણવોને જળપાન કરાવ્યું",
-      "start_page": 48,
-      "end_page": 51,
-      "type": "prose"
-    },
-    {
-      "idx": 19,
-      "title_gu": "પ્રસાદ ભગવદ્ અર્પણ",
-      "start_page": 52,
-      "end_page": 55,
-      "type": "prose"
-    },
-    {
-      "idx": 20,
-      "title_gu": "જાંબુડા ઉપર કરુણા",
-      "start_page": 56,
-      "end_page": 57,
-      "type": "prose"
-    },
-    {
-      "idx": 21,
-      "title_gu": "દ્વારકામાં કૃપાનાથ સાથે",
-      "start_page": 58,
-      "end_page": 59,
-      "type": "prose"
-    },
-    {
-      "idx": 22,
-      "title_gu": "પ્રેમનું પ્રાબલ્ય",
-      "start_page": 60,
-      "end_page": 61,
-      "type": "prose"
-    },
-    {
-      "idx": 23,
-      "title_gu": "કૃષ્ણદાસની ગણપતિ આરાધના",
-      "start_page": 62,
-      "end_page": 67,
-      "type": "prose"
-    },
-    {
-      "idx": 24,
-      "title_gu": "કૃષ્ણદાસને ભક્તિ માર્ગનું દર્શન કરાવ્યું",
-      "start_page": 68,
-      "end_page": 69,
-      "type": "prose"
-    },
-    {
-      "idx": 25,
-      "title_gu": "ભક્તિ રંગ",
-      "start_page": 70,
-      "end_page": 71,
-      "type": "prose"
-    },
-    {
-      "idx": 26,
-      "title_gu": "સંકલ્પ શક્તિ",
-      "start_page": 72,
-      "end_page": 73,
-      "type": "prose"
-    },
-    {
-      "idx": 27,
-      "title_gu": "ભીલાપુરમાં સ્વપ્નાંતર",
-      "start_page": 74,
-      "end_page": 75,
-      "type": "prose"
-    },
-    {
-      "idx": 28,
-      "title_gu": "સ્વધામ",
-      "start_page": 76,
-      "end_page": 79,
-      "type": "prose"
-    },
-    {
-      "idx": 29,
-      "title_gu": "શ્યામદાસજી",
-      "start_page": 80,
-      "end_page": 82,
-      "type": "prose"
-    },
-    {
-      "idx": 30,
-      "title_gu": "પ્રેમબાઈ - દરાપુરા",
-      "start_page": 83,
-      "end_page": 83,
-      "type": "prose"
-    },
-    {
-      "idx": 31,
-      "title_gu": "અનન્ય વૈષ્ણવતાનું રક્ષણ",
-      "start_page": 84,
-      "end_page": 85,
-      "type": "prose"
-    },
-    {
-      "idx": 32,
-      "title_gu": "ધૈર્યની કસોટી",
-      "start_page": 86,
-      "end_page": 87,
-      "type": "prose"
-    },
-    {
-      "idx": 33,
-      "title_gu": "બંસીવટ",
-      "start_page": 88,
-      "end_page": 89,
-      "type": "prose"
-    },
-    {
-      "idx": 34,
-      "title_gu": "કબીરજી",
-      "start_page": 90,
-      "end_page": 90,
-      "type": "prose"
-    },
-    {
-      "idx": 35,
-      "title_gu": "આધાર શીલા",
-      "start_page": 91,
-      "end_page": 92,
-      "type": "prose"
-    },
-    {
-      "idx": 36,
-      "title_gu": "પરિચય",
-      "start_page": 93,
-      "end_page": 96,
-      "type": "prose"
-    },
-    {
-      "idx": 37,
-      "title_gu": "આસન, સમાગમ અને માળા",
-      "start_page": 97,
-      "end_page": 99,
-      "type": "prose"
-    },
-    {
-      "idx": 38,
-      "title_gu": "શ્રી પદ્મવાડી પાટણ",
-      "start_page": 100,
-      "end_page": 100,
-      "type": "prose"
-    },
-    {
-      "idx": 39,
-      "title_gu": "વચન એજ પરમેશ્વર",
-      "start_page": 101,
-      "end_page": 103,
-      "type": "prose"
-    },
-    {
-      "idx": 40,
-      "title_gu": "શાહપુરા",
-      "start_page": 104,
-      "end_page": 105,
-      "type": "prose"
-    },
-    {
-      "idx": 41,
-      "title_gu": "પુનિયાદ",
-      "start_page": 106,
-      "end_page": 107,
-      "type": "prose"
-    },
-    {
-      "idx": 42,
-      "title_gu": "ધનોરા",
-      "start_page": 108,
-      "end_page": 117,
-      "type": "prose"
-    },
-    {
-      "idx": 43,
-      "title_gu": "ઉદા ધર્મની ધાર્મિક પ્રથાઓ",
-      "start_page": 118,
-      "end_page": 120,
-      "type": "prose"
-    },
-    {
-      "idx": 44,
-      "title_gu": "સદ્‌ગુરુ જીવણદાસજી મહારાજની પુણ્ય સ્થલીઓ વિષે સંક્ષિપ્ત પરિચય",
-      "start_page": 121,
-      "end_page": 121,
-      "type": "prose"
-    },
-    {
-      "idx": 45,
-      "title_gu": "વૃંદાવન",
-      "start_page": 122,
-      "end_page": 123,
-      "type": "prose"
-    },
-    {
-      "idx": 46,
-      "title_gu": "પાટણ",
-      "start_page": 124,
-      "end_page": 126,
-      "type": "prose"
-    },
-    {
-      "idx": 47,
-      "title_gu": "કાશી",
-      "start_page": 127,
-      "end_page": 127,
-      "type": "prose"
-    },
-    {
-      "idx": 48,
-      "title_gu": "અમદાવાદ",
-      "start_page": 128,
-      "end_page": 128,
-      "type": "prose"
-    },
-    {
-      "idx": 49,
-      "title_gu": "જેસલમેર",
-      "start_page": 128,
-      "end_page": 129,
-      "type": "prose"
-    },
-    {
-      "idx": 50,
-      "title_gu": "ગલતા",
-      "start_page": 130,
-      "end_page": 130,
-      "type": "prose"
-    },
-    {
-      "idx": 51,
-      "title_gu": "કબીરવડ",
-      "start_page": 131,
-      "end_page": 131,
-      "type": "prose"
-    },
-    {
-      "idx": 52,
-      "title_gu": "મોટા સાંજ",
-      "start_page": 132,
-      "end_page": 132,
-      "type": "prose"
-    },
-    {
-      "idx": 53,
-      "title_gu": "શ્રીમાળી, કોશમાળી",
-      "start_page": 132,
-      "end_page": 132,
-      "type": "prose"
-    },
-    {
-      "idx": 54,
-      "title_gu": "પલાસવાડા",
-      "start_page": 133,
-      "end_page": 135,
-      "type": "prose"
-    },
-    {
-      "idx": 55,
-      "title_gu": "થુવાવી",
-      "start_page": 136,
-      "end_page": 136,
-      "type": "prose"
-    },
-    {
-      "idx": 56,
-      "title_gu": "ઝાડેશ્વર",
-      "start_page": 136,
-      "end_page": 136,
-      "type": "prose"
-    },
-    {
-      "idx": 57,
-      "title_gu": "શુકતલીર્થ",
-      "start_page": 137,
-      "end_page": 137,
-      "type": "prose"
-    },
-    {
-      "idx": 58,
-      "title_gu": "ચોરંદા",
-      "start_page": 138,
-      "end_page": 140,
-      "type": "prose"
-    },
-    {
-      "idx": 59,
-      "title_gu": "કેસલુ",
-      "start_page": 141,
-      "end_page": 141,
-      "type": "prose"
-    },
-    {
-      "idx": 60,
-      "title_gu": "ઉજ્જૈન",
-      "start_page": 142,
-      "end_page": 142,
-      "type": "prose"
-    },
-    {
-      "idx": 61,
-      "title_gu": "સોખડા",
-      "start_page": 143,
-      "end_page": 144,
-      "type": "prose"
-    },
-    {
-      "idx": 62,
-      "title_gu": "બોરબાર",
-      "start_page": 145,
-      "end_page": 145,
-      "type": "prose"
-    },
-    {
-      "idx": 63,
-      "title_gu": "કંડારી",
-      "start_page": 145,
-      "end_page": 145,
-      "type": "prose"
-    },
-    {
-      "idx": 64,
-      "title_gu": "કરમસદ",
-      "start_page": 146,
-      "end_page": 146,
-      "type": "prose"
-    },
-    {
-      "idx": 65,
-      "title_gu": "ગોરિયાદ",
-      "start_page": 147,
-      "end_page": 147,
-      "type": "prose"
-    },
-    {
-      "idx": 66,
-      "title_gu": "શાહપુરા",
-      "start_page": 147,
-      "end_page": 147,
-      "type": "prose"
-    },
-    {
-      "idx": 67,
-      "title_gu": "ભીલાપુર",
-      "start_page": 148,
-      "end_page": 148,
-      "type": "prose"
-    },
-    {
-      "idx": 68,
-      "title_gu": "અરીઠા",
-      "start_page": 149,
-      "end_page": 151,
-      "type": "prose"
-    },
-    {
-      "idx": 69,
-      "title_gu": "તાંદલજા",
-      "start_page": 152,
-      "end_page": 152,
-      "type": "prose"
-    },
-    {
-      "idx": 70,
-      "title_gu": "માંગલેશ્વર",
-      "start_page": 153,
-      "end_page": 153,
-      "type": "prose"
-    },
-    {
-      "idx": 71,
-      "title_gu": "નાના અમાદરા",
-      "start_page": 153,
-      "end_page": 153,
-      "type": "prose"
-    },
-    {
-      "idx": 72,
-      "title_gu": "માલવા",
-      "start_page": 154,
-      "end_page": 155,
-      "type": "prose"
-    },
-    {
-      "idx": 73,
-      "title_gu": "કુકશ",
-      "start_page": 156,
-      "end_page": 156,
-      "type": "prose"
-    },
-    {
-      "idx": 74,
-      "title_gu": "સુરત",
-      "start_page": 156,
-      "end_page": 157,
-      "type": "prose"
-    },
-    {
-      "idx": 75,
-      "title_gu": "મુંબઈ - ૩૩",
-      "start_page": 158,
-      "end_page": 158,
-      "type": "prose"
-    },
-    {
-      "idx": 76,
-      "title_gu": "અમેરિકા કારશન",
-      "start_page": 159,
-      "end_page": 159,
-      "type": "prose"
-    },
-    {
-      "idx": 77,
-      "title_gu": "પાછિયાપુરા",
-      "start_page": 159,
-      "end_page": 159,
-      "type": "prose"
-    },
-    {
-      "idx": 78,
-      "title_gu": "ઈડર, હીંદોવર દાવડ",
-      "start_page": 160,
-      "end_page": 160,
-      "type": "prose"
-    },
-    {
-      "idx": 79,
-      "title_gu": "આગલોડ",
-      "start_page": 160,
-      "end_page": 160,
-      "type": "prose"
-    },
-    {
-      "idx": 80,
-      "title_gu": "સરદારપુર",
-      "start_page": 161,
-      "end_page": 161,
-      "type": "prose"
-    },
-    {
-      "idx": 81,
-      "title_gu": "સબલપુર",
-      "start_page": 161,
-      "end_page": 161,
-      "type": "prose"
-    },
-    {
-      "idx": 82,
-      "title_gu": "કાસમપુર",
-      "start_page": 162,
-      "end_page": 162,
-      "type": "prose"
-    },
-    {
-      "idx": 83,
-      "title_gu": "દરાપુરા",
-      "start_page": 163,
-      "end_page": 163,
-      "type": "prose"
-    },
-    {
-      "idx": 84,
-      "title_gu": "વડોદરા",
-      "start_page": 164,
-      "end_page": 164,
-      "type": "prose"
-    },
-    {
-      "idx": 85,
-      "title_gu": "હંસાપુરા",
-      "start_page": 164,
-      "end_page": 164,
-      "type": "prose"
-    },
-    {
-      "idx": 86,
-      "title_gu": "બોડેલી",
-      "start_page": 165,
-      "end_page": 165,
-      "type": "prose"
-    },
-    {
-      "idx": 87,
-      "title_gu": "ફલુ",
-      "start_page": 166,
-      "end_page": 166,
-      "type": "prose"
-    },
-    {
-      "idx": 88,
-      "title_gu": "માંજલપુર",
-      "start_page": 167,
-      "end_page": 167,
-      "type": "prose"
-    },
-    {
-      "idx": 89,
-      "title_gu": "દૂધરેજ",
-      "start_page": 167,
-      "end_page": 167,
-      "type": "prose"
-    },
-    {
-      "idx": 90,
-      "title_gu": "પાટડી બજાણુ",
-      "start_page": 168,
-      "end_page": 168,
-      "type": "prose"
-    },
-    {
-      "idx": 91,
-      "title_gu": "ગણપતપુરા",
-      "start_page": 169,
-      "end_page": 169,
-      "type": "prose"
-    },
-    {
-      "idx": 92,
-      "title_gu": "દ્વારકા",
-      "start_page": 170,
-      "end_page": 170,
-      "type": "prose"
-    },
-    {
-      "idx": 93,
-      "title_gu": "જગન્નાથપુરી",
-      "start_page": 170,
-      "end_page": 171,
-      "type": "prose"
-    },
-    {
-      "idx": 94,
-      "title_gu": "બરેલી",
-      "start_page": 172,
-      "end_page": 172,
-      "type": "prose"
-    },
-    {
-      "idx": 95,
-      "title_gu": "ઝુલાણા",
-      "start_page": 172,
-      "end_page": 173,
-      "type": "prose"
-    },
-    {
-      "idx": 96,
-      "title_gu": "ભક્ત પીપાજી",
-      "start_page": 174,
-      "end_page": 174,
-      "type": "prose"
-    },
-    {
-      "idx": 97,
-      "title_gu": "ધના ભગત",
-      "start_page": 174,
-      "end_page": 174,
-      "type": "prose"
-    },
-    {
-      "idx": 98,
-      "title_gu": "શેરખી",
-      "start_page": 175,
-      "end_page": 175,
-      "type": "prose"
-    },
-    {
-      "idx": 99,
-      "title_gu": "કમીજડા",
-      "start_page": 176,
-      "end_page": 176,
-      "type": "prose"
-    }
-  ]
+ "book": "sant-darshan",
+ "toc_found": true,
+ "page_offset_note": "Printed TOC (અનુક્રમણિકા) on txt pages 5-8, 94 entries. Offset is constant: txt page = printed folio + 8 (folio 1 = txt 9, folio 168 = txt 176); verified against printed folio numbers at ~40 points across the book, no plate shift. Page numbers here are txt file numbers and come from the BODY headings verified by rendering the PDF, not from the TOC: three TOC folios are wrong (કૃષ્ણા દર્શન printed 34, actually folio 38 = txt 46; કાશી printed 118, actually 119 = txt 127, which pushes અમદાવાદ/જેસલમેર to folio 120 = txt 128; દ્વારકા printed 161, actually 162 = txt 170; બરેલી printed 163, actually 164 = txt 172). 5 sections are not in the TOC: 4 front-matter sections plus the part-title on txt 121. IMPORTANT: at 15 boundaries two chapters genuinely begin on the SAME page (second heading is mid-page), so those pages are the end_page of one section and the start_page of the next - the only overlaps in the file. Otherwise ranges are contiguous and disjoint over 1-176.",
+ "sections": [
+  {
+   "idx": 1,
+   "title_gu": "સંત દર્શન",
+   "start_page": 1,
+   "end_page": 2,
+   "type": "front_matter"
+  },
+  {
+   "idx": 2,
+   "title_gu": "અર્પણ પત્રિકા",
+   "start_page": 3,
+   "end_page": 3,
+   "type": "front_matter"
+  },
+  {
+   "idx": 3,
+   "title_gu": "સદ્‌ગુરુના બાલગોપાલ :",
+   "start_page": 4,
+   "end_page": 4,
+   "type": "front_matter"
+  },
+  {
+   "idx": 4,
+   "title_gu": "અનુક્રમણિકા",
+   "start_page": 5,
+   "end_page": 8,
+   "type": "front_matter"
+  },
+  {
+   "idx": 5,
+   "title_gu": "જ્ઞાનીજી",
+   "start_page": 9,
+   "end_page": 18,
+   "type": "prose"
+  },
+  {
+   "idx": 6,
+   "title_gu": "પ્રાગટ્ય",
+   "start_page": 19,
+   "end_page": 20,
+   "type": "prose"
+  },
+  {
+   "idx": 7,
+   "title_gu": "વૈષ્ણવ ગોપાલદાસને સદ્ગુરુ પ્રમાણ્યા",
+   "start_page": 21,
+   "end_page": 23,
+   "type": "prose"
+  },
+  {
+   "idx": 8,
+   "title_gu": "હરમા બા પર જીવણજી મહારાજની કૃપા",
+   "start_page": 24,
+   "end_page": 25,
+   "type": "prose"
+  },
+  {
+   "idx": 9,
+   "title_gu": "જગન્નાથપુરીમાં ભાવ સમાધિ",
+   "start_page": 26,
+   "end_page": 27,
+   "type": "prose"
+  },
+  {
+   "idx": 10,
+   "title_gu": "ભગવાન જગન્નાથ સાથે વાર્તાલાપ",
+   "start_page": 28,
+   "end_page": 29,
+   "type": "prose"
+  },
+  {
+   "idx": 11,
+   "title_gu": "હિમાલય ઉપરથી ભારત દર્શન",
+   "start_page": 30,
+   "end_page": 30,
+   "type": "prose"
+  },
+  {
+   "idx": 12,
+   "title_gu": "ભક્તોની કસોટી",
+   "start_page": 31,
+   "end_page": 33,
+   "type": "prose"
+  },
+  {
+   "idx": 13,
+   "title_gu": "શાહપુરામાં અનન્ય વૈષ્ણવ ઉદા ધર્મનો માર્ગ દૃઢાવ્યો",
+   "start_page": 34,
+   "end_page": 34,
+   "type": "prose"
+  },
+  {
+   "idx": 14,
+   "title_gu": "શાહપુરામાં સંત સમાગમ",
+   "start_page": 35,
+   "end_page": 37,
+   "type": "prose"
+  },
+  {
+   "idx": 15,
+   "title_gu": "અરીઠા - વાલ પાપડી",
+   "start_page": 38,
+   "end_page": 38,
+   "type": "prose"
+  },
+  {
+   "idx": 16,
+   "title_gu": "ભોજા ગુર્જરનો ઉદ્ધાર",
+   "start_page": 39,
+   "end_page": 45,
+   "type": "prose"
+  },
+  {
+   "idx": 17,
+   "title_gu": "કૃષ્ણા દર્શન",
+   "start_page": 46,
+   "end_page": 47,
+   "type": "prose"
+  },
+  {
+   "idx": 18,
+   "title_gu": "વૈષ્ણવોને જળપાન કરાવ્યું",
+   "start_page": 48,
+   "end_page": 51,
+   "type": "prose"
+  },
+  {
+   "idx": 19,
+   "title_gu": "પ્રસાદ ભગવદ્ અર્પણ",
+   "start_page": 52,
+   "end_page": 55,
+   "type": "prose"
+  },
+  {
+   "idx": 20,
+   "title_gu": "જાંબુડા ઉપર કરુણા",
+   "start_page": 56,
+   "end_page": 57,
+   "type": "prose"
+  },
+  {
+   "idx": 21,
+   "title_gu": "દ્વારકામાં કૃપાનાથ સાથે",
+   "start_page": 58,
+   "end_page": 59,
+   "type": "prose"
+  },
+  {
+   "idx": 22,
+   "title_gu": "પ્રેમનું પ્રાબલ્ય",
+   "start_page": 60,
+   "end_page": 61,
+   "type": "prose"
+  },
+  {
+   "idx": 23,
+   "title_gu": "કૃષ્ણદાસની ગણપતિ આરાધના",
+   "start_page": 62,
+   "end_page": 67,
+   "type": "prose"
+  },
+  {
+   "idx": 24,
+   "title_gu": "કૃષ્ણદાસને ભક્તિ માર્ગનું દર્શન કરાવ્યું",
+   "start_page": 68,
+   "end_page": 69,
+   "type": "prose"
+  },
+  {
+   "idx": 25,
+   "title_gu": "ભક્તિ રંગ",
+   "start_page": 70,
+   "end_page": 71,
+   "type": "prose"
+  },
+  {
+   "idx": 26,
+   "title_gu": "સંકલ્પ શક્તિ",
+   "start_page": 72,
+   "end_page": 73,
+   "type": "prose"
+  },
+  {
+   "idx": 27,
+   "title_gu": "ભીલાપુરમાં સ્વપ્નાંતર",
+   "start_page": 74,
+   "end_page": 75,
+   "type": "prose"
+  },
+  {
+   "idx": 28,
+   "title_gu": "સ્વધામ",
+   "start_page": 76,
+   "end_page": 79,
+   "type": "prose"
+  },
+  {
+   "idx": 29,
+   "title_gu": "શ્યામદાસજી",
+   "start_page": 80,
+   "end_page": 82,
+   "type": "prose"
+  },
+  {
+   "idx": 30,
+   "title_gu": "પ્રેમબાઈ - દરાપુરા",
+   "start_page": 83,
+   "end_page": 83,
+   "type": "prose"
+  },
+  {
+   "idx": 31,
+   "title_gu": "અનન્ય વૈષ્ણવતાનું રક્ષણ",
+   "start_page": 84,
+   "end_page": 85,
+   "type": "prose"
+  },
+  {
+   "idx": 32,
+   "title_gu": "ધૈર્યની કસોટી",
+   "start_page": 86,
+   "end_page": 87,
+   "type": "prose"
+  },
+  {
+   "idx": 33,
+   "title_gu": "બંસીવટ",
+   "start_page": 88,
+   "end_page": 89,
+   "type": "prose"
+  },
+  {
+   "idx": 34,
+   "title_gu": "કબીરજી",
+   "start_page": 90,
+   "end_page": 90,
+   "type": "prose"
+  },
+  {
+   "idx": 35,
+   "title_gu": "આધાર શીલા",
+   "start_page": 91,
+   "end_page": 92,
+   "type": "prose"
+  },
+  {
+   "idx": 36,
+   "title_gu": "પરિચય",
+   "start_page": 93,
+   "end_page": 96,
+   "type": "prose"
+  },
+  {
+   "idx": 37,
+   "title_gu": "આસન, સમાગમ અને માળા",
+   "start_page": 97,
+   "end_page": 99,
+   "type": "prose"
+  },
+  {
+   "idx": 38,
+   "title_gu": "શ્રી પદ્મવાડી પાટણ",
+   "start_page": 100,
+   "end_page": 100,
+   "type": "prose"
+  },
+  {
+   "idx": 39,
+   "title_gu": "વચન એજ પરમેશ્વર",
+   "start_page": 101,
+   "end_page": 103,
+   "type": "prose"
+  },
+  {
+   "idx": 40,
+   "title_gu": "શાહપુરા",
+   "start_page": 104,
+   "end_page": 105,
+   "type": "prose"
+  },
+  {
+   "idx": 41,
+   "title_gu": "પુનિયાદ",
+   "start_page": 106,
+   "end_page": 107,
+   "type": "prose"
+  },
+  {
+   "idx": 42,
+   "title_gu": "ધનોરા",
+   "start_page": 108,
+   "end_page": 117,
+   "type": "prose"
+  },
+  {
+   "idx": 43,
+   "title_gu": "ઉદા ધર્મની ધાર્મિક પ્રથાઓ",
+   "start_page": 118,
+   "end_page": 120,
+   "type": "prose"
+  },
+  {
+   "idx": 44,
+   "title_gu": "સદ્‌ગુરુ જીવણદાસજી મહારાજની પુણ્ય સ્થલીઓ વિષે સંક્ષિપ્ત પરિચય",
+   "start_page": 121,
+   "end_page": 121,
+   "type": "prose"
+  },
+  {
+   "idx": 45,
+   "title_gu": "વૃંદાવન",
+   "start_page": 122,
+   "end_page": 123,
+   "type": "prose"
+  },
+  {
+   "idx": 46,
+   "title_gu": "પાટણ",
+   "start_page": 124,
+   "end_page": 126,
+   "type": "prose"
+  },
+  {
+   "idx": 47,
+   "title_gu": "કાશી",
+   "start_page": 127,
+   "end_page": 127,
+   "type": "prose"
+  },
+  {
+   "idx": 48,
+   "title_gu": "અમદાવાદ",
+   "start_page": 128,
+   "end_page": 128,
+   "type": "prose"
+  },
+  {
+   "idx": 49,
+   "title_gu": "જેસલમેર",
+   "start_page": 128,
+   "end_page": 129,
+   "type": "prose"
+  },
+  {
+   "idx": 50,
+   "title_gu": "ગલતા",
+   "start_page": 130,
+   "end_page": 130,
+   "type": "prose"
+  },
+  {
+   "idx": 51,
+   "title_gu": "કબીરવડ",
+   "start_page": 131,
+   "end_page": 131,
+   "type": "prose"
+  },
+  {
+   "idx": 52,
+   "title_gu": "મોટા સાંજા",
+   "start_page": 132,
+   "end_page": 132,
+   "type": "prose"
+  },
+  {
+   "idx": 53,
+   "title_gu": "શ્રીમાળી, કોશમાળી",
+   "start_page": 132,
+   "end_page": 132,
+   "type": "prose"
+  },
+  {
+   "idx": 54,
+   "title_gu": "પલાસવાડા",
+   "start_page": 133,
+   "end_page": 135,
+   "type": "prose"
+  },
+  {
+   "idx": 55,
+   "title_gu": "થુવાવી",
+   "start_page": 136,
+   "end_page": 136,
+   "type": "prose"
+  },
+  {
+   "idx": 56,
+   "title_gu": "ઝાડેશ્વર",
+   "start_page": 136,
+   "end_page": 136,
+   "type": "prose"
+  },
+  {
+   "idx": 57,
+   "title_gu": "શુકતલીર્થ",
+   "start_page": 137,
+   "end_page": 137,
+   "type": "prose"
+  },
+  {
+   "idx": 58,
+   "title_gu": "ચોરંદા",
+   "start_page": 138,
+   "end_page": 140,
+   "type": "prose"
+  },
+  {
+   "idx": 59,
+   "title_gu": "કેસલુ",
+   "start_page": 141,
+   "end_page": 141,
+   "type": "prose"
+  },
+  {
+   "idx": 60,
+   "title_gu": "ઉજ્જૈન",
+   "start_page": 142,
+   "end_page": 142,
+   "type": "prose"
+  },
+  {
+   "idx": 61,
+   "title_gu": "સોખડા",
+   "start_page": 143,
+   "end_page": 144,
+   "type": "prose"
+  },
+  {
+   "idx": 62,
+   "title_gu": "બોરબાર",
+   "start_page": 145,
+   "end_page": 145,
+   "type": "prose"
+  },
+  {
+   "idx": 63,
+   "title_gu": "કંડારી",
+   "start_page": 145,
+   "end_page": 145,
+   "type": "prose"
+  },
+  {
+   "idx": 64,
+   "title_gu": "કરમસદ",
+   "start_page": 146,
+   "end_page": 146,
+   "type": "prose"
+  },
+  {
+   "idx": 65,
+   "title_gu": "ગોરિયાદ",
+   "start_page": 147,
+   "end_page": 147,
+   "type": "prose"
+  },
+  {
+   "idx": 66,
+   "title_gu": "શાહપુરા",
+   "start_page": 147,
+   "end_page": 147,
+   "type": "prose"
+  },
+  {
+   "idx": 67,
+   "title_gu": "ભીલાપુર",
+   "start_page": 148,
+   "end_page": 148,
+   "type": "prose"
+  },
+  {
+   "idx": 68,
+   "title_gu": "અરીઠા",
+   "start_page": 149,
+   "end_page": 151,
+   "type": "prose"
+  },
+  {
+   "idx": 69,
+   "title_gu": "તાંદલજા",
+   "start_page": 152,
+   "end_page": 152,
+   "type": "prose"
+  },
+  {
+   "idx": 70,
+   "title_gu": "માંગલેશ્વર",
+   "start_page": 153,
+   "end_page": 153,
+   "type": "prose"
+  },
+  {
+   "idx": 71,
+   "title_gu": "નાના અમાદરા",
+   "start_page": 153,
+   "end_page": 153,
+   "type": "prose"
+  },
+  {
+   "idx": 72,
+   "title_gu": "માલવા",
+   "start_page": 154,
+   "end_page": 155,
+   "type": "prose"
+  },
+  {
+   "idx": 73,
+   "title_gu": "કુકશ",
+   "start_page": 156,
+   "end_page": 156,
+   "type": "prose"
+  },
+  {
+   "idx": 74,
+   "title_gu": "સુરત",
+   "start_page": 156,
+   "end_page": 157,
+   "type": "prose"
+  },
+  {
+   "idx": 75,
+   "title_gu": "મુંબઈ - ૩૩",
+   "start_page": 158,
+   "end_page": 158,
+   "type": "prose"
+  },
+  {
+   "idx": 76,
+   "title_gu": "અમેરિકા કારશન",
+   "start_page": 159,
+   "end_page": 159,
+   "type": "prose"
+  },
+  {
+   "idx": 77,
+   "title_gu": "પાછિયાપુરા",
+   "start_page": 159,
+   "end_page": 159,
+   "type": "prose"
+  },
+  {
+   "idx": 78,
+   "title_gu": "ઈડર, હીંદોવર દાવડ",
+   "start_page": 160,
+   "end_page": 160,
+   "type": "prose"
+  },
+  {
+   "idx": 79,
+   "title_gu": "આગલોડ",
+   "start_page": 160,
+   "end_page": 160,
+   "type": "prose"
+  },
+  {
+   "idx": 80,
+   "title_gu": "સરદારપુર",
+   "start_page": 161,
+   "end_page": 161,
+   "type": "prose"
+  },
+  {
+   "idx": 81,
+   "title_gu": "સબલપુર",
+   "start_page": 161,
+   "end_page": 161,
+   "type": "prose"
+  },
+  {
+   "idx": 82,
+   "title_gu": "કાસમપુર",
+   "start_page": 162,
+   "end_page": 162,
+   "type": "prose"
+  },
+  {
+   "idx": 83,
+   "title_gu": "દરાપુરા",
+   "start_page": 163,
+   "end_page": 163,
+   "type": "prose"
+  },
+  {
+   "idx": 84,
+   "title_gu": "વડોદરા",
+   "start_page": 164,
+   "end_page": 164,
+   "type": "prose"
+  },
+  {
+   "idx": 85,
+   "title_gu": "હંસાપુરા",
+   "start_page": 164,
+   "end_page": 164,
+   "type": "prose"
+  },
+  {
+   "idx": 86,
+   "title_gu": "બોડેલી",
+   "start_page": 165,
+   "end_page": 165,
+   "type": "prose"
+  },
+  {
+   "idx": 87,
+   "title_gu": "ફલુ",
+   "start_page": 166,
+   "end_page": 166,
+   "type": "prose"
+  },
+  {
+   "idx": 88,
+   "title_gu": "માંજલપુર",
+   "start_page": 167,
+   "end_page": 167,
+   "type": "prose"
+  },
+  {
+   "idx": 89,
+   "title_gu": "દૂધરેજ",
+   "start_page": 167,
+   "end_page": 167,
+   "type": "prose"
+  },
+  {
+   "idx": 90,
+   "title_gu": "પાટડી બજાણુ",
+   "start_page": 168,
+   "end_page": 168,
+   "type": "prose"
+  },
+  {
+   "idx": 91,
+   "title_gu": "ગણપતપુરા",
+   "start_page": 169,
+   "end_page": 169,
+   "type": "prose"
+  },
+  {
+   "idx": 92,
+   "title_gu": "દ્વારકા",
+   "start_page": 170,
+   "end_page": 170,
+   "type": "prose"
+  },
+  {
+   "idx": 93,
+   "title_gu": "જગન્નાથપુરી",
+   "start_page": 170,
+   "end_page": 171,
+   "type": "prose"
+  },
+  {
+   "idx": 94,
+   "title_gu": "બરેલી",
+   "start_page": 172,
+   "end_page": 172,
+   "type": "prose"
+  },
+  {
+   "idx": 95,
+   "title_gu": "ઝુલાણા",
+   "start_page": 172,
+   "end_page": 173,
+   "type": "prose"
+  },
+  {
+   "idx": 96,
+   "title_gu": "ભક્ત પીપાજી",
+   "start_page": 174,
+   "end_page": 174,
+   "type": "prose"
+  },
+  {
+   "idx": 97,
+   "title_gu": "ધના ભગત",
+   "start_page": 174,
+   "end_page": 174,
+   "type": "prose"
+  },
+  {
+   "idx": 98,
+   "title_gu": "શેરખી",
+   "start_page": 175,
+   "end_page": 175,
+   "type": "prose"
+  },
+  {
+   "idx": 99,
+   "title_gu": "કમીજડા",
+   "start_page": 176,
+   "end_page": 176,
+   "type": "prose"
+  }
+ ]
 }
