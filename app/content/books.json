@@ -34,7 +34,7 @@
   },
   {
    "id": "kirtan-english",
-   "title_gu": "અધ્યારુજીનાં કીર્તન (English)",
+   "title_gu": "અધ્યારુજીનાં કીર્તન (અંગ્રેજી)",
    "title_en": "Adhyaruji na Kirtan — English transliteration",
    "language": "translit",
    "pages": 143,
@@ -54,13 +54,13 @@
    "book": "kirtan-gujarati",
    "section": 7,
    "label_gu": "વાણી",
-   "label_en": "Parabrahma vani re…"
+   "label_en": "Vani — Parabrahma vani re…"
   },
   {
    "book": "kirtan-english",
    "section": 6,
-   "label_gu": "Vani (English)",
-   "label_en": "Parbrahm vani re parni e…"
+   "label_gu": "વાણી (અંગ્રેજી)",
+   "label_en": "Vani (English) — Parbrahm vani re…"
   }
  ]
 }

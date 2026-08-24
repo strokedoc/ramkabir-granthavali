@@ -68,6 +68,10 @@ to present the kirtans to non-adhikari; Harsh decided an open family link is fin
 - [x] DEPLOYED: https://strokedoc.github.io/ramkabir-granthavali/
       (GitHub Pages via Actions; repo strokedoc/ramkabir-granthavali;
       push to main = redeploy; bump sw.js VERSION each content change)
+- [x] Sub-page chapter boundaries across ALL books (2026-08-22/23): boundary
+      pages split at the printed heading line (splits.json per book; Sant
+      Darshan needed 63 split points + 18 heading repairs; p145 rebuilt from
+      image). App-wide ગુ/EN language toggle + kirtan gu⇄en cross-links.
 - [ ] Harsh: read-through of સાર pearl wording before wide family sharing
 - [ ] Later (optional): verse-quote correction inside Samagam volumes;
       sub-headings pass for Samagam ch. 13/17; more pearls (વેદપુરાણ theme)

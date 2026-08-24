@@ -24,7 +24,7 @@ BOOKS = [
          idx_range=(1, 38)),
     dict(id="jivandas-sakhi",    title_gu="વૈષ્ણવ જીવણદાસજીકી સાખી", title_en="Vaishnav Jivandasji ki Sakhi", language="gu",
          src="kirtan-gujarati", idx_range=(39, 64)),
-    dict(id="kirtan-english",    title_gu="અધ્યારુજીનાં કીર્તન (English)", title_en="Adhyaruji na Kirtan — English transliteration", language="translit"),
+    dict(id="kirtan-english",    title_gu="અધ્યારુજીનાં કીર્તન (અંગ્રેજી)", title_en="Adhyaruji na Kirtan — English transliteration", language="translit"),
     dict(id="sant-darshan",      title_gu="સંત દર્શન",           title_en="Sant Darshan",        language="gu"),
 ]
 
@@ -38,8 +38,8 @@ FRONT_MATTER_TITLE = "પ્રારંભિક પાનાં"
 # the Vani "Parabrahma vani re…" is in frequent use). Resolved by exact
 # section-title match at build time so indices never go stale.
 FEATURED = [
-    {"book": "kirtan-gujarati", "title": "વાણી", "label_gu": "વાણી", "label_en": "Parabrahma vani re…"},
-    {"book": "kirtan-english",  "title": "Vani", "label_gu": "Vani (English)", "label_en": "Parbrahm vani re parni e…"},
+    {"book": "kirtan-gujarati", "title": "વાણી", "label_gu": "વાણી", "label_en": "Vani — Parabrahma vani re…"},
+    {"book": "kirtan-english",  "title": "Vani", "label_gu": "વાણી (અંગ્રેજી)", "label_en": "Vani (English) — Parbrahm vani re…"},
 ]
 
 def page_text(book_id, n):

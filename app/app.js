@@ -31,7 +31,8 @@ const STR = {
   continueL:  { gu: "વાંચન ચાલુ રાખો", en: "Continue reading" },
   sections:   { gu: "વિભાગ", en: "sections" },
   pagesW:     { gu: "પાનાં", en: "pages" },
-  compositions: { gu: "compositions", en: "compositions" },
+  compositions: { gu: "રચનાઓ", en: "compositions" },
+  invocation: { gu: "રામકબીર સંપ્રદાય", en: "Ram Kabir Sampraday" },
   pageAbbr:   { gu: "પા.", en: "p." },
   pearlLabel: { gu: "આજનું મોતી", en: "Today's Pearl" },
   pearls:     { gu: "મોતી", en: "pearls" },
@@ -47,11 +48,11 @@ const STR = {
   gloss:      { gu: "શબ્દાર્થ", en: "WORD MEANINGS" },
   meaning:    { gu: "ભાવાર્થ", en: "MEANING" },
   why:        { gu: "કેમ મહત્વનું", en: "WHY IT MATTERS" },
-  searchTitle:{ gu: "શોધ · Search", en: "Search" },
-  marksTitle: { gu: "નિશાની · Bookmarks", en: "Bookmarks" },
-  saarTitle:  { gu: "સાર · Essence", en: "સાર · Essence" },
-  toEnglish:  { gu: "આ કીર્તન English માં →", en: "This kirtan in English →" },
-  toGujarati: { gu: "આ કીર્તન ગુજરાતીમાં →", en: "આ કીર્તન ગુજરાતીમાં (in Gujarati) →" },
+  searchTitle:{ gu: "શોધ", en: "Search" },
+  marksTitle: { gu: "નિશાની", en: "Bookmarks" },
+  saarTitle:  { gu: "સાર", en: "Essence" },
+  toEnglish:  { gu: "આ કીર્તન અંગ્રેજીમાં →", en: "This kirtan in English →" },
+  toGujarati: { gu: "આ કીર્તન ગુજરાતીમાં →", en: "This kirtan in Gujarati →" },
   loadFail:   { gu: "સામગ્રી લોડ ન થઈ.", en: "Content failed to load." },
 };
 let lang = store.get("lang", "gu");
@@ -166,10 +167,43 @@ async function loadBook(id) {
   if (!bookCache[id]) bookCache[id] = await (await fetch(`content/${id}.json`)).json();
   return bookCache[id];
 }
+const enCache = {};
+async function loadEn(id) {
+  if (!(id in enCache)) {
+    try { enCache[id] = await (await fetch(`content/en/${id}.json`)).json(); }
+    catch { enCache[id] = null; }
+  }
+  return enCache[id];
+}
+function enSec(en, idx) { return (en && en.sections && en.sections[idx]) || null; }
+function secTitle(book, en, idx) {
+  const s = book.sections[idx];
+  if (lang !== "en") return s.title;
+  const e = enSec(en, idx);
+  return (e && e.title_translit) || s.title;
+}
+
 let teachings = null;
 async function loadTeachings() {
-  if (!teachings) teachings = await (await fetch("content/teachings.json")).json();
+  if (!teachings) {
+    teachings = await (await fetch("content/teachings.json")).json();
+    try {
+      const gu = await (await fetch("content/teachings-gu.json")).json();
+      Object.assign(teachings.story, gu.story);
+      teachings.themes.forEach(th => {
+        th.intro_gu = (gu.intros || {})[th.id] || "";
+        th.units.forEach(u => Object.assign(u, (gu.units || {})[u.id] || {}));
+      });
+    } catch {}
+  }
   return teachings;
+}
+/* language-sensitive field pickers for સાર */
+function uf(u, base) { return lang === "en" ? u[base + "_en"] : (u[base + "_gu"] || u[base + "_en"]); }
+const GU_DIGITS = { "૦":"0","૧":"1","૨":"2","૩":"3","૪":"4","૫":"5","૬":"6","૭":"7","૮":"8","૯":"9" };
+function pageLabel(src) {
+  if (lang === "en") return src.page_label_en || (src.page_label || "").replace(/[૦-૯]/g, d => GU_DIGITS[d]).replace(/પા\./g, "p.");
+  return src.page_label || "";
 }
 function allUnits(t) {
   const out = [];
@@ -240,17 +274,18 @@ async function renderLibrary() {
   try { tj = await loadTeachings(); } catch {}
   let html = `<div class="reveal">
     <div class="hero">
-      <div class="invocation">Ram Kabir Sampraday</div>
-      <h2>॥ ${escapeHtml(t("appTitle"))} ॥</h2>
+      <div class="invocation">${escapeHtml(t("invocation"))}</div>
+      <h2>${lang === "en" ? "" : "॥ "}${escapeHtml(t("appTitle"))}${lang === "en" ? "" : " ॥"}</h2>
       <hr class="rule">
     </div>`;
   if (tj) html += pearlCard(tj);
   if (featured.length) {
     html += `<div class="pinned-row">`;
     for (const f of featured) {
+      const label = lang === "en" ? f.label_en : f.label_gu;
       html += `<a class="pinned-chip" href="#/book/${f.book}/${f.section}">
-        <span class="pin-glyph">॥</span>
-        <span><strong>${escapeHtml(f.label_gu)}</strong><br><small>${escapeHtml(f.label_en)}</small></span>
+        <span class="pin-glyph">${lang === "en" ? "||" : "॥"}</span>
+        <span><strong>${escapeHtml(label)}</strong></span>
       </a>`;
     }
     html += `</div>`;
@@ -260,12 +295,11 @@ async function renderLibrary() {
     html += `<a class="continue-card" href="#/book/${last.book}/${last.section}">
       <div class="label">${escapeHtml(t("continueL"))}</div>
       <h3>${escapeHtml(bt(b))}</h3>
-      <div class="sub">${escapeHtml(last.sectionTitle || "")}</div></a>`;
+      ${lang === "en" ? "" : `<div class="sub">${escapeHtml(last.sectionTitle || "")}</div>`}</a>`;
   }
   for (const b of books) {
     html += `<a class="book-card" href="#/book/${b.id}">
       <h3>${escapeHtml(bt(b))}</h3>
-      <div class="sub">${escapeHtml(bts(b))}</div>
       <div class="meta">${b.sections_count} ${b.language === "translit" ? t("compositions") : t("sections")} · ${b.pages} ${t("pagesW")}</div>
     </a>`;
   }
@@ -277,12 +311,16 @@ async function renderLibrary() {
 /* ---------------- table of contents ---------------- */
 async function renderToc(bookId) {
   const book = await loadBook(bookId);
+  const en = lang === "en" ? await loadEn(bookId) : null;
   setTitle(bt(book));
   let html = `<div class="reveal">`;
   book.sections.forEach((s, i) => {
+    const e = enSec(en, i);
+    const sub = lang === "en" && e && e.title_en
+      ? `<br><small style="color:var(--ink-soft)">${escapeHtml(e.title_en)}</small>` : "";
     html += `<a class="toc-item" href="#/book/${bookId}/${i}">
       <span class="n">${i + 1}</span>
-      <span class="t">${escapeHtml(s.title)}</span>
+      <span class="t">${escapeHtml(secTitle(book, en, i))}${sub}</span>
       <span class="pg">${s.page_start ? t("pageAbbr") + " " + s.page_start : ""}</span>
     </a>`;
   });
@@ -296,25 +334,38 @@ async function renderReader(bookId, idx) {
   const book = await loadBook(bookId);
   const s = book.sections[idx];
   if (!s) return renderToc(bookId);
+  const en = lang === "en" ? await loadEn(bookId) : null;
+  const e = enSec(en, idx);
   setTitle(bt(book));
   store.set("lastRead", { book: bookId, section: idx, sectionTitle: s.title });
 
   let body = "";
-  for (const blk of s.blocks) {
-    if (blk.page) body += `<div class="pageref">${blk.page}</div>`;
-    body += `<div class="block">${escapeHtml(blk.text)}</div>`;
+  if (lang === "en" && e && (e.translit || e.translation)) {
+    // full English edition: pronunciation + meaning, no Gujarati on screen
+    if (e.translit) body += `<div class="block en-translit">${escapeHtml(e.translit)}</div>`;
+    if (e.translation) {
+      if (e.translit) body += `<h4 class="saar-h">MEANING</h4>`;
+      body += `<div class="block en-translation">${escapeHtml(e.translation)}</div>`;
+    }
+  } else {
+    for (const blk of s.blocks) {
+      if (blk.page) body += `<div class="pageref">${blk.page}</div>`;
+      body += `<div class="block">${escapeHtml(blk.text)}</div>`;
+    }
   }
   const bmKey = `${bookId}/${idx}`;
   const marked = store.get("bookmarks", []).some(b => b.key === bmKey);
   const xl = crossLink(bookId, idx);
   const xlHtml = xl ? `<div class="src-link"><a href="#/book/${xl.book}/${xl.section}">${escapeHtml(xl.label)}</a></div>` : "";
-  const prev = idx > 0 ? `<a href="#/book/${bookId}/${idx - 1}">‹ ${escapeHtml(book.sections[idx - 1].title)}</a>` : "<span></span>";
-  const next = idx < book.sections.length - 1 ? `<a href="#/book/${bookId}/${idx + 1}">${escapeHtml(book.sections[idx + 1].title)} ›</a>` : "<span></span>";
+  const prev = idx > 0 ? `<a href="#/book/${bookId}/${idx - 1}">‹ ${escapeHtml(secTitle(book, en, idx - 1))}</a>` : "<span></span>";
+  const next = idx < book.sections.length - 1 ? `<a href="#/book/${bookId}/${idx + 1}">${escapeHtml(secTitle(book, en, idx + 1))} ›</a>` : "<span></span>";
+  const headSub = lang === "en" && e && e.title_en
+    ? `<div class="sub-en">${escapeHtml(e.title_en)}</div>` : "";
 
   view.innerHTML = `<article class="reader">
     <div class="section-head">
-      <div class="deco">॥ ✻ ॥</div>
-      <h2>${escapeHtml(s.title)}</h2>
+      <div class="deco">${lang === "en" ? "|| ✻ ||" : "॥ ✻ ॥"}</div>
+      <h2>${escapeHtml(secTitle(book, en, idx))}</h2>${headSub}
     </div>
     ${xlHtml}
     ${body}
@@ -339,11 +390,12 @@ async function renderReader(bookId, idx) {
 /* ---------------- saar (essence / teachings) ---------------- */
 function pearlCard(tj) {
   const p = todaysPearl(tj);
-  const firstLine = p.u.verse_gu.split("\n")[0];
+  const firstLine = (lang === "en" ? p.u.verse_translit : p.u.verse_gu).split(/[;\n]/)[0];
+  const sub = lang === "en" ? `${p.u.title_translit} · ${p.u.title_en}` : p.u.title_gu;
   return `<a class="pearl-card" href="#/saar/${p.ti}/${p.ui}">
     <div class="label">✦ ${escapeHtml(t("pearlLabel"))}</div>
     <div class="pearl-verse">${escapeHtml(firstLine)}</div>
-    <div class="pearl-title">${escapeHtml(p.u.title_gu)} · ${escapeHtml(p.u.title_en)}</div>
+    <div class="pearl-title">${escapeHtml(sub)}</div>
   </a>`;
 }
 
@@ -353,12 +405,10 @@ async function renderSaar() {
   let html = `<div class="reveal">`;
   html += pearlCard(tj);
   html += `<a class="book-card" href="#/saar/story">
-    <h3>${escapeHtml(lang === "en" ? tj.story.title_en : tj.story.title_gu)}</h3>
-    <div class="sub">${escapeHtml(lang === "en" ? tj.story.title_gu : tj.story.title_en)}</div></a>`;
+    <h3>${escapeHtml(lang === "en" ? tj.story.title_en : tj.story.title_gu)}</h3></a>`;
   tj.themes.forEach((th, ti) => {
     html += `<a class="book-card" href="#/saar/${ti}">
       <h3>${escapeHtml(lang === "en" ? th.title_en : th.title_gu)}</h3>
-      <div class="sub">${escapeHtml(lang === "en" ? th.title_gu : th.title_en)}</div>
       <div class="meta">${th.units.length} ${escapeHtml(t("pearls"))}</div></a>`;
   });
   view.innerHTML = html + `</div>`;
@@ -369,15 +419,16 @@ async function renderStory() {
   const tj = await loadTeachings();
   setTitle(lang === "en" ? tj.story.title_en : tj.story.title_gu);
   const s = tj.story;
+  const body = lang === "en" ? s.body_en : (s.body_gu || s.body_en);
+  const verse = lang === "en" ? (s.anchor_verse_translit || "") : s.anchor_verse;
   let html = `<article class="reader saar-story">
-    <div class="section-head"><div class="deco">॥ ✦ ॥</div>
-    <h2>${escapeHtml(s.title_gu)}</h2>
-    <div class="sub-en">${escapeHtml(s.title_en)}</div></div>`;
-  for (const p of s.body_en) html += `<p class="story-p">${escapeHtml(p)}</p>`;
-  html += `<div class="unit-verse">${escapeHtml(s.anchor_verse)}</div>
-    <p class="story-p muted">${escapeHtml(s.anchor_meaning_en)}</p>
-    <div class="src-link"><a href="#/book/${s.anchor_source.book}/${s.anchor_source.section}">${escapeHtml(t("readInBook"))} ${escapeHtml(s.anchor_source.page_label)}</a></div>
-    <p class="caveat">${escapeHtml(s.caveat_en)}</p></article>`;
+    <div class="section-head"><div class="deco">${lang === "en" ? "|| ✦ ||" : "॥ ✦ ॥"}</div>
+    <h2>${escapeHtml(lang === "en" ? s.title_en : s.title_gu)}</h2></div>`;
+  for (const p of body) html += `<p class="story-p">${escapeHtml(p)}</p>`;
+  html += `<div class="unit-verse">${escapeHtml(verse)}</div>
+    <p class="story-p muted">${escapeHtml(lang === "en" ? s.anchor_meaning_en : (s.anchor_meaning_gu || s.anchor_meaning_en))}</p>
+    <div class="src-link"><a href="#/book/${s.anchor_source.book}/${s.anchor_source.section}">${escapeHtml(t("readInBook"))} ${escapeHtml(pageLabel(s.anchor_source))}</a></div>
+    <p class="caveat">${escapeHtml(lang === "en" ? s.caveat_en : (s.caveat_gu || s.caveat_en))}</p></article>`;
   view.innerHTML = html;
   window.scrollTo(0, 0);
 }
@@ -387,11 +438,14 @@ async function renderTheme(ti) {
   const th = tj.themes[ti];
   if (!th) return renderSaar();
   setTitle(lang === "en" ? th.title_en : th.title_gu);
-  let html = `<div class="reveal"><p class="theme-intro">${escapeHtml(th.intro_en)}</p>`;
+  const intro = lang === "en" ? th.intro_en : (th.intro_gu || th.intro_en);
+  let html = `<div class="reveal"><p class="theme-intro">${escapeHtml(intro)}</p>`;
   th.units.forEach((u, ui) => {
+    const main = lang === "en" ? u.title_en : u.title_gu;
+    const small = lang === "en" ? u.title_translit : "";
     html += `<a class="toc-item" href="#/saar/${ti}/${ui}">
       <span class="n">✦</span>
-      <span class="t">${escapeHtml(u.title_gu)}<br><small style="color:var(--ink-soft)">${escapeHtml(u.title_en)}</small></span></a>`;
+      <span class="t">${escapeHtml(main)}${small ? `<br><small style="color:var(--ink-soft)">${escapeHtml(small)}</small>` : ""}</span></a>`;
   });
   view.innerHTML = html + `</div>`;
   window.scrollTo(0, 0);
@@ -403,22 +457,28 @@ async function renderUnit(ti, ui) {
   if (!u) return renderSaar();
   setTitle(lang === "en" ? th.title_en : th.title_gu);
   const src = u.source;
-  const gloss = u.gloss.map(g =>
-    `<div class="gloss-item"><span class="g-word">${escapeHtml(g.word)}</span><span class="g-mean">${escapeHtml(g.meaning)}</span></div>`).join("");
-  const alt = src.alt_book ? ` · <a href="#/book/${src.alt_book}/${src.alt_section}">English</a>` : "";
-  const prev = ui > 0 ? `<a href="#/saar/${ti}/${ui - 1}">‹ ${escapeHtml(th.units[ui - 1].title_gu)}</a>` : "<span></span>";
-  const next = ui < th.units.length - 1 ? `<a href="#/saar/${ti}/${ui + 1}">${escapeHtml(th.units[ui + 1].title_gu)} ›</a>` : "<span></span>";
+  const gloss = u.gloss.map((g, gi) => {
+    const word = lang === "en" ? (g.word_translit || g.word) : g.word;
+    const mean = lang === "en" ? g.meaning : ((u.gloss_gu || [])[gi] || g.meaning);
+    return `<div class="gloss-item"><span class="g-word">${escapeHtml(word)}</span><span class="g-mean">${escapeHtml(mean)}</span></div>`;
+  }).join("");
+  const alt = src.alt_book ? ` · <a href="#/book/${src.alt_book}/${src.alt_section}">${lang === "en" ? "English" : "અંગ્રેજી"}</a>` : "";
+  const uTitle = x => lang === "en" ? x.title_en : x.title_gu;
+  const prev = ui > 0 ? `<a href="#/saar/${ti}/${ui - 1}">‹ ${escapeHtml(uTitle(th.units[ui - 1]))}</a>` : "<span></span>";
+  const next = ui < th.units.length - 1 ? `<a href="#/saar/${ti}/${ui + 1}">${escapeHtml(uTitle(th.units[ui + 1]))} ›</a>` : "<span></span>";
+  const verse = lang === "en" ? u.verse_translit : u.verse_gu;
+  const translitLine = lang === "en" ? "" : "";
   view.innerHTML = `<article class="reader saar-unit reveal">
-    <div class="section-head"><div class="deco">॥ ✦ ॥</div>
-      <h2>${escapeHtml(lang === "en" ? u.title_en : u.title_gu)}</h2>
-      <div class="sub-en">${escapeHtml(lang === "en" ? u.title_gu : u.title_en)}</div></div>
-    <div class="unit-verse">${escapeHtml(u.verse_gu)}</div>
-    <div class="translit">${escapeHtml(u.verse_translit)}</div>
-    <div class="src-link"><a href="#/book/${src.book}/${src.section}">${escapeHtml(t("readInBook"))} ${escapeHtml(src.page_label)}</a>${alt}</div>
+    <div class="section-head"><div class="deco">${lang === "en" ? "|| ✦ ||" : "॥ ✦ ॥"}</div>
+      <h2>${escapeHtml(uTitle(u))}</h2>
+      ${lang === "en" ? `<div class="sub-en">${escapeHtml(u.title_translit || "")}</div>` : ""}</div>
+    <div class="unit-verse">${escapeHtml(verse)}</div>
+    ${translitLine}
+    <div class="src-link"><a href="#/book/${src.book}/${src.section}">${escapeHtml(t("readInBook"))} ${escapeHtml(pageLabel(src))}</a>${alt}</div>
     <h4 class="saar-h">${escapeHtml(t("gloss"))}</h4><div class="gloss">${gloss}</div>
-    <h4 class="saar-h">${escapeHtml(t("meaning"))}</h4><p class="story-p">${escapeHtml(u.meaning_en)}</p>
-    <h4 class="saar-h">${escapeHtml(t("why"))}</h4><p class="story-p">${escapeHtml(u.why_en)}</p>
-    <div class="reflect">✦ ${escapeHtml(u.reflect_en)}</div>
+    <h4 class="saar-h">${escapeHtml(t("meaning"))}</h4><p class="story-p">${escapeHtml(uf(u, "meaning"))}</p>
+    <h4 class="saar-h">${escapeHtml(t("why"))}</h4><p class="story-p">${escapeHtml(uf(u, "why"))}</p>
+    <div class="reflect">✦ ${escapeHtml(uf(u, "reflect"))}</div>
     <div class="reader-nav">${prev}${next}</div>
   </article>`;
   window.scrollTo(0, 0);

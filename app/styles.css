@@ -165,6 +165,8 @@ body {
 .reader .section-head h2 { color: var(--maroon); font-size: 1.25em; font-weight: 700; }
 .reader .section-head .deco { color: var(--gold); letter-spacing: 0.4em; font-size: 0.85em; }
 .reader .block { white-space: pre-wrap; margin-bottom: 1.15em; overflow-wrap: break-word; }
+.reader .en-translit { font-family: "Fraunces", serif; font-size: 0.92em; line-height: 1.9; color: var(--maroon); }
+.reader .en-translation { font-family: "Fraunces", serif; font-size: 0.88em; line-height: 1.8; }
 .reader .pageref {
   text-align: center; color: var(--ink-soft); font-size: 0.68em;
   font-family: "Fraunces", serif; letter-spacing: 0.15em;
@@ -246,10 +248,10 @@ body {
 .gloss { display: flex; flex-direction: column; gap: 0.35em; }
 .gloss-item { display: flex; gap: 0.8em; align-items: baseline; font-size: 0.9em; }
 .g-word { color: var(--maroon); font-weight: 600; min-width: 6.5em; }
-.g-mean { color: var(--ink-soft); font-family: "Fraunces", serif; font-size: 0.88em; }
-.story-p { font-family: "Fraunces", serif; font-size: 0.88em; line-height: 1.75; margin-bottom: 0.9em; }
+.g-mean { color: var(--ink-soft); font-family: "Fraunces", "Noto Serif Gujarati", serif; font-size: 0.88em; }
+.story-p { font-family: "Fraunces", "Noto Serif Gujarati", serif; font-size: 0.88em; line-height: 1.75; margin-bottom: 0.9em; }
 .story-p.muted { color: var(--ink-soft); font-style: italic; }
-.theme-intro { font-family: "Fraunces", serif; color: var(--ink-soft); font-size: 0.95rem; padding: 0.4rem 0.2rem 1rem; line-height: 1.7; }
+.theme-intro { font-family: "Fraunces", "Noto Serif Gujarati", serif; color: var(--ink-soft); font-size: 0.95rem; padding: 0.4rem 0.2rem 1rem; line-height: 1.7; }
 .reflect {
   background: var(--mark-bg); border-left: 3px solid var(--saffron);
   border-radius: 0 0.5rem 0.5rem 0;
