@@ -16,15 +16,22 @@ NAT = re.compile(r"[ऀ-ॿ઀-૿]")
 fails = []
 
 GU_BOOKS = ["samagam-purvardh", "samagam-uttarardh", "sant-darshan", "kirtan-gujarati", "jivandas-sakhi"]
+# The print itself contains genuine English (author's glosses, degrees, URLs,
+# phone numbers). The frozen baseline records those per page; the gate fails
+# only on Latin BEYOND the baseline (i.e. regressions / new garble).
+baseline = json.loads(Path("/Users/harsh/RamKabir/tools/latin_baseline.json").read_text())
 for b in GU_BOOKS:
     j = json.loads((APP / f"{b}.json").read_text(encoding="utf-8"))
-    n = 0
+    excess = 0
     for s in j["sections"]:
         for bl in s["blocks"]:
-            n += len(LAT.findall(bl["text"]))
-    if n:
-        fails.append(f"{b}: {n} Latin runs in Gujarati body")
-    print(f"{b}: latin-runs={n}")
+            n = len(LAT.findall(bl["text"]))
+            allowed = baseline.get(b, {}).get(str(bl["page"]), 0)
+            if n > allowed:
+                excess += n - allowed
+    if excess:
+        fails.append(f"{b}: {excess} Latin runs beyond print baseline")
+    print(f"{b}: latin-runs-beyond-baseline={excess}")
 
 en_dir = APP / "en"
 for f in sorted(en_dir.glob("*.json")) if en_dir.exists() else []:
