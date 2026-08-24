@@ -55,9 +55,17 @@ if leaks:
     fails.append(f"teachings.json native-in-EN: {leaks}")
 print(f"teachings.json EN-field leaks: {len(leaks)}")
 
-tg = (APP / "teachings-gu.json").read_text(encoding="utf-8")
-gl = LAT.findall(json.dumps([v for v in json.loads(tg).values()], ensure_ascii=False))
-# allow nothing: gu overlay is pure Gujarati prose
+tg = json.loads((APP / "teachings-gu.json").read_text(encoding="utf-8"))
+gl = []
+def scan_gu(o):
+    if isinstance(o, dict):
+        for k, v in o.items():
+            if k != "note": scan_gu(v)
+    elif isinstance(o, list):
+        for v in o: scan_gu(v)
+    elif isinstance(o, str):
+        gl.extend(LAT.findall(o))
+scan_gu(tg)
 if gl:
     fails.append(f"teachings-gu.json Latin runs: {gl[:8]}")
 print(f"teachings-gu.json latin-runs: {len(gl)}")
