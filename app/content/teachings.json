@@ -146,6 +146,47 @@
    "intro_en": "The most radical thing our tradition ever did was at the dinner thali. This path explains why — in the tradition's own words.",
    "units": [
     {
+     "id": "ek-j-saar",
+     "title_gu": "એક જ સાર",
+     "title_en": "One essence, after all the books",
+     "title_translit": "Ek J Saar",
+     "verse_gu": "હરિ હરિ વેદ પુરાણ સ્મૃતિ ષટદર્શન ॥\nનિઘંટ વિચારી સ્વામી જોઈયું એ ॥૧॥\nહરિ હરિ એક જ સાર સનાતન લાધું એ ॥\nચૈતન હરિ પરબ્રહ્મ તણું એ ॥૨॥",
+     "verse_translit": "Hari Hari Ved Puran Smruti Shatdarshan || Nighant vichari Swami joiyu e ||1|| Hari Hari ek j saar sanatan ladhu e || Chaitan Hari Parbrahm tanu e ||2||",
+     "source": {
+      "book": "kirtan-gujarati",
+      "section": 18,
+      "page_label": "વેદપુરાણ, ચરણ ૧–૨",
+      "page_label_en": "Vedpuran, charans 1-2",
+      "alt_book": "kirtan-english",
+      "alt_section": 17
+     },
+     "gloss": [
+      {
+       "word": "ષટદર્શન",
+       "word_translit": "shatdarshan",
+       "meaning": "the six classical schools of Hindu philosophy"
+      },
+      {
+       "word": "નિઘંટ",
+       "word_translit": "nighant",
+       "meaning": "lexicons, glossaries — the reference books of scholarship"
+      },
+      {
+       "word": "સાર",
+       "word_translit": "saar",
+       "meaning": "essence, the extract that remains"
+      },
+      {
+       "word": "ચૈતન",
+       "word_translit": "chaitan",
+       "meaning": "the conscious, living one"
+      }
+     ],
+     "meaning_en": "Adhyaruji opens the Ved Puran with a claim of method, not rejection: I went through it all — Vedas, Puranas, Smritis, all six schools of philosophy, even the lexicons — and examined them. What survived the search was a single eternal essence: the living, conscious Hari Parabrahma.",
+     "why_en": "This is why the tradition's stance on scripture is transcendence, not contempt. The kirtan does not say the books are worthless; it says they were read, weighed, and found to point past themselves. Everything else this path teaches — the one thali, bhakti over ritual — stands on this verse's authority: the conclusion of a man who did the reading.",
+     "reflect_en": "Have I examined what I inherited — or only either obeyed it or dismissed it?"
+    },
+    {
      "id": "charan-41",
      "title_gu": "તું વિના સહુ રડવડે",
      "title_en": "Caste and stage cannot save",
