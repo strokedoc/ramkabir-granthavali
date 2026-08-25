@@ -341,10 +341,27 @@ async function renderReader(bookId, idx) {
 
   let body = "";
   if (lang === "en" && e && (e.translit || e.translation)) {
-    // full English edition: pronunciation + meaning, no Gujarati on screen
-    if (e.translit) body += `<div class="block en-translit">${escapeHtml(e.translit)}</div>`;
+    // full English edition: pronunciation + meaning, no Gujarati on screen.
+    // Kirtans 1-31 carry no generated translit (the printed English edition
+    // IS the pronunciation) — pull it inline from the English volume.
+    let translit = e.translit;
+    if (!translit) {
+      const xl0 = crossLink(bookId, idx);
+      if (xl0) {
+        const enBook = await loadBook(xl0.book);
+        const xs = enBook.sections[xl0.section];
+        if (xs) {
+          translit = xs.blocks.map(b => b.text).join("\n\n");
+          // the printed edition's page flow can carry the previous
+          // composition's tail — start at this composition's ATH opening
+          const at = translit.search(/ATH\s+SH?REE?\s|ATH\s+SHRI\s/i);
+          if (at > 0) translit = translit.slice(at);
+        }
+      }
+    }
+    if (translit) body += `<div class="block en-translit">${escapeHtml(translit)}</div>`;
     if (e.translation) {
-      if (e.translit) body += `<h4 class="saar-h">MEANING</h4>`;
+      if (translit) body += `<h4 class="saar-h">MEANING</h4>`;
       body += `<div class="block en-translation">${escapeHtml(e.translation)}</div>`;
     }
   } else {

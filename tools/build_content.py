@@ -16,6 +16,7 @@ BASE = Path("/Users/harsh/RamKabir")
 EXT = BASE / "extraction"
 OUT = BASE / "app" / "content"
 OUT.mkdir(parents=True, exist_ok=True)
+WARNINGS = []  # fail-loud: split-needle misses abort the build
 
 BOOKS = [
     dict(id="samagam-purvardh",  title_gu="સમાગમ (પૂર્વાર્ધ)",  title_en="Samagam — Purvardh",  language="gu"),
@@ -59,22 +60,29 @@ def load_splits(src):
     return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
 
 def _norm_line(s):
-    return re.sub(r"[^઀-૿ऀ-ॿA-Za-z]", "", s)
+    # NB: strip dandas (। ॥ live inside the Devanagari block) so single- vs
+    # double-danda variants of the same heading still match
+    return re.sub(r"[।॥]", "", re.sub(r"[^઀-૿ऀ-ॿA-Za-z]", "", s))
 
 def split_page(text, sp):
     """Return (head, tail) of a page's text per its split spec; (None, None) if
     the needle can't be found (caller falls back to unsplit)."""
     lines = text.split("\n")
     mode = "before" if "before" in sp else "after"
-    needle = _norm_line(sp[mode])
-    if not needle:
-        return None, None
-    # exact line match wins; fuzzy containment only as fallback
-    k = next((i for i, ln in enumerate(lines) if _norm_line(ln) == needle), None)
-    if k is None:
-        k = next((i for i, ln in enumerate(lines)
-                  if needle in _norm_line(ln) or
-                     (len(_norm_line(ln)) >= 6 and _norm_line(ln) in needle)), None)
+    def find(needle):
+        if not needle:
+            return None
+        k = next((i for i, ln in enumerate(lines) if _norm_line(ln) == needle), None)
+        if k is None:
+            k = next((i for i, ln in enumerate(lines)
+                      if needle in _norm_line(ln) or
+                         (len(_norm_line(ln)) >= 6 and _norm_line(ln) in needle)), None)
+        return k
+    k = find(_norm_line(sp[mode]))
+    if k is None and "replace" in sp:
+        # the repair pass may have replaced the garbled needle line with clean
+        # text — which is exactly what "replace" holds; match on that instead
+        k = find(_norm_line(sp["replace"].split("\n")[0]))
     if k is None:
         return None, None
     cut = k if mode == "before" else k + 1
@@ -128,6 +136,7 @@ def build_gujarati(book):
             head, tail = split_page(rest, one)
             if head is None:
                 print(f"  ! split needle not found on p{pg} ({book['id']})")
+                WARNINGS.append(f"{book['id']} p{pg}")
                 return None
             parts.append(head)
             rest = tail
@@ -265,3 +274,6 @@ for f in FEATURED:
     json.dumps({"books": manifest, "featured": featured}, ensure_ascii=False, indent=1),
     encoding="utf-8")
 print(f"manifest: {len(manifest)} books, {len(featured)} featured")
+if WARNINGS:
+    print(f"BUILD FAILED — unresolved split needles: {WARNINGS}")
+    sys.exit(1)
