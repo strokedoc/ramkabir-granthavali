@@ -171,6 +171,30 @@ def build_gujarati(book):
                 blocks.append({"page": nxt, "text": parts[0].strip()})
         title = s.get("title_gu") or s.get("title") or f"વિભાગ {s['idx']}"
         sections.append({"title": title.strip(), "page_start": s["start_page"], "blocks": blocks})
+    # inline sub-headings (extraction/<src>/subheads.json: {"<page>": [lines]}):
+    # split blocks so each sub-heading becomes its own block with sub:true
+    sh_file = EXT / src / "subheads.json"
+    if sh_file.exists():
+        subheads = json.loads(sh_file.read_text(encoding="utf-8"))
+        for sec in sections:
+            out = []
+            for bl in sec["blocks"]:
+                heads = [_norm_line(h) for h in subheads.get(str(bl["page"]), [])]
+                if not heads:
+                    out.append(bl)
+                    continue
+                cur = []
+                for ln in bl["text"].split("\n"):
+                    if _norm_line(ln) in heads:
+                        if cur and any(_norm_line(x) for x in cur):
+                            out.append({"page": bl["page"], "text": "\n".join(cur).strip()})
+                        out.append({"page": bl["page"], "text": ln.strip(), "sub": True})
+                        cur = []
+                    else:
+                        cur.append(ln)
+                if cur and any(_norm_line(x) for x in cur):
+                    out.append({"page": bl["page"], "text": "\n".join(cur).strip()})
+            sec["blocks"] = out
     return dict(book, pages=n_pages, sections=sections)
 
 def build_english(book):

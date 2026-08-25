@@ -348,9 +348,12 @@ async function renderReader(bookId, idx) {
       body += `<div class="block en-translation">${escapeHtml(e.translation)}</div>`;
     }
   } else {
+    let lastPage = null;
     for (const blk of s.blocks) {
-      if (blk.page) body += `<div class="pageref">${blk.page}</div>`;
-      body += `<div class="block">${escapeHtml(blk.text)}</div>`;
+      if (blk.page && blk.page !== lastPage) { body += `<div class="pageref">${blk.page}</div>`; lastPage = blk.page; }
+      body += blk.sub
+        ? `<div class="subhead">${escapeHtml(blk.text)}</div>`
+        : `<div class="block">${escapeHtml(blk.text)}</div>`;
     }
   }
   const bmKey = `${bookId}/${idx}`;
