@@ -72,6 +72,14 @@ to present the kirtans to non-adhikari; Harsh decided an open family link is fin
       pages split at the printed heading line (splits.json per book; Sant
       Darshan needed 63 split points + 18 heading repairs; p145 rebuilt from
       image). App-wide ગુ/EN language toggle + kirtan gu⇄en cross-links.
-- [ ] Harsh: read-through of સાર pearl wording before wide family sharing
-- [ ] Later (optional): verse-quote correction inside Samagam volumes;
-      sub-headings pass for Samagam ch. 13/17; more pearls (વેદપુરાણ theme)
+- [x] FULL QUALITY OVERHAUL (2026-08-23→25, Harsh's directive):
+      corpus-wide garble repair (32k+ Latin runs → 555 genuine-print-English;
+      gate green vs frozen baseline); COMPLETE English edition — all 189
+      sections, verse pronunciation + full translation, 25+ adversarial
+      samples passed; strict two-way script purity (gu mode zero English,
+      en mode zero Gujarati incl. full Gujarati સાર layer); ચ/્ય glyph audit
+      (1800dpi); વેદપુરાણ pearl; 34 Samagam sub-headings; Codex attack —
+      5 findings all fixed (SW caching ×3 layers, split-needle fail-loud,
+      full-library offline precache).
+- [ ] Harsh: read-through of સાર pearl wording + sample English translations
+      before wide family sharing
