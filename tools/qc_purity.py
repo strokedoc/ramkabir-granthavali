@@ -15,23 +15,15 @@ LAT = re.compile(r"[A-Za-z]{2,}")
 NAT = re.compile(r"[ऀ-ॿ઀-૿]")
 fails = []
 
-GU_BOOKS = ["samagam-purvardh", "samagam-uttarardh", "sant-darshan", "kirtan-gujarati", "jivandas-sakhi"]
-# The print itself contains genuine English (author's glosses, degrees, URLs,
-# phone numbers). The frozen baseline records those per page; the gate fails
-# only on Latin BEYOND the baseline (i.e. regressions / new garble).
-baseline = json.loads(Path("/Users/harsh/RamKabir/tools/latin_baseline.json").read_text())
-for b in GU_BOOKS:
-    j = json.loads((APP / f"{b}.json").read_text(encoding="utf-8"))
-    excess = 0
-    for s in j["sections"]:
-        for bl in s["blocks"]:
-            n = len(LAT.findall(bl["text"]))
-            allowed = baseline.get(b, {}).get(str(bl["page"]), 0)
-            if n > allowed:
-                excess += n - allowed
-    if excess:
-        fails.append(f"{b}: {excess} Latin runs beyond print baseline")
-    print(f"{b}: latin-runs-beyond-baseline={excess}")
+# Latin in the Gujarati books is checked by tools/find_garble.py against the
+# evidence-based whitelist (tokens confirmed present in the printed page by an
+# image-verification worker). No blanket baseline: unverified Latin = failure.
+import subprocess
+r = subprocess.run([sys.executable, "/Users/harsh/RamKabir/tools/find_garble.py"],
+                   capture_output=True, text=True)
+print(r.stdout.strip())
+if r.returncode != 0:
+    fails.append("garble detector reports unverified Latin / malformed Indic text")
 
 en_dir = APP / "en"
 for f in sorted(en_dir.glob("*.json")) if en_dir.exists() else []:
