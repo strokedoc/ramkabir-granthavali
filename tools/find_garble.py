@@ -19,7 +19,8 @@ MATRA = r'ા-ૌा-ौ'
 ANUS = r'ઁ-ઃँ-ः'
 HAL = r'્्'
 BAD = [
-    (re.compile(f'[{MATRA}]{{2,}}'), 'stacked matras'),
+    # ૂ+ા is the conventional રૂા. (rupees) ligature — genuine print, not garble
+    (re.compile(f'(?!ૂા|ूा)[{MATRA}]{{2,}}'), 'stacked matras'),
     (re.compile(f'(?<![{CONS}{MATRA}{ANUS}{HAL}])[{MATRA}]'), 'orphan matra'),
     # A halant at word end is VALID (અર્થાત્, ભગવદ્‌, विद्युत् …) — only a halant
     # followed by a matra/another halant, or one opening a word, is malformed.
@@ -42,7 +43,10 @@ for b in BOOKS:
             pg = str(bl['page'])
             t = bl['text']
             hits = per_page.setdefault(pg, {'latin': [], 'indic': []})
-            allowed = set(whitelist.get(b, {}).get(pg, []))
+            wl = whitelist.get(b, {}).get(pg, [])
+            allowed = set(wl)
+            for entry in wl:            # "www.ramkabir.guru" -> www, ramkabir, guru
+                allowed.update(re.findall(r'[A-Za-z]{2,}', entry))
             for w in LAT.findall(t):
                 if w not in allowed:
                     hits['latin'].append(w)

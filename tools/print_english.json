@@ -1,5 +1,110 @@
 {
+ "kirtan-gujarati": {
+  "16": [
+   "ApD",
+   "Apple",
+   "Phone",
+   "google",
+   "online",
+   "play",
+   "stor",
+   "www.ramkabir.guru",
+   "www.ramkabir.org"
+  ]
+ },
+ "samagam-purvardh": {
+  "9": [
+   "P.",
+   "hd."
+  ],
+  "22": [
+   "Amaigamation",
+   "Combination"
+  ],
+  "23": [
+   "Reference",
+   "Who"
+  ],
+  "25": [
+   "Problem",
+   "Puzzle",
+   "example",
+   "explination",
+   "with"
+  ],
+  "60": [
+   "oooo"
+  ],
+  "64": [
+   "oooo"
+  ],
+  "67": [
+   "Vitulity"
+  ],
+  "78": [
+   "Truth",
+   "Ultimate"
+  ],
+  "85": [
+   "ooooo"
+  ],
+  "108": [
+   "column",
+   "spinal"
+  ],
+  "114": [
+   "Colgony"
+  ],
+  "150": [
+   "ooooo"
+  ],
+  "156": [
+   "truth",
+   "ultimate"
+  ],
+  "207": [
+   "ooooo"
+  ],
+  "251": [
+   "ooooo"
+  ],
+  "263": [
+   "ooooo"
+  ],
+  "267": [
+   "Telescope"
+  ],
+  "277": [
+   "ooooo"
+  ],
+  "289": [
+   "ooooo"
+  ],
+  "316": [
+   "Challenge"
+  ],
+  "321": [
+   "ARTS",
+   "LIFE",
+   "LIVING",
+   "OF",
+   "THE"
+  ],
+  "358": [
+   "ooooo"
+  ]
+ },
  "samagam-uttarardh": {
+  "183": [
+   "Knowledge",
+   "bht",
+   "collection",
+   "informa",
+   "is",
+   "nothing",
+   "of",
+   "tion"
+  ],
   "184": [
    "Application",
    "Apply",
@@ -28,6 +133,94 @@
   ],
   "191": [
    "VIP"
+  ],
+  "320": [
+   "Problem"
+  ],
+  "352": [
+   "Application",
+   "Apply",
+   "Knowledge",
+   "bht",
+   "cituation",
+   "collection",
+   "derstanding",
+   "explication",
+   "in",
+   "infor-",
+   "information",
+   "is",
+   "known",
+   "mation",
+   "nothing",
+   "of",
+   "the",
+   "un-",
+   "unknown"
+  ],
+  "353": [
+   "Blue",
+   "Creat",
+   "Prient",
+   "Skil",
+   "any",
+   "cituation",
+   "confounded",
+   "either",
+   "for",
+   "information",
+   "known",
+   "new",
+   "or",
+   "unknown"
+  ],
+  "359": [
+   "Proclamation",
+   "ordinance"
+  ],
+  "365": [
+   "Hindu",
+   "book",
+   "of",
+   "saints"
+  ],
+  "371": [
+   "Manotoxin"
+  ],
+  "372": [
+   "Menopause"
+  ]
+ },
+ "sant-darshan": {
+  "2": [
+   "Computer",
+   "Ph.",
+   "YS"
+  ],
+  "98": [
+   "II",
+   "III",
+   "IV",
+   "IX",
+   "VI",
+   "VII",
+   "VIII"
+  ],
+  "143": [
+   "Valley"
+  ]
+ },
+ "jivandas-sakhi": {
+  "16": [
+   "ApD",
+   "Apple",
+   "Phone",
+   "google",
+   "online",
+   "play",
+   "stor",
+   "www.ramkabir.guru",
+   "www.ramkabir.org"
   ]
  }
 }

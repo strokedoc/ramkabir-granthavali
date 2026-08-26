@@ -80,6 +80,8 @@ def split_page(text, sp):
                          (len(_norm_line(ln)) >= 6 and _norm_line(ln) in needle)), None)
         return k
     k = find(_norm_line(sp[mode]))
+    if k is None and sp.get("fallback_title"):
+        k = find(_norm_line(sp["fallback_title"]))
     if k is None and "replace" in sp:
         # the repair pass may have replaced the garbled needle line with clean
         # text — which is exactly what "replace" holds; match on that instead
@@ -131,9 +133,14 @@ def build_gujarati(book):
         if not sp:
             return None
         sps = sp if isinstance(sp, list) else [sp]
+        # titles of the sections that start on this page — a repair pass may
+        # have rewritten a garbled heading, which would strand a needle
+        titles = [specs[i].get("title_gu", "") for i in starters.get(pg, [])]
         rest = page_text(src, pg).strip()
         parts = []
-        for one in sps:
+        for n, one in enumerate(sps):
+            if n < len(titles) and titles[n]:
+                one = dict(one, fallback_title=titles[n])
             head, tail = split_page(rest, one)
             if head is None:
                 print(f"  ! split needle not found on p{pg} ({book['id']})")
