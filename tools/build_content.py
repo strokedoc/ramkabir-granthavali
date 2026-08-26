@@ -17,6 +17,7 @@ EXT = BASE / "extraction"
 OUT = BASE / "app" / "content"
 OUT.mkdir(parents=True, exist_ok=True)
 WARNINGS = []  # fail-loud: split-needle misses abort the build
+PENDING = {}   # nothing is written until the whole build is known good
 
 BOOKS = [
     dict(id="samagam-purvardh",  title_gu="સમાગમ (પૂર્વાર્ધ)",  title_en="Samagam — Purvardh",  language="gu"),
@@ -217,12 +218,20 @@ def build_english(book):
     ATH = re.compile(r"\bATH\s+SH?R[EI]", re.I)
     for s in spec["sections"]:
         seg = lines[s["start_line"] - 1 : s["end_line"]]
-        # the printed page flow can carry the previous composition's closing
-        # verses above this one's ATH heading — drop that tail so a section
-        # starts at its own opening (mirrors the Gujarati books' sub-page splits)
-        k = next((i for i, ln in enumerate(seg) if ATH.search(ln)), None)
-        if k:
-            seg = seg[k:]
+        # The printed page flow can carry the previous composition's closing
+        # verses above this one's ATH heading — drop that tail. Strictly
+        # bounded: only a heading in the first few lines, and only one naming
+        # THIS section, may trim. (A section can legitimately quote another
+        # composition's ATH mid-body — e.g. Sandhya Aarati embeds Ath Shri
+        # Vani — and trimming there would delete most of the section.)
+        want = re.sub(r"[^a-z]", "", s["title"].lower())
+        for i, ln in enumerate(seg[:8]):
+            if i == 0 or not ATH.search(ln):
+                continue
+            here = re.sub(r"[^a-z]", "", ln.lower())
+            if want and (want in here or here.endswith(want)):
+                seg = seg[i:]
+                break
         # split into blocks on blank lines; track "(N)" page markers
         blocks, cur, cur_page = [], [], None
         def flush():
@@ -256,8 +265,7 @@ for book in BOOKS:
     if built is None:
         print(f"skip {book['id']} (no sections.json / txt yet)")
         continue
-    (OUT / f"{book['id']}.json").write_text(
-        json.dumps(built, ensure_ascii=False), encoding="utf-8")
+    PENDING[f"{book['id']}.json"] = json.dumps(built, ensure_ascii=False)
     manifest.append({k: built[k] for k in ("id", "title_gu", "title_en", "language", "pages")}
                     | {"sections_count": len(built["sections"])})
     print(f"built {book['id']}: {len(built['sections'])} sections, "
@@ -277,10 +285,13 @@ for f in FEATURED:
     else:
         print(f"featured UNRESOLVED ({len(hits)} matches): {f['title']} in {f['book']}")
 
-(OUT / "books.json").write_text(
-    json.dumps({"books": manifest, "featured": featured}, ensure_ascii=False, indent=1),
-    encoding="utf-8")
+PENDING["books.json"] = json.dumps({"books": manifest, "featured": featured},
+                                   ensure_ascii=False, indent=1)
 print(f"manifest: {len(manifest)} books, {len(featured)} featured")
 if WARNINGS:
     print(f"BUILD FAILED — unresolved split needles: {WARNINGS}")
+    print("no files written; previous content left intact")
     sys.exit(1)
+for name, data in PENDING.items():
+    (OUT / name).write_text(data, encoding="utf-8")
+print(f"wrote {len(PENDING)} content files")

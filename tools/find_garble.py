@@ -21,7 +21,10 @@ HAL = r'્्'
 BAD = [
     (re.compile(f'[{MATRA}]{{2,}}'), 'stacked matras'),
     (re.compile(f'(?<![{CONS}{MATRA}{ANUS}{HAL}])[{MATRA}]'), 'orphan matra'),
-    (re.compile(f'[{HAL}](?![{CONS}])'), 'dangling halant'),
+    # A halant at word end is VALID (અર્થાત્, ભગવદ્‌, विद्युत् …) — only a halant
+    # followed by a matra/another halant, or one opening a word, is malformed.
+    (re.compile(f'[{HAL}][{MATRA}{HAL}]'), 'halant fault'),
+    (re.compile(f'(?<![{CONS}{MATRA}{ANUS}])[{HAL}]'), 'orphan halant'),
     (re.compile(f'[{ANUS}][{MATRA}]'), 'sign-order fault'),
 ]
 

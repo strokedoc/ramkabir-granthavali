@@ -163,15 +163,19 @@ async function loadManifest() {
   }
   return manifest;
 }
-async function loadBook(id) {
-  if (!bookCache[id]) bookCache[id] = await (await fetch(`content/${id}.json`)).json();
+/* cache the in-flight PROMISE, so two rapid navigations share one request
+   instead of racing each other */
+function loadBook(id) {
+  if (!bookCache[id]) {
+    bookCache[id] = fetch(`content/${id}.json`).then(r => r.json())
+      .catch(err => { delete bookCache[id]; throw err; });
+  }
   return bookCache[id];
 }
 const enCache = {};
-async function loadEn(id) {
+function loadEn(id) {
   if (!(id in enCache)) {
-    try { enCache[id] = await (await fetch(`content/en/${id}.json`)).json(); }
-    catch { enCache[id] = null; }
+    enCache[id] = fetch(`content/en/${id}.json`).then(r => r.json()).catch(() => null);
   }
   return enCache[id];
 }
@@ -225,7 +229,13 @@ function parseHash() {
   return h.split("/").filter(Boolean);
 }
 
+/* every route() run gets a token; an async renderer that finishes after a
+   newer navigation started must not paint over the newer screen */
+let routeToken = 0;
+function stale(tok) { return tok !== routeToken; }
+
 async function route() {
+  const tok = ++routeToken;
   const parts = parseHash();
   const navKey = parts[0] === "search" ? "search" : parts[0] === "bookmarks" ? "bookmarks"
     : parts[0] === "saar" ? "saar" : "library";
@@ -237,17 +247,18 @@ async function route() {
   $("#back-btn").hidden = parts.length === 0;
 
   try {
-    if (parts.length === 0) return renderLibrary();
-    if (parts[0] === "search") return renderSearch(decodeURIComponent(parts[1] || ""));
-    if (parts[0] === "bookmarks") return renderBookmarks();
-    if (parts[0] === "saar" && parts[1] === "story") return renderStory();
-    if (parts[0] === "saar" && parts.length === 3) return renderUnit(+parts[1], +parts[2]);
-    if (parts[0] === "saar" && parts.length === 2) return renderTheme(+parts[1]);
-    if (parts[0] === "saar") return renderSaar();
-    if (parts[0] === "book" && parts.length === 2) return renderToc(parts[1]);
-    if (parts[0] === "book" && parts.length >= 3) return renderReader(parts[1], parseInt(parts[2], 10));
-    renderLibrary();
+    if (parts.length === 0) return renderLibrary(tok);
+    if (parts[0] === "search") return renderSearch(decodeURIComponent(parts[1] || ""), tok);
+    if (parts[0] === "bookmarks") return renderBookmarks(tok);
+    if (parts[0] === "saar" && parts[1] === "story") return renderStory(tok);
+    if (parts[0] === "saar" && parts.length === 3) return renderUnit(+parts[1], +parts[2], tok);
+    if (parts[0] === "saar" && parts.length === 2) return renderTheme(+parts[1], tok);
+    if (parts[0] === "saar") return renderSaar(tok);
+    if (parts[0] === "book" && parts.length === 2) return renderToc(parts[1], tok);
+    if (parts[0] === "book" && parts.length >= 3) return renderReader(parts[1], parseInt(parts[2], 10), tok);
+    renderLibrary(tok);
   } catch (err) {
+    if (stale(tok)) return;
     view.innerHTML = `<div class="empty"><span class="glyph">✻</span>
       ${escapeHtml(t("loadFail"))} ${escapeHtml(String(err.message || err))}</div>`;
   }
@@ -266,7 +277,7 @@ function escapeHtml(s) {
 }
 
 /* ---------------- library ---------------- */
-async function renderLibrary() {
+async function renderLibrary(tok) {
   setTitle(t("appTitle"));
   const books = await loadManifest();
   const last = store.get("lastRead", null);
@@ -314,12 +325,13 @@ async function renderLibrary() {
     </a>`;
   }
   html += `</div>`;
+  if (stale(tok)) return;
   view.innerHTML = html;
   window.scrollTo(0, 0);
 }
 
 /* ---------------- table of contents ---------------- */
-async function renderToc(bookId) {
+async function renderToc(bookId, tok) {
   const book = await loadBook(bookId);
   const en = lang === "en" ? await loadEn(bookId) : null;
   setTitle(bt(book));
@@ -335,21 +347,26 @@ async function renderToc(bookId) {
     </a>`;
   });
   html += `</div>`;
+  if (stale(tok)) return;
   view.innerHTML = html;
   window.scrollTo(0, 0);
 }
 
 /* ---------------- reader ---------------- */
-async function renderReader(bookId, idx) {
+async function renderReader(bookId, idx, tok) {
   const book = await loadBook(bookId);
+  if (stale(tok)) return;
   const s = book.sections[idx];
-  if (!s) return renderToc(bookId);
+  if (!s) return renderToc(bookId, tok);
   // a Latin-content volume must never render in Gujarati mode: send the
   // reader to its Gujarati counterpart instead of showing the wrong script
   if (book.language === "translit" && lang !== "en") {
     const back = crossLink(bookId, idx);
-    location.hash = back ? `#/book/${back.book}/${back.section}` : "#/";
-    return;
+    // replaceState, not a hash assignment: pushing a new entry would let Back
+    // return to the hidden volume and bounce forward again forever
+    const target = back ? `#/book/${back.book}/${back.section}` : "#/";
+    history.replaceState(null, "", location.pathname + location.search + target);
+    return route();
   }
   const en = lang === "en" ? await loadEn(bookId) : null;
   const e = enSec(en, idx);
@@ -399,6 +416,8 @@ async function renderReader(bookId, idx) {
   const headSub = lang === "en" && e && e.title_en
     ? `<div class="sub-en">${escapeHtml(e.title_en)}</div>` : "";
 
+  if (stale(tok)) return;
+
   view.innerHTML = `<article class="reader">
     <div class="section-head">
       <div class="deco">${lang === "en" ? "|| ✻ ||" : "॥ ✻ ॥"}</div>
@@ -436,7 +455,7 @@ function pearlCard(tj) {
   </a>`;
 }
 
-async function renderSaar() {
+async function renderSaar(tok) {
   setTitle(t("saarTitle"));
   const tj = await loadTeachings();
   let html = `<div class="reveal">`;
@@ -448,11 +467,12 @@ async function renderSaar() {
       <h3>${escapeHtml(lang === "en" ? th.title_en : th.title_gu)}</h3>
       <div class="meta">${th.units.length} ${escapeHtml(t("pearls"))}</div></a>`;
   });
+  if (stale(tok)) return;
   view.innerHTML = html + `</div>`;
   window.scrollTo(0, 0);
 }
 
-async function renderStory() {
+async function renderStory(tok) {
   const tj = await loadTeachings();
   setTitle(lang === "en" ? tj.story.title_en : tj.story.title_gu);
   const s = tj.story;
@@ -466,11 +486,12 @@ async function renderStory() {
     <p class="story-p muted">${escapeHtml(lang === "en" ? s.anchor_meaning_en : (s.anchor_meaning_gu || s.anchor_meaning_en))}</p>
     <div class="src-link"><a href="#/book/${s.anchor_source.book}/${s.anchor_source.section}">${escapeHtml(t("readInBook"))} ${escapeHtml(pageLabel(s.anchor_source))}</a></div>
     <p class="caveat">${escapeHtml(lang === "en" ? s.caveat_en : (s.caveat_gu || s.caveat_en))}</p></article>`;
+  if (stale(tok)) return;
   view.innerHTML = html;
   window.scrollTo(0, 0);
 }
 
-async function renderTheme(ti) {
+async function renderTheme(ti, tok) {
   const tj = await loadTeachings();
   const th = tj.themes[ti];
   if (!th) return renderSaar();
@@ -484,11 +505,12 @@ async function renderTheme(ti) {
       <span class="n">✦</span>
       <span class="t">${escapeHtml(main)}${small ? `<br><small style="color:var(--ink-soft)">${escapeHtml(small)}</small>` : ""}</span></a>`;
   });
+  if (stale(tok)) return;
   view.innerHTML = html + `</div>`;
   window.scrollTo(0, 0);
 }
 
-async function renderUnit(ti, ui) {
+async function renderUnit(ti, ui, tok) {
   const tj = await loadTeachings();
   const th = tj.themes[ti], u = th && th.units[ui];
   if (!u) return renderSaar();
@@ -505,6 +527,7 @@ async function renderUnit(ti, ui) {
   const next = ui < th.units.length - 1 ? `<a href="#/saar/${ti}/${ui + 1}">${escapeHtml(uTitle(th.units[ui + 1]))} ›</a>` : "<span></span>";
   const verse = lang === "en" ? u.verse_translit : u.verse_gu;
   const translitLine = lang === "en" ? "" : "";
+  if (stale(tok)) return;
   view.innerHTML = `<article class="reader saar-unit reveal">
     <div class="section-head"><div class="deco">${lang === "en" ? "|| ✦ ||" : "॥ ✦ ॥"}</div>
       <h2>${escapeHtml(uTitle(u))}</h2>
@@ -522,7 +545,7 @@ async function renderUnit(ti, ui) {
 }
 
 /* ---------------- bookmarks ---------------- */
-async function renderBookmarks() {
+async function renderBookmarks(tok) {
   setTitle(t("marksTitle"));
   const bms = store.get("bookmarks", []);
   const books = await loadManifest();
@@ -538,6 +561,7 @@ async function renderBookmarks() {
     rows.push({ ...b, secLabel: secTitle(full, en, b.section), bookLabel: bt(meta) });
   }
   if (!rows.length) {
+    if (stale(tok)) return;
     view.innerHTML = `<div class="empty"><span class="glyph">✻</span>${t("bmEmpty")}</div>`;
     return;
   }
@@ -548,6 +572,7 @@ async function renderBookmarks() {
       <span class="t">${escapeHtml(b.secLabel)}<br><small style="color:var(--ink-soft)">${escapeHtml(b.bookLabel)}</small></span>
     </a>`;
   }
+  if (stale(tok)) return;
   view.innerHTML = html + `</div>`;
 }
 
@@ -557,15 +582,18 @@ async function renderBookmarks() {
    only ids, so results render in whatever language is active. */
 const indexes = {};
 async function buildIndex() {
-  if (indexes[lang]) return indexes[lang];
+  // pin the language for the whole (async) build — reading the global mid-build
+  // would splice two languages into one index if the user toggles while it runs
+  const L = lang;
+  if (indexes[L]) return indexes[L];
   const books = await loadManifest();
   const idx = [];
   for (const b of books) {
-    if (b.language === "translit" && lang !== "en") continue;
+    if (b.language === "translit" && L !== "en") continue;
     const book = await loadBook(b.id);
-    const en = lang === "en" ? await loadEn(b.id) : null;
+    const en = L === "en" ? await loadEn(b.id) : null;
     book.sections.forEach((s, si) => {
-      if (lang === "en") {
+      if (L === "en") {
         const e = enSec(en, si);
         const text = e ? [e.translit, e.translation].filter(Boolean).join("\n")
                        : (b.language === "translit" ? s.blocks.map(x => x.text).join("\n") : "");
@@ -578,13 +606,14 @@ async function buildIndex() {
       }
     });
   }
-  indexes[lang] = idx;
+  indexes[L] = idx;
   return idx;
 }
 
 let searchTimer = null;
-async function renderSearch(initial) {
+async function renderSearch(initial, tok) {
   setTitle(t("searchTitle"));
+  if (stale(tok)) return;
   view.innerHTML = `
     <div class="search-wrap">
       <input id="search-input" type="search" autocomplete="off"

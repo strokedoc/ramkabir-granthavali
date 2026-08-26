@@ -59,7 +59,7 @@ gl = []
 def scan_gu(o):
     if isinstance(o, dict):
         for k, v in o.items():
-            if k != "note": scan_gu(v)
+            scan_gu(v)
     elif isinstance(o, list):
         for v in o: scan_gu(v)
     elif isinstance(o, str):
