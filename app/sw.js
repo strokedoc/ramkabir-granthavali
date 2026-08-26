@@ -1,9 +1,9 @@
 /* Service worker: offline-first gutka.
    Whole library precached so every book reads offline from first install. */
-const VERSION = "v6";
+const VERSION = "v7";
 const PREFIX = "rkg-";
 const SHELL = [
-  "./", "index.html", "styles.css?v=6", "app.js?v=6", "manifest.json", "icons/icon.svg",
+  "./", "index.html", "styles.css?v=7", "app.js?v=7", "manifest.json", "icons/icon.svg",
   "content/books.json", "content/teachings.json", "content/teachings-gu.json",
   "content/samagam-purvardh.json", "content/samagam-uttarardh.json",
   "content/sant-darshan.json", "content/kirtan-gujarati.json",

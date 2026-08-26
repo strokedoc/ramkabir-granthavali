@@ -214,8 +214,15 @@ def build_english(book):
     lines = full.read_text(encoding="utf-8", errors="replace").splitlines()
     spec = json.loads(sec_file.read_text(encoding="utf-8"))
     sections = []
+    ATH = re.compile(r"\bATH\s+SH?R[EI]", re.I)
     for s in spec["sections"]:
         seg = lines[s["start_line"] - 1 : s["end_line"]]
+        # the printed page flow can carry the previous composition's closing
+        # verses above this one's ATH heading — drop that tail so a section
+        # starts at its own opening (mirrors the Gujarati books' sub-page splits)
+        k = next((i for i, ln in enumerate(seg) if ATH.search(ln)), None)
+        if k:
+            seg = seg[k:]
         # split into blocks on blank lines; track "(N)" page markers
         blocks, cur, cur_page = [], [], None
         def flush():

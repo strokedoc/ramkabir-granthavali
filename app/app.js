@@ -279,9 +279,12 @@ async function renderLibrary() {
       <hr class="rule">
     </div>`;
   if (tj) html += pearlCard(tj);
-  if (featured.length) {
+  const visible = books.filter(b => b.language !== "translit" || lang === "en");
+  const visibleIds = new Set(visible.map(b => b.id));
+  const shownFeatured = featured.filter(f => visibleIds.has(f.book));
+  if (shownFeatured.length) {
     html += `<div class="pinned-row">`;
-    for (const f of featured) {
+    for (const f of shownFeatured) {
       const label = lang === "en" ? f.label_en : f.label_gu;
       html += `<a class="pinned-chip" href="#/book/${f.book}/${f.section}">
         <span class="pin-glyph">${lang === "en" ? "||" : "॥"}</span>
@@ -290,14 +293,21 @@ async function renderLibrary() {
     }
     html += `</div>`;
   }
-  if (last && books.find(b => b.id === last.book)) {
-    const b = books.find(bb => bb.id === last.book);
+  // resume card: only for a book readable in the CURRENT language, and its
+  // section title is derived live (never replayed from whatever language it
+  // was stored in)
+  const lastBook = last && visible.find(b => b.id === last.book);
+  if (lastBook) {
+    const lastEn = lang === "en" ? await loadEn(last.book) : null;
+    const lastFull = await loadBook(last.book);
+    const secLabel = lastFull.sections[last.section]
+      ? secTitle(lastFull, lastEn, last.section) : "";
     html += `<a class="continue-card" href="#/book/${last.book}/${last.section}">
       <div class="label">${escapeHtml(t("continueL"))}</div>
-      <h3>${escapeHtml(bt(b))}</h3>
-      ${lang === "en" ? "" : `<div class="sub">${escapeHtml(last.sectionTitle || "")}</div>`}</a>`;
+      <h3>${escapeHtml(bt(lastBook))}</h3>
+      ${secLabel ? `<div class="sub">${escapeHtml(secLabel)}</div>` : ""}</a>`;
   }
-  for (const b of books) {
+  for (const b of visible) {
     html += `<a class="book-card" href="#/book/${b.id}">
       <h3>${escapeHtml(bt(b))}</h3>
       <div class="meta">${b.sections_count} ${b.language === "translit" ? t("compositions") : t("sections")} · ${b.pages} ${t("pagesW")}</div>
@@ -334,10 +344,17 @@ async function renderReader(bookId, idx) {
   const book = await loadBook(bookId);
   const s = book.sections[idx];
   if (!s) return renderToc(bookId);
+  // a Latin-content volume must never render in Gujarati mode: send the
+  // reader to its Gujarati counterpart instead of showing the wrong script
+  if (book.language === "translit" && lang !== "en") {
+    const back = crossLink(bookId, idx);
+    location.hash = back ? `#/book/${back.book}/${back.section}` : "#/";
+    return;
+  }
   const en = lang === "en" ? await loadEn(bookId) : null;
   const e = enSec(en, idx);
   setTitle(bt(book));
-  store.set("lastRead", { book: bookId, section: idx, sectionTitle: s.title });
+  store.set("lastRead", { book: bookId, section: idx });
 
   let body = "";
   if (lang === "en" && e && (e.translit || e.translation)) {
@@ -399,7 +416,7 @@ async function renderReader(bookId, idx) {
   $("#bm-toggle").addEventListener("click", () => {
     let bms = store.get("bookmarks", []);
     if (bms.some(b => b.key === bmKey)) bms = bms.filter(b => b.key !== bmKey);
-    else bms.push({ key: bmKey, book: bookId, section: idx, title: s.title, bookTitle: book.title_gu });
+    else bms.push({ key: bmKey, book: bookId, section: idx });
     store.set("bookmarks", bms);
     const on = bms.some(b => b.key === bmKey);
     $("#bm-toggle").classList.toggle("on", on);
@@ -505,40 +522,64 @@ async function renderUnit(ti, ui) {
 }
 
 /* ---------------- bookmarks ---------------- */
-function renderBookmarks() {
+async function renderBookmarks() {
   setTitle(t("marksTitle"));
   const bms = store.get("bookmarks", []);
-  if (!bms.length) {
+  const books = await loadManifest();
+  // titles derived live in the current language; a bookmark in a volume that
+  // does not exist in this language is hidden rather than shown in the wrong script
+  const rows = [];
+  for (const b of bms) {
+    const meta = books.find(x => x.id === b.book);
+    if (!meta || (meta.language === "translit" && lang !== "en")) continue;
+    const full = await loadBook(b.book);
+    if (!full.sections[b.section]) continue;
+    const en = lang === "en" ? await loadEn(b.book) : null;
+    rows.push({ ...b, secLabel: secTitle(full, en, b.section), bookLabel: bt(meta) });
+  }
+  if (!rows.length) {
     view.innerHTML = `<div class="empty"><span class="glyph">✻</span>${t("bmEmpty")}</div>`;
     return;
   }
   let html = `<div class="reveal">`;
-  for (const b of bms) {
+  for (const b of rows) {
     html += `<a class="toc-item" href="#/book/${b.book}/${b.section}">
       <span class="n">✻</span>
-      <span class="t">${escapeHtml(b.title)}<br><small style="color:var(--ink-soft)">${escapeHtml(b.bookTitle)}</small></span>
+      <span class="t">${escapeHtml(b.secLabel)}<br><small style="color:var(--ink-soft)">${escapeHtml(b.bookLabel)}</small></span>
     </a>`;
   }
   view.innerHTML = html + `</div>`;
 }
 
 /* ---------------- search ---------------- */
+/* One index per language: Gujarati mode searches the scripture text;
+   English mode searches the English edition. Labels are NOT baked in —
+   only ids, so results render in whatever language is active. */
+const indexes = {};
 async function buildIndex() {
-  if (searchIndex) return searchIndex;
+  if (indexes[lang]) return indexes[lang];
   const books = await loadManifest();
-  searchIndex = [];
+  const idx = [];
   for (const b of books) {
+    if (b.language === "translit" && lang !== "en") continue;
     const book = await loadBook(b.id);
+    const en = lang === "en" ? await loadEn(b.id) : null;
     book.sections.forEach((s, si) => {
-      s.blocks.forEach(blk => {
-        searchIndex.push({
-          book: b.id, bookTitle: b.title_gu, section: si, sectionTitle: s.title,
-          page: blk.page || null, raw: blk.text, norm: normalize(blk.text),
-        });
-      });
+      if (lang === "en") {
+        const e = enSec(en, si);
+        const text = e ? [e.translit, e.translation].filter(Boolean).join("\n")
+                       : (b.language === "translit" ? s.blocks.map(x => x.text).join("\n") : "");
+        if (text.trim()) idx.push({ book: b.id, section: si, page: null, raw: text, norm: normalize(text) });
+      } else {
+        s.blocks.forEach(blk => idx.push({
+          book: b.id, section: si, page: blk.page || null,
+          raw: blk.text, norm: normalize(blk.text),
+        }));
+      }
     });
   }
-  return searchIndex;
+  indexes[lang] = idx;
+  return idx;
 }
 
 let searchTimer = null;
@@ -577,10 +618,16 @@ async function runSearch(q) {
     resEl.innerHTML = `<div class="empty"><span class="glyph">॥</span>${escapeHtml(t("noResults"))}</div>`;
     return;
   }
+  const books = await loadManifest();
   let html = "";
   for (const e of out.slice(0, 50)) {
+    const meta = books.find(b => b.id === e.book);
+    const full = await loadBook(e.book);
+    const enB = lang === "en" ? await loadEn(e.book) : null;
+    const where = `${escapeHtml(bt(meta))} · ${escapeHtml(secTitle(full, enB, e.section))}` +
+      (e.page ? " · " + t("pageAbbr") + " " + e.page : "");
     html += `<a class="result" href="#/book/${e.book}/${e.section}">
-      <div class="where">${escapeHtml(e.bookTitle)} · ${escapeHtml(e.sectionTitle)}${e.page ? " · " + t("pageAbbr") + " " + e.page : ""}</div>
+      <div class="where">${where}</div>
       <div class="snip">${snippet(e.raw, q)}</div>
     </a>`;
   }
