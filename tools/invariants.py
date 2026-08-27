@@ -8,7 +8,7 @@ Exit 1 on any violation."""
 import json, os, re, sys
 from pathlib import Path
 
-BASE = Path("/Users/harsh/RamKabir")
+BASE = Path(__file__).resolve().parents[1]
 APP = Path(os.environ.get("CONTENT_DIR") or (BASE / "app" / "content"))
 EXT = BASE / "extraction"
 GU_BOOKS = ["samagam-purvardh", "samagam-uttarardh", "sant-darshan",

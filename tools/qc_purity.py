@@ -10,7 +10,9 @@ Exit 1 on any violation. Run after every content rebuild."""
 import json, os, re, sys
 from pathlib import Path
 
-APP = Path(os.environ.get("CONTENT_DIR") or "/Users/harsh/RamKabir/app/content")
+BASE = Path(__file__).resolve().parents[1]
+
+APP = Path(os.environ.get("CONTENT_DIR") or str(BASE / "app/content"))
 LAT = re.compile(r"[A-Za-z]{2,}")
 NAT = re.compile(r"[ऀ-ॿ઀-૿]")
 fails = []
@@ -36,12 +38,12 @@ for f in sorted(en_dir.glob("*.json")) if en_dir.exists() else []:
 
 # index.html chrome: any Indic text there is baked in and cannot switch
 # language at runtime (the nav "search" icon was literally the word શોધ)
-html = Path("/Users/harsh/RamKabir/app/index.html").read_text(encoding="utf-8")
+html = (BASE / "app/index.html").read_text(encoding="utf-8")
 chrome = re.sub(r"<title>.*?</title>", "", html, flags=re.S)
 chrome = re.sub(r'(content|placeholder)="[^"]*"', "", chrome)
 # aria-labels are rewritten by applyLang(); verify each element it targets is
 # actually in its table rather than silently stripping them from the scan
-js = Path("/Users/harsh/RamKabir/app/app.js").read_text(encoding="utf-8")
+js = (BASE / "app/app.js").read_text(encoding="utf-8")
 aria_ids = set(re.findall(r'"#([\w-]+)":\s*"a11y', js))
 # attribute order and quote style must not matter
 for tag in re.finditer(r"<[^>]*\baria-label\s*=\s*['\"]([^'\"]*)['\"][^>]*>", html):

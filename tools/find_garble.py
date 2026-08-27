@@ -12,7 +12,9 @@ import json, os, re, sys
 from collections import Counter
 from pathlib import Path
 
-APP = Path(os.environ.get('CONTENT_DIR') or '/Users/harsh/RamKabir/app/content')
+BASE = Path(__file__).resolve().parents[1]
+
+APP = Path(os.environ.get('CONTENT_DIR') or str(BASE / "app/content"))
 BOOKS = ['samagam-purvardh','samagam-uttarardh','sant-darshan','kirtan-gujarati','jivandas-sakhi']
 LAT = re.compile(r'[A-Za-z]{2,}')
 CONS = r'ક-હক-হक-ह'
@@ -37,13 +39,13 @@ BAD = [
 ]
 
 whitelist = {}
-wl_file = Path('/Users/harsh/RamKabir/tools/print_english.json')
+wl_file = BASE / "tools/print_english.json"
 if wl_file.exists():
     whitelist = json.loads(wl_file.read_text())
 # Indic forms an image-verification worker confirmed the book really prints
 # (e.g. કૃીપાનાથ in samagam-uttarardh p163/164 — the manuscript's own spelling)
 indic_ok = {}
-ind_file = Path('/Users/harsh/RamKabir/tools/print_indic.json')
+ind_file = BASE / "tools/print_indic.json"
 if ind_file.exists():
     indic_ok = json.loads(ind_file.read_text())
 
@@ -132,7 +134,7 @@ for b in BOOKS:
                          'latin': h['latin'][:8], 'indic': h['indic'][:4]})
 
 rows.sort(key=lambda r: -r['n'])
-json.dump(rows, open('/Users/harsh/RamKabir/tools/garble_report.json', 'w'), ensure_ascii=False, indent=1)
+json.dump(rows, open(str(BASE / "tools/garble_report.json"), 'w'), ensure_ascii=False, indent=1)
 by_book = {}
 for r in rows:
     by_book.setdefault(r['book'], [0, 0])

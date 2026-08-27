@@ -12,7 +12,7 @@ display blocks. Re-runnable; overwrites app/content."""
 import json, os, re, sys, tempfile
 from pathlib import Path
 
-BASE = Path("/Users/harsh/RamKabir")
+BASE = Path(__file__).resolve().parents[1]
 EXT = BASE / "extraction"
 OUT = BASE / "app" / "content"
 OUT.mkdir(parents=True, exist_ok=True)

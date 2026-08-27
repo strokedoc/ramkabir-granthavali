@@ -13,8 +13,10 @@ import hashlib, json, os, re, sys
 from collections import Counter
 from pathlib import Path
 
-APP = Path("/Users/harsh/RamKabir/app/content")
-PROV = Path("/Users/harsh/RamKabir/tools/provenance.json")
+BASE = Path(__file__).resolve().parents[1]
+
+APP = BASE / "app/content"
+PROV = BASE / "tools/provenance.json"
 prov = json.loads(PROV.read_text(encoding="utf-8")) if PROV.exists() else {}
 ORNAMENT = re.compile(r"[=~_*·•\-]{3,}")
 INDIC_LETTER = re.compile(r"[ઁ-૏ऀ-ॏॐ-ॣॱ-ॿ]")

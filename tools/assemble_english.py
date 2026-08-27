@@ -7,8 +7,10 @@ a hard error (reported, file skipped). Missing parts are reported loudly."""
 import hashlib, json, re, sys
 from pathlib import Path
 
-EXT = Path("/Users/harsh/RamKabir/extraction/en")
-APP = Path("/Users/harsh/RamKabir/app/content")
+BASE = Path(__file__).resolve().parents[1]
+
+EXT = BASE / "extraction/en"
+APP = BASE / "app/content"
 OUT = APP / "en"
 OUT.mkdir(parents=True, exist_ok=True)
 
@@ -74,7 +76,7 @@ if missing:
 if errors or missing:
     print("NOTHING WRITTEN — fix the reported problems and re-run")
     sys.exit(1)
-PROV = Path("/Users/harsh/RamKabir/tools/provenance.json")
+PROV = BASE / "tools/provenance.json"
 prov = json.loads(PROV.read_text(encoding="utf-8")) if PROV.exists() else {}
 for book, data in payloads.items():
     (OUT / f"{book}.json").write_text(data, encoding="utf-8")

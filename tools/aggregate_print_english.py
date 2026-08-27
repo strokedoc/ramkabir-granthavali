@@ -8,7 +8,9 @@ Only tokens a worker confirmed against the printed page get whitelisted."""
 import json, re, sys
 from pathlib import Path
 
-EXT = Path('/Users/harsh/RamKabir/extraction')
+BASE = Path(__file__).resolve().parents[1]
+
+EXT = BASE / "extraction"
 rejected = []
 
 def page_text(book, n):
@@ -71,7 +73,7 @@ for alias, src in BOOK_SRC.items():
                       if rng is None or int(p) in rng}
         if rng is not None:
             out[src] = {p: v for p, v in out[src].items() if int(p) not in rng}
-Path('/Users/harsh/RamKabir/tools/print_english.json').write_text(
+(BASE / "tools/print_english.json").write_text(
     json.dumps(out, ensure_ascii=False, indent=1), encoding='utf-8')
 print({b: len(v) for b, v in out.items()}, '->', sum(len(v) for v in out.values()), 'pages whitelisted')
 allt = sorted({(t['t'] if isinstance(t, dict) else t)
