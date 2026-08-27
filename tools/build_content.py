@@ -278,7 +278,10 @@ def build_english(book):
     full = EXT / "kirtan-english" / "full.txt"
     if not sec_file.exists() or not full.exists():
         return None
-    lines = full.read_text(encoding="utf-8", errors="replace").splitlines()
+    # NB: split on LF only. sections.json line numbers came from grep -n, and
+    # the file contains 143 form-feed page markers that str.splitlines() would
+    # also treat as line breaks — drifting every section after the first page.
+    lines = full.read_text(encoding="utf-8", errors="replace").split("\n")
     spec = json.loads(sec_file.read_text(encoding="utf-8"))
     sections = []
     ATH = re.compile(r"\bATH\s+SH?R[EI]", re.I)
@@ -291,7 +294,12 @@ def build_english(book):
         # composition's ATH mid-body — e.g. Sandhya Aarati embeds Ath Shri
         # Vani — and trimming there would delete most of the section.)
         want = re.sub(r"[^a-z]", "", s["title"].lower())
-        for i, ln in enumerate(seg[:8]):
+        # If the slice ALREADY opens with this section's heading there is no
+        # previous-composition tail to remove. Trimming here would match the
+        # running page header further down and delete the opening verses.
+        opens_correctly = bool(seg) and ATH.search(seg[0]) and \
+            want in re.sub(r"[^a-z]", "", seg[0].lower())
+        for i, ln in enumerate([] if opens_correctly else seg[:8]):
             if i == 0 or not ATH.search(ln):
                 continue
             here = re.sub(r"[^a-z]", "", ln.lower())
@@ -308,16 +316,22 @@ def build_english(book):
             if t.strip():
                 blocks.append({"page": cur_page, "text": t})
             cur = []
-        for ln in seg:
-            # page markers sit alone OR inside a running header, e.g.
-            # "(18)                 II ATH SHRI VANI II7II"
-            m = re.fullmatch(r"\s*\((\d+)\)\s*", ln) or re.match(r"\s*\((\d+)\)\s+\S", ln)
-            if m:
+        for raw in seg:
+            # form feeds are page breaks inside the line; the printed folio
+            # "(N)" may sit at either end of a running-header line
+            ln = raw.replace("\x0c", " ")
+            pm = re.search(r"\((\d{1,3})\)", ln)
+            if pm and not re.search(r"[A-Za-z]{3,}", ln[:pm.start()]):
                 flush()
-                cur_page = int(m.group(1))
-                if ln.strip().startswith("(") and not re.fullmatch(r"\s*\(\d+\)\s*", ln):
+                cur_page = int(pm.group(1))
+                ln = (ln[:pm.start()] + ln[pm.end():])
+                if not ln.strip():
                     continue
-                continue
+            elif pm and re.fullmatch(r"[\s\dIVX|]*", ln[pm.end():]):
+                cur_page = int(pm.group(1))       # folio trailing a header line
+                ln = (ln[:pm.start()] + ln[pm.end():])
+                if not ln.strip():
+                    continue
             if not ln.strip():
                 if len(cur) > 12:
                     flush()

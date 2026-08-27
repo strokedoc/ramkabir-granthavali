@@ -247,7 +247,28 @@ function todaysPearl(t) {
 }
 
 /* ---------------- routing ---------------- */
-window.addEventListener("hashchange", route);
+// take over scroll restoration: the browser's automatic restore runs AFTER our
+// own and would re-apply the previous section's offset to a new destination
+if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+const scrollPositions = {};
+let prevHash = location.hash;
+function restoreScroll() {
+  // Back/Forward returns to where the reader left off; a fresh destination
+  // starts at the top
+  const y = scrollPositions[location.hash] || 0;
+  // scroll immediately, then once more after layout settles. NOT via
+  // requestAnimationFrame alone: rAF never fires while the tab is hidden,
+  // which would leave a new section showing the previous one's scroll offset.
+  window.scrollTo(0, y);
+  setTimeout(() => window.scrollTo(0, y), 0);
+}
+addEventListener("hashchange", () => {
+  // record where we LEFT, keyed by the hash we are leaving — sampling during
+  // navigation would stamp the old position onto the new destination
+  scrollPositions[prevHash] = scrollY;
+  prevHash = location.hash;
+  route();
+});
 window.addEventListener("DOMContentLoaded", route);
 
 function parseHash() {
@@ -297,11 +318,11 @@ $("#back-btn").addEventListener("click", () => {
   else location.hash = "#/";
 });
 
-function setTitle(text) {
+function setTitle(text, opts = {}) {
   $("#topbar-text").textContent = text;
   // announce the destination to assistive tech and reset the reading position
   document.title = text === t("appTitle") ? text : `${text} · ${t("appTitle")}`;
-  view.focus({ preventScroll: true });
+  if (!opts.keepFocus) view.focus({ preventScroll: true });
 }
 function escapeHtml(s) {
   return s.replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
@@ -358,7 +379,7 @@ async function renderLibrary(tok) {
   html += `</div>`;
   if (stale(tok)) return;
   view.innerHTML = html;
-  window.scrollTo(0, 0);
+  restoreScroll();
 }
 
 /* ---------------- table of contents ---------------- */
@@ -381,7 +402,7 @@ async function renderToc(bookId, tok) {
   html += `</div>`;
   if (stale(tok)) return;
   view.innerHTML = html;
-  window.scrollTo(0, 0);
+  restoreScroll();
 }
 
 /* ---------------- reader ---------------- */
@@ -464,7 +485,7 @@ async function renderReader(bookId, idx, tok) {
     </div>
     <div class="reader-nav">${prev}${next}</div>
   </article>`;
-  window.scrollTo(0, 0);
+  restoreScroll();
 
   $("#bm-toggle").addEventListener("click", () => {
     let bms = store.get("bookmarks", []);
@@ -504,7 +525,7 @@ async function renderSaar(tok) {
   });
   if (stale(tok)) return;
   view.innerHTML = html + `</div>`;
-  window.scrollTo(0, 0);
+  restoreScroll();
 }
 
 async function renderStory(tok) {
@@ -524,7 +545,7 @@ async function renderStory(tok) {
     <p class="caveat">${escapeHtml(lang === "en" ? s.caveat_en : (s.caveat_gu || s.caveat_en))}</p></article>`;
   if (stale(tok)) return;
   view.innerHTML = html;
-  window.scrollTo(0, 0);
+  restoreScroll();
 }
 
 async function renderTheme(ti, tok) {
@@ -544,7 +565,7 @@ async function renderTheme(ti, tok) {
   });
   if (stale(tok)) return;
   view.innerHTML = html + `</div>`;
-  window.scrollTo(0, 0);
+  restoreScroll();
 }
 
 async function renderUnit(ti, ui, tok) {
@@ -579,7 +600,7 @@ async function renderUnit(ti, ui, tok) {
     <div class="reflect">✦ ${escapeHtml(uf(u, "reflect"))}</div>
     <div class="reader-nav">${prev}${next}</div>
   </article>`;
-  window.scrollTo(0, 0);
+  restoreScroll();
 }
 
 /* ---------------- bookmarks ---------------- */
@@ -651,7 +672,7 @@ async function buildIndex() {
 let searchTimer = null;
 let searchGen = 0;      // a newer query (or a cleared field) invalidates older ones
 async function renderSearch(initial, tok) {
-  setTitle(t("searchTitle"));
+  setTitle(t("searchTitle"), { keepFocus: true });
   if (stale(tok)) return;
   view.innerHTML = `
     <div class="search-wrap">
@@ -663,10 +684,17 @@ async function renderSearch(initial, tok) {
   const input = $("#search-input");
   input.addEventListener("input", () => {
     clearTimeout(searchTimer);
-    searchTimer = setTimeout(() => runSearch(input.value), 250);
+    searchTimer = setTimeout(() => {
+      // mirror the query into the hash so a language switch or reload keeps it
+      const q = input.value.trim();
+      const want = q ? `#/search/${encodeURIComponent(q)}` : "#/search";
+      if (location.hash !== want) history.replaceState(null, "", want);
+      runSearch(input.value);
+    }, 250);
   });
+  input.focus();
+  input.setSelectionRange(input.value.length, input.value.length);
   if (initial) runSearch(initial);
-  else input.focus();
 }
 
 async function runSearch(q) {
