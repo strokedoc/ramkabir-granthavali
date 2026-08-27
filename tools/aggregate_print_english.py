@@ -43,7 +43,17 @@ for d in sorted(EXT.glob('*/print_english')):
                 rejected.append(f'{book} p{pg}: {tk!r} not present on page'); continue
             ok.append(tk)
         if ok:
-            per[pg] = sorted(set(ok))
+            # short tokens (<=2 chars) get a budget = how many times they occur
+            # in the page text the worker verified. A later OCR insertion of an
+            # extra 'X' then exceeds the budget and is flagged.
+            entry = []
+            for tk in sorted(set(ok)):
+                if len(re.sub(r"[^A-Za-z]", "", tk)) <= 2:
+                    n = len(re.findall(r'(?<![A-Za-z])' + re.escape(tk) + r'(?![A-Za-z])', page_txt))
+                    entry.append({"t": tk, "n": n})
+                else:
+                    entry.append(tk)
+            per[pg] = entry
     if per:
         out[book] = per
 for alias, src in BOOK_SRC.items():
@@ -52,7 +62,8 @@ for alias, src in BOOK_SRC.items():
 Path('/Users/harsh/RamKabir/tools/print_english.json').write_text(
     json.dumps(out, ensure_ascii=False, indent=1), encoding='utf-8')
 print({b: len(v) for b, v in out.items()}, '->', sum(len(v) for v in out.values()), 'pages whitelisted')
-allt = sorted({t for v in out.values() for toks in v.values() for t in toks})
+allt = sorted({(t['t'] if isinstance(t, dict) else t)
+                for v in out.values() for toks in v.values() for t in toks})
 print(f'{len(allt)} distinct whitelisted tokens:', allt[:40])
 if rejected:
     print(f'REJECTED {len(rejected)} entries:')

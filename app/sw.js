@@ -1,9 +1,18 @@
 /* Service worker: offline-first gutka.
    Whole library precached so every book reads offline from first install. */
-const VERSION = "v12";
+const VERSION = "v13";
 const PREFIX = "rkg-";
 const SHELL = [
-  "./", "index.html", "styles.css?v=12", "app.js?v=12", "manifest.json", "icons/icon.svg",
+  "./", "index.html", "styles.css?v=13", "app.js?v=13", "manifest.json", "icons/icon.svg",
+  "fonts/fonts.css?v=13",
+  "fonts/1fba8b406f.woff2",
+  "fonts/62135b8fb7.woff2",
+  "fonts/63f1654d1e.woff2",
+  "fonts/64f2eab719.woff2",
+  "fonts/abc66cb538.woff2",
+  "fonts/b376e1cab3.woff2",
+  "fonts/dedfa76904.woff2",
+  "fonts/f2197f6858.woff2",
   "content/books.json", "content/teachings.json", "content/teachings-gu.json",
   "content/samagam-purvardh.json", "content/samagam-uttarardh.json",
   "content/sant-darshan.json", "content/kirtan-gujarati.json",
@@ -33,7 +42,7 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
   if (e.request.method !== "GET") return;
-  const runtime = url.hostname === "fonts.googleapis.com" || url.hostname === "fonts.gstatic.com";
+  const runtime = false;   // everything is self-hosted and precached
   e.respondWith(
     caches.match(e.request).then(hit => {
       if (hit) return hit;

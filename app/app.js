@@ -54,11 +54,27 @@ const STR = {
   toEnglish:  { gu: "આ કીર્તન અંગ્રેજીમાં →", en: "This kirtan in English →" },
   toGujarati: { gu: "આ કીર્તન ગુજરાતીમાં →", en: "This kirtan in Gujarati →" },
   loadFail:   { gu: "સામગ્રી લોડ ન થઈ.", en: "Content failed to load." },
+  // control labels announced by screen readers
+  a11yBack:   { gu: "પાછળ", en: "Back" },
+  a11ySmaller:{ gu: "નાના અક્ષર", en: "Smaller text" },
+  a11yLarger: { gu: "મોટા અક્ષર", en: "Larger text" },
+  a11yLang:   { gu: "ભાષા બદલો — English", en: "Change language — ગુજરાતી" },
+  a11yTheme:  { gu: "થીમ બદલો", en: "Change theme" },
+  a11yNav:    { gu: "મુખ્ય", en: "Main" },
 };
 let lang = store.get("lang", "gu");
 function t(key) { return (STR[key] || {})[lang] || (STR[key] || {}).gu || key; }
 function applyLang() {
   document.documentElement.lang = lang;
+  document.title = t("appTitle");
+  const aria = {
+    "#back-btn": "a11yBack", "#font-minus": "a11ySmaller", "#font-plus": "a11yLarger",
+    "#lang-btn": "a11yLang", "#theme-btn": "a11yTheme", "#bottomnav": "a11yNav",
+  };
+  for (const [sel, key] of Object.entries(aria)) {
+    const el = $(sel);
+    if (el) el.setAttribute("aria-label", t(key));
+  }
   const btn = $("#lang-btn");
   if (btn) btn.textContent = lang === "gu" ? "EN" : "ગુ";
   document.querySelectorAll("#topbar-title .ornament").forEach(o => {

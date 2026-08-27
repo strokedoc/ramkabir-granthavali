@@ -4,9 +4,15 @@
    "ApD",
    "Apple",
    "Phone",
-   "f",
+   {
+    "t": "f",
+    "n": 1
+   },
    "google",
-   "i",
+   {
+    "t": "i",
+    "n": 1
+   },
    "online",
    "play",
    "stor",
@@ -17,11 +23,20 @@
  "samagam-purvardh": {
   "2": [
    "L.L.B.",
-   "M.A."
+   {
+    "t": "M.A.",
+    "n": 1
+   }
   ],
   "9": [
-   "P.",
-   "hd."
+   {
+    "t": "P.",
+    "n": 2
+   },
+   {
+    "t": "hd.",
+    "n": 2
+   }
   ],
   "22": [
    "Amaigamation",
@@ -39,13 +54,22 @@
    "with"
   ],
   "37": [
-   "X"
+   {
+    "t": "X",
+    "n": 1
+   }
   ],
   "38": [
-   "x"
+   {
+    "t": "x",
+    "n": 1
+   }
   ],
   "59": [
-   "x"
+   {
+    "t": "x",
+    "n": 1
+   }
   ],
   "60": [
    "oooo"
@@ -64,7 +88,10 @@
    "ooooo"
   ],
   "89": [
-   "X"
+   {
+    "t": "X",
+    "n": 1
+   }
   ],
   "108": [
    "column",
@@ -108,7 +135,10 @@
    "ARTS",
    "LIFE",
    "LIVING",
-   "OF",
+   {
+    "t": "OF",
+    "n": 1
+   },
    "THE"
   ],
   "329": [
@@ -124,9 +154,15 @@
    "bht",
    "collection",
    "informa",
-   "is",
+   {
+    "t": "is",
+    "n": 1
+   },
    "nothing",
-   "of",
+   {
+    "t": "of",
+    "n": 1
+   },
    "tion"
   ],
   "184": [
@@ -141,13 +177,22 @@
    "creat",
    "either",
    "for",
-   "in",
+   {
+    "t": "in",
+    "n": 2
+   },
    "informa",
    "information",
-   "is",
+   {
+    "t": "is",
+    "n": 1
+   },
    "known",
    "new",
-   "or",
+   {
+    "t": "or",
+    "n": 1
+   },
    "print",
    "standing",
    "the",
@@ -170,16 +215,28 @@
    "collection",
    "derstanding",
    "explication",
-   "in",
+   {
+    "t": "in",
+    "n": 2
+   },
    "infor-",
    "information",
-   "is",
+   {
+    "t": "is",
+    "n": 2
+   },
    "known",
    "mation",
    "nothing",
-   "of",
+   {
+    "t": "of",
+    "n": 1
+   },
    "the",
-   "un-",
+   {
+    "t": "un-",
+    "n": 1
+   },
    "unknown"
   ],
   "353": [
@@ -195,7 +252,10 @@
    "information",
    "known",
    "new",
-   "or",
+   {
+    "t": "or",
+    "n": 1
+   },
    "unknown"
   ],
   "359": [
@@ -205,7 +265,10 @@
   "365": [
    "Hindu",
    "book",
-   "of",
+   {
+    "t": "of",
+    "n": 1
+   },
    "saints"
   ],
   "371": [
@@ -218,20 +281,47 @@
  "sant-darshan": {
   "2": [
    "Computer",
-   "Ph.",
-   "YS"
+   {
+    "t": "Ph.",
+    "n": 1
+   },
+   {
+    "t": "YS",
+    "n": 1
+   }
   ],
   "98": [
-   "I",
-   "II",
+   {
+    "t": "I",
+    "n": 1
+   },
+   {
+    "t": "II",
+    "n": 1
+   },
    "III",
-   "IV",
-   "IX",
-   "V",
-   "VI",
+   {
+    "t": "IV",
+    "n": 1
+   },
+   {
+    "t": "IX",
+    "n": 1
+   },
+   {
+    "t": "V",
+    "n": 1
+   },
+   {
+    "t": "VI",
+    "n": 1
+   },
    "VII",
    "VIII",
-   "X"
+   {
+    "t": "X",
+    "n": 1
+   }
   ],
   "143": [
    "Valley"
@@ -242,9 +332,15 @@
    "ApD",
    "Apple",
    "Phone",
-   "f",
+   {
+    "t": "f",
+    "n": 1
+   },
    "google",
-   "i",
+   {
+    "t": "i",
+    "n": 1
+   },
    "online",
    "play",
    "stor",

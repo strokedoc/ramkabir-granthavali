@@ -62,9 +62,15 @@ for b in BOOKS:
             #   "www.ramkabir.guru" -> that exact string is genuine; a stray
             #                          "guru" elsewhere is still flagged
             # (substring removal was unsound: "in"+"for" erased "infor")
-            words, phrases = set(), []
+            words, phrases, budget = set(), [], {}
             for entry in whitelist.get(b, {}).get(pg, []):
-                if re.fullmatch(r'[A-Za-z]+', entry):
+                if isinstance(entry, dict):      # short token with a count budget
+                    budget[entry["t"]] = entry["n"]
+                    if re.fullmatch(r'[A-Za-z]+', entry["t"]):
+                        words.add(entry["t"])
+                    else:
+                        phrases.append(entry["t"])
+                elif re.fullmatch(r'[A-Za-z]+', entry):
                     words.add(entry)
                 else:
                     phrases.append(entry)
@@ -78,9 +84,13 @@ for b in BOOKS:
                 if w not in words:
                     hits['latin'].append(w)
             # a lone Latin letter left in Indic text is a transcription artifact
+            seen_short = {}
             for m in re.finditer(r'(?<![A-Za-z])[A-Za-z](?![A-Za-z])', scan):
-                if m.group(0) not in words:
-                    hits['latin'].append(m.group(0))
+                tok = m.group(0)
+                seen_short[tok] = seen_short.get(tok, 0) + 1
+                allowed = budget.get(tok, 0) if tok in words else 0
+                if tok not in words or seen_short[tok] > allowed:
+                    hits['latin'].append(tok)
             # an immediately repeated Latin token is garble even when the word
             # itself is genuinely printed ("Apple Apple")
             for m in re.finditer(r'\b([A-Za-z]{2,})\s+\1\b', t):

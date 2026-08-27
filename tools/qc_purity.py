@@ -42,7 +42,20 @@ for f in sorted(en_dir.glob("*.json")) if en_dir.exists() else []:
 # language at runtime (the nav "search" icon was literally the word શોધ)
 html = Path("/Users/harsh/RamKabir/app/index.html").read_text(encoding="utf-8")
 chrome = re.sub(r"<title>.*?</title>", "", html, flags=re.S)
-chrome = re.sub(r'(aria-label|content|placeholder)="[^"]*"', "", chrome)
+chrome = re.sub(r'(content|placeholder)="[^"]*"', "", chrome)
+# aria-labels are rewritten by applyLang(); verify each element it targets is
+# actually in its table rather than silently stripping them from the scan
+js = Path("/Users/harsh/RamKabir/app/app.js").read_text(encoding="utf-8")
+aria_ids = set(re.findall(r'"#([\w-]+)":\s*"a11y', js))
+for m in re.finditer(r'id="([\w-]+)"[^>]*aria-label="([^"]*)"', html):
+    if NAT.search(m.group(2)) and m.group(1) not in aria_ids:
+        fails.append(f"aria-label on #{m.group(1)} is Indic and never localized by applyLang()")
+chrome = re.sub(r'aria-label="[^"]*"', "", chrome)
+# data-i18n is only legitimate where applyLang() rewrites it (ornaments, nav)
+for m in re.finditer(r"<(\w+)([^>]*\bdata-i18n\b[^>]*)>", html):
+    attrs = m.group(2)
+    if "ornament" not in attrs and "nav" not in html[max(0, m.start()-120):m.start()]:
+        fails.append(f"data-i18n on <{m.group(1)}> is outside applyLang()'s reach")
 chrome = re.sub(r"<h1[^>]*>.*?</h1>", "", chrome, flags=re.S)
 # elements marked data-i18n are language defaults that applyLang() rewrites
 chrome = re.sub(r"<(\w+)[^>]*\bdata-i18n\b[^>]*>.*?</\1>", "", chrome, flags=re.S)
