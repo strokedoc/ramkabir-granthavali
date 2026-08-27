@@ -1,28 +1,58 @@
 {
  "kirtan-gujarati": {
   "16": [
-   "ApD",
-   "Apple",
-   "Phone",
+   {
+    "t": "ApD",
+    "n": 1
+   },
+   {
+    "t": "Apple",
+    "n": 1
+   },
+   {
+    "t": "Phone",
+    "n": 1
+   },
    {
     "t": "f",
     "n": 1
    },
-   "google",
+   {
+    "t": "google",
+    "n": 1
+   },
    {
     "t": "i",
     "n": 1
    },
-   "online",
-   "play",
-   "stor",
-   "www.ramkabir.guru",
-   "www.ramkabir.org"
+   {
+    "t": "online",
+    "n": 1
+   },
+   {
+    "t": "play",
+    "n": 1
+   },
+   {
+    "t": "stor",
+    "n": 1
+   },
+   {
+    "t": "www.ramkabir.guru",
+    "n": 1
+   },
+   {
+    "t": "www.ramkabir.org",
+    "n": 1
+   }
   ]
  },
  "samagam-purvardh": {
   "2": [
-   "L.L.B.",
+   {
+    "t": "L.L.B.",
+    "n": 1
+   },
    {
     "t": "M.A.",
     "n": 1
@@ -39,19 +69,46 @@
    }
   ],
   "22": [
-   "Amaigamation",
-   "Combination"
+   {
+    "t": "Amaigamation",
+    "n": 1
+   },
+   {
+    "t": "Combination",
+    "n": 1
+   }
   ],
   "23": [
-   "Reference",
-   "Who"
+   {
+    "t": "Reference",
+    "n": 1
+   },
+   {
+    "t": "Who",
+    "n": 1
+   }
   ],
   "25": [
-   "Problem",
-   "Puzzle",
-   "example",
-   "explination",
-   "with"
+   {
+    "t": "Problem",
+    "n": 1
+   },
+   {
+    "t": "Puzzle",
+    "n": 1
+   },
+   {
+    "t": "example",
+    "n": 1
+   },
+   {
+    "t": "explination",
+    "n": 1
+   },
+   {
+    "t": "with",
+    "n": 1
+   }
   ],
   "37": [
    {
@@ -72,20 +129,38 @@
    }
   ],
   "60": [
-   "oooo"
+   {
+    "t": "oooo",
+    "n": 1
+   }
   ],
   "64": [
-   "oooo"
+   {
+    "t": "oooo",
+    "n": 1
+   }
   ],
   "67": [
-   "Vitulity"
+   {
+    "t": "Vitulity",
+    "n": 1
+   }
   ],
   "78": [
-   "Truth",
-   "Ultimate"
+   {
+    "t": "Truth",
+    "n": 1
+   },
+   {
+    "t": "Ultimate",
+    "n": 1
+   }
   ],
   "85": [
-   "ooooo"
+   {
+    "t": "ooooo",
+    "n": 1
+   }
   ],
   "89": [
    {
@@ -94,193 +169,448 @@
    }
   ],
   "108": [
-   "column",
-   "spinal"
+   {
+    "t": "column",
+    "n": 1
+   },
+   {
+    "t": "spinal",
+    "n": 1
+   }
   ],
   "114": [
-   "Colgony"
+   {
+    "t": "Colgony",
+    "n": 1
+   }
   ],
   "150": [
-   "ooooo"
+   {
+    "t": "ooooo",
+    "n": 1
+   }
   ],
   "156": [
-   "truth",
-   "ultimate"
+   {
+    "t": "truth",
+    "n": 1
+   },
+   {
+    "t": "ultimate",
+    "n": 1
+   }
   ],
   "207": [
-   "ooooo"
+   {
+    "t": "ooooo",
+    "n": 1
+   }
   ],
   "251": [
-   "ooooo"
+   {
+    "t": "ooooo",
+    "n": 1
+   }
   ],
   "263": [
-   "ooooo"
+   {
+    "t": "ooooo",
+    "n": 1
+   }
   ],
   "267": [
-   "Telescope"
+   {
+    "t": "Telescope",
+    "n": 1
+   }
   ],
   "277": [
-   "ooooo"
+   {
+    "t": "ooooo",
+    "n": 1
+   }
   ],
   "289": [
-   "ooooo"
+   {
+    "t": "ooooo",
+    "n": 1
+   }
   ],
   "309": [
-   "ooooo"
+   {
+    "t": "ooooo",
+    "n": 1
+   }
   ],
   "316": [
-   "Challenge"
+   {
+    "t": "Challenge",
+    "n": 1
+   }
   ],
   "321": [
-   "ARTS",
-   "LIFE",
-   "LIVING",
+   {
+    "t": "ARTS",
+    "n": 1
+   },
+   {
+    "t": "LIFE",
+    "n": 1
+   },
+   {
+    "t": "LIVING",
+    "n": 1
+   },
    {
     "t": "OF",
     "n": 1
    },
-   "THE"
+   {
+    "t": "THE",
+    "n": 2
+   }
   ],
   "329": [
-   "ooooo"
+   {
+    "t": "ooooo",
+    "n": 1
+   }
   ],
   "358": [
-   "ooooo"
+   {
+    "t": "ooooo",
+    "n": 1
+   }
   ]
  },
  "samagam-uttarardh": {
   "183": [
-   "Knowledge",
-   "bht",
-   "collection",
-   "informa",
+   {
+    "t": "Knowledge",
+    "n": 1
+   },
+   {
+    "t": "bht",
+    "n": 1
+   },
+   {
+    "t": "collection",
+    "n": 1
+   },
+   {
+    "t": "informa",
+    "n": 1
+   },
    {
     "t": "is",
     "n": 1
    },
-   "nothing",
+   {
+    "t": "nothing",
+    "n": 1
+   },
    {
     "t": "of",
     "n": 1
    },
-   "tion"
+   {
+    "t": "tion",
+    "n": 1
+   }
   ],
   "184": [
-   "Application",
-   "Apply",
-   "Blue",
-   "Explication",
-   "Skil",
-   "any",
-   "cituation",
-   "citution",
-   "creat",
-   "either",
-   "for",
+   {
+    "t": "Application",
+    "n": 1
+   },
+   {
+    "t": "Apply",
+    "n": 2
+   },
+   {
+    "t": "Blue",
+    "n": 1
+   },
+   {
+    "t": "Explication",
+    "n": 1
+   },
+   {
+    "t": "Skil",
+    "n": 1
+   },
+   {
+    "t": "any",
+    "n": 1
+   },
+   {
+    "t": "cituation",
+    "n": 2
+   },
+   {
+    "t": "citution",
+    "n": 1
+   },
+   {
+    "t": "creat",
+    "n": 1
+   },
+   {
+    "t": "either",
+    "n": 1
+   },
+   {
+    "t": "for",
+    "n": 2
+   },
    {
     "t": "in",
     "n": 2
    },
-   "informa",
-   "information",
+   {
+    "t": "informa",
+    "n": 1
+   },
+   {
+    "t": "information",
+    "n": 2
+   },
    {
     "t": "is",
     "n": 1
    },
-   "known",
-   "new",
+   {
+    "t": "known",
+    "n": 2
+   },
+   {
+    "t": "new",
+    "n": 1
+   },
    {
     "t": "or",
     "n": 1
    },
-   "print",
-   "standing",
-   "the",
-   "tion",
-   "under",
-   "unknown"
+   {
+    "t": "print",
+    "n": 1
+   },
+   {
+    "t": "standing",
+    "n": 1
+   },
+   {
+    "t": "the",
+    "n": 2
+   },
+   {
+    "t": "tion",
+    "n": 1
+   },
+   {
+    "t": "under",
+    "n": 1
+   },
+   {
+    "t": "unknown",
+    "n": 2
+   }
   ],
   "191": [
-   "VIP"
+   {
+    "t": "VIP",
+    "n": 1
+   }
   ],
   "320": [
-   "Problem"
+   {
+    "t": "Problem",
+    "n": 1
+   }
   ],
   "352": [
-   "Application",
-   "Apply",
-   "Knowledge",
-   "bht",
-   "cituation",
-   "collection",
-   "derstanding",
-   "explication",
+   {
+    "t": "Application",
+    "n": 1
+   },
+   {
+    "t": "Apply",
+    "n": 2
+   },
+   {
+    "t": "Knowledge",
+    "n": 1
+   },
+   {
+    "t": "bht",
+    "n": 1
+   },
+   {
+    "t": "cituation",
+    "n": 2
+   },
+   {
+    "t": "collection",
+    "n": 1
+   },
+   {
+    "t": "derstanding",
+    "n": 1
+   },
+   {
+    "t": "explication",
+    "n": 1
+   },
    {
     "t": "in",
     "n": 2
    },
-   "infor-",
-   "information",
+   {
+    "t": "infor-",
+    "n": 1
+   },
+   {
+    "t": "information",
+    "n": 2
+   },
    {
     "t": "is",
     "n": 2
    },
-   "known",
-   "mation",
-   "nothing",
+   {
+    "t": "known",
+    "n": 1
+   },
+   {
+    "t": "mation",
+    "n": 1
+   },
+   {
+    "t": "nothing",
+    "n": 1
+   },
    {
     "t": "of",
     "n": 1
    },
-   "the",
+   {
+    "t": "the",
+    "n": 2
+   },
    {
     "t": "un-",
     "n": 1
    },
-   "unknown"
+   {
+    "t": "unknown",
+    "n": 1
+   }
   ],
   "353": [
-   "Blue",
-   "Creat",
-   "Prient",
-   "Skil",
-   "any",
-   "cituation",
-   "confounded",
-   "either",
-   "for",
-   "information",
-   "known",
-   "new",
+   {
+    "t": "Blue",
+    "n": 1
+   },
+   {
+    "t": "Creat",
+    "n": 1
+   },
+   {
+    "t": "Prient",
+    "n": 1
+   },
+   {
+    "t": "Skil",
+    "n": 1
+   },
+   {
+    "t": "any",
+    "n": 1
+   },
+   {
+    "t": "cituation",
+    "n": 2
+   },
+   {
+    "t": "confounded",
+    "n": 1
+   },
+   {
+    "t": "either",
+    "n": 1
+   },
+   {
+    "t": "for",
+    "n": 2
+   },
+   {
+    "t": "information",
+    "n": 1
+   },
+   {
+    "t": "known",
+    "n": 1
+   },
+   {
+    "t": "new",
+    "n": 1
+   },
    {
     "t": "or",
     "n": 1
    },
-   "unknown"
+   {
+    "t": "unknown",
+    "n": 1
+   }
   ],
   "359": [
-   "Proclamation",
-   "ordinance"
+   {
+    "t": "Proclamation",
+    "n": 1
+   },
+   {
+    "t": "ordinance",
+    "n": 1
+   }
   ],
   "365": [
-   "Hindu",
-   "book",
+   {
+    "t": "Hindu",
+    "n": 1
+   },
+   {
+    "t": "book",
+    "n": 1
+   },
    {
     "t": "of",
     "n": 1
    },
-   "saints"
+   {
+    "t": "saints",
+    "n": 1
+   }
   ],
   "371": [
-   "Manotoxin"
+   {
+    "t": "Manotoxin",
+    "n": 1
+   }
   ],
   "372": [
-   "Menopause"
+   {
+    "t": "Menopause",
+    "n": 1
+   }
   ]
  },
  "sant-darshan": {
   "2": [
-   "Computer",
+   {
+    "t": "Computer",
+    "n": 1
+   },
    {
     "t": "Ph.",
     "n": 1
@@ -299,7 +629,10 @@
     "t": "II",
     "n": 1
    },
-   "III",
+   {
+    "t": "III",
+    "n": 1
+   },
    {
     "t": "IV",
     "n": 1
@@ -316,36 +649,72 @@
     "t": "VI",
     "n": 1
    },
-   "VII",
-   "VIII",
+   {
+    "t": "VII",
+    "n": 1
+   },
+   {
+    "t": "VIII",
+    "n": 1
+   },
    {
     "t": "X",
     "n": 1
    }
   ],
   "143": [
-   "Valley"
+   {
+    "t": "Valley",
+    "n": 1
+   }
   ]
  },
  "jivandas-sakhi": {
   "16": [
-   "ApD",
-   "Apple",
-   "Phone",
+   {
+    "t": "ApD",
+    "n": 1
+   },
+   {
+    "t": "Apple",
+    "n": 1
+   },
+   {
+    "t": "Phone",
+    "n": 1
+   },
    {
     "t": "f",
     "n": 1
    },
-   "google",
+   {
+    "t": "google",
+    "n": 1
+   },
    {
     "t": "i",
     "n": 1
    },
-   "online",
-   "play",
-   "stor",
-   "www.ramkabir.guru",
-   "www.ramkabir.org"
+   {
+    "t": "online",
+    "n": 1
+   },
+   {
+    "t": "play",
+    "n": 1
+   },
+   {
+    "t": "stor",
+    "n": 1
+   },
+   {
+    "t": "www.ramkabir.guru",
+    "n": 1
+   },
+   {
+    "t": "www.ramkabir.org",
+    "n": 1
+   }
   ]
  }
 }

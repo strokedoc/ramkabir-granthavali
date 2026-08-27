@@ -423,9 +423,12 @@ async function renderReader(bookId, idx, tok) {
     let lastPage = null;
     for (const blk of s.blocks) {
       if (blk.page && blk.page !== lastPage) { body += `<div class="pageref">${blk.page}</div>`; lastPage = blk.page; }
-      body += blk.sub
-        ? `<div class="subhead">${escapeHtml(blk.text)}</div>`
-        : `<div class="block">${escapeHtml(blk.text)}</div>`;
+      // a predominantly Devanagari block gets the Devanagari face first, so
+      // its dandas (। ॥) match the verse rather than borrowing the Gujarati cut
+      const dev = (blk.text.match(/[\u0900-\u094f\u0958-\u097f]/g) || []).length >
+                  (blk.text.match(/[\u0a80-\u0aff]/g) || []).length;
+      const cls = (blk.sub ? "subhead" : "block") + (dev ? " dev" : "");
+      body += `<div class="${cls}">${escapeHtml(blk.text)}</div>`;
     }
   }
   const bmKey = `${bookId}/${idx}`;

@@ -46,13 +46,12 @@ for d in sorted(EXT.glob('*/print_english')):
             # short tokens (<=2 chars) get a budget = how many times they occur
             # in the page text the worker verified. A later OCR insertion of an
             # extra 'X' then exceeds the budget and is flagged.
+            # every approval carries a budget = its verified occurrence count,
+            # so a repeated OCR artifact can never hide behind a real word
             entry = []
             for tk in sorted(set(ok)):
-                if len(re.sub(r"[^A-Za-z]", "", tk)) <= 2:
-                    n = len(re.findall(r'(?<![A-Za-z])' + re.escape(tk) + r'(?![A-Za-z])', page_txt))
-                    entry.append({"t": tk, "n": n})
-                else:
-                    entry.append(tk)
+                n = len(re.findall(r'(?<![A-Za-z])' + re.escape(tk) + r'(?![A-Za-z])', page_txt))
+                entry.append({"t": tk, "n": max(n, 1)})
             per[pg] = entry
     if per:
         out[book] = per

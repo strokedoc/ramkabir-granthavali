@@ -50,11 +50,16 @@ if ind_file.exists():
 rows = []
 for b in BOOKS:
     j = json.loads((APP / f'{b}.json').read_text(encoding='utf-8'))
-    per_page = {}
+    # join every block of a page first: budgets are per PAGE, and a page split
+    # across sections must not get a fresh allowance per block
+    page_text_map = {}
     for s in j['sections']:
         for bl in s['blocks']:
-            pg = str(bl['page'])
-            t = bl['text']
+            page_text_map.setdefault(str(bl['page']), []).append(bl['text'])
+    per_page = {}
+    if True:
+        for pg, parts in page_text_map.items():
+            t = "\n".join(parts)
             hits = per_page.setdefault(pg, {'latin': [], 'indic': []})
             # Whitelisting is TOKEN-BOUNDARY based, and a composite entry is a
             # phrase — it never blesses its parts elsewhere:
@@ -100,7 +105,12 @@ for b in BOOKS:
                     hits['latin'].append(tok)
             # an immediately repeated Latin token is garble even when the word
             # itself is genuinely printed ("Apple Apple")
+            # a repeated token is reported ONCE; if the token itself was
+            # already flagged as unapproved, do not inflate the count again
             for m in re.finditer(r'\b([A-Za-z]{2,})\s+\1\b', t):
+                tok = m.group(1)
+                if tok in hits['latin']:
+                    continue
                 hits['latin'].append(m.group(0))
             ok_forms = indic_ok.get(b, {}).get(pg, [])
             ok_spans = []
