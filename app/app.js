@@ -566,9 +566,22 @@ async function renderReader(bookId, idx, tok) {
       body += `<div class="block en-translation">${escapeHtml(e.translation)}</div>`;
     }
   } else {
-    let lastPage = null;
-    for (const blk of s.blocks) {
+    let lastPage = null, headDropped = false;
+    for (let blk of s.blocks) {
       if (blk.page && blk.page !== lastPage) { body += `<div class="pageref">${blk.page}</div>`; lastPage = blk.page; }
+      // The section title was lifted FROM the page's heading line, and that
+      // line is still the first line of the text, so the heading rendered
+      // twice on 109 of 222 sections. The printed page shows it once, in a
+      // banner — so drop the duplicate here rather than from the content,
+      // which must keep matching the page it came from.
+      if (!headDropped) {
+        headDropped = true;
+        const lines = blk.text.split("\n");
+        if (sameHeading(lines[0], s.title)) {
+          blk = { ...blk, text: lines.slice(1).join("\n").replace(/^\n+/, "") };
+          if (!blk.text.trim()) continue;
+        }
+      }
       // a predominantly Devanagari block gets the Devanagari face first, so
       // its dandas (। ॥) match the verse rather than borrowing the Gujarati cut
       const cls = (blk.sub ? "subhead" : "block") + devClass(blk.text);
@@ -729,6 +742,13 @@ async function renderUnit(ti, ui, tok) {
    translates the column track. Works for any script, respects the font-size
    control, and re-lays out on resize / rotation / device fold. */
 let pagerState = null;
+
+/* two headings are the same when only spacing or a zero-width joiner differs:
+   the printed line and the lifted title routinely disagree on those */
+function sameHeading(line, title) {
+  const k = (x) => (x || "").replace(/[\s\u200c\u200d]/g, "");
+  return k(line).length > 6 && k(line) === k(title);
+}
 
 function pagerKey() { return "pg:" + scrollKey(); }
 
