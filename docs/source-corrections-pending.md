@@ -24,3 +24,30 @@ we have. Only a page-by-page image comparison would find them all, which has not
 been done for the ~1,300 Gujarati pages. Treat printed numbers (Samvat years,
 volume/page citations, verse numbers) as the highest-risk class: three were
 already found wrong in Sant Darshan (1712, 157, 129) and one here.
+
+## Errors in the PRINTED BOOKS, faithfully reproduced (do not "fix")
+
+These are the books' own mistakes. The corpus reproduces them on purpose; a
+later pass that "corrects" them would be departing from the source.
+
+| Book | Page | What the book prints | Note |
+|---|---|---|---|
+| samagam-purvardh | 22 | `Amaigamation Combination` | the print's own typo for "Amalgamation"; verified at 600dpi |
+| kirtan-gujarati | 15 | `૧૬૬૪` | the sense requires 1964; the English notes the discrepancy rather than silently fixing it |
+| jivandas-sakhi | 361 | doha numbered `૧૬૩` where `૧૬૧` belongs | numbering runs …160, 163, 162, 163, 164…; the print itself is wrong |
+
+## Verification coverage so far
+
+Image-by-image comparison of source text against the scans has been done for
+the pages touched by the English repair pass, not the whole corpus:
+
+- kirtan-gujarati: 33 pages compared digit by digit — **no discrepancies**, and
+  verse numbering re-checked across all 38 sections.
+- jivandas-sakhi: 26 pages compared — **no discrepancies**; doha numbering
+  checked mechanically across all 26 sections (the one anomaly is the print's).
+- samagam-purvardh: the one error above.
+- sant-darshan: three wrong numbers found and fixed in the ENGLISH (1712, 157,
+  129); the Gujarati was not systematically digit-checked.
+
+So the corpus looks sound rather than systematically corrupt, but coverage is
+partial and concentrated on pages that happened to need translation repair.
