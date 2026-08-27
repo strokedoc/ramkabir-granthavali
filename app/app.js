@@ -620,6 +620,7 @@ async function buildIndex() {
 }
 
 let searchTimer = null;
+let searchGen = 0;      // a newer query (or a cleared field) invalidates older ones
 async function renderSearch(initial, tok) {
   setTitle(t("searchTitle"));
   if (stale(tok)) return;
@@ -640,11 +641,13 @@ async function renderSearch(initial, tok) {
 }
 
 async function runSearch(q) {
-  const resEl = $("#results");
+  const gen = ++searchGen;               // clearing the field bumps this too,
+  const resEl = $("#results");           // so an in-flight search cannot paint
   const nq = normalize(q);
   if (nq.length < 2) { resEl.innerHTML = ""; return; }
   resEl.innerHTML = `<div class="search-hint">${escapeHtml(t("searching"))}</div>`;
   const idx = await buildIndex();
+  if (gen !== searchGen) return;
   const out = [];
   for (const e of idx) {
     if (e.norm.includes(nq)) {
@@ -657,6 +660,7 @@ async function runSearch(q) {
     return;
   }
   const books = await loadManifest();
+  if (gen !== searchGen) return;
   let html = "";
   for (const e of out.slice(0, 50)) {
     const meta = books.find(b => b.id === e.book);
@@ -670,6 +674,7 @@ async function runSearch(q) {
     </a>`;
   }
   if (out.length > 50) html += `<div class="search-hint">${out.length}+ ${escapeHtml(t("moreResults"))}</div>`;
+  if (gen !== searchGen) return;
   resEl.innerHTML = html;
 }
 

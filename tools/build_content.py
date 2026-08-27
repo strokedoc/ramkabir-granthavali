@@ -17,6 +17,7 @@ EXT = BASE / "extraction"
 OUT = BASE / "app" / "content"
 OUT.mkdir(parents=True, exist_ok=True)
 WARNINGS = []  # fail-loud: split-needle misses abort the build
+EMPTY = []     # sections that rendered with no body text
 PENDING = {}   # nothing is written until the whole build is known good
 
 BOOKS = [
@@ -80,14 +81,15 @@ def split_page(text, sp):
         k = next((i for i, ln in enumerate(lines) if _norm_line(ln) == needle), None)
         if k is not None:
             return k
-        best, best_len = None, 0
+        best, best_score = None, None
         for i, ln in enumerate(lines):
             n = _norm_line(ln)
             if not n:
                 continue
             if needle in n or (n in needle and len(n) >= 0.7 * len(needle)):
-                if len(n) > best_len:
-                    best, best_len = i, len(n)
+                score = abs(len(n) - len(needle))   # closest in length wins,
+                if best_score is None or score < best_score:   # earliest on tie
+                    best, best_score = i, score
         return best
     k = find(_norm_line(sp[mode]))
     if k is None and "replace" in sp:
@@ -212,8 +214,11 @@ def build_gujarati(book):
     # inline sub-headings (extraction/<src>/subheads.json: {"<page>": [lines]}):
     # split blocks so each sub-heading becomes its own block with sub:true
     for sec in sections:
-        if not sec["blocks"] or not sum(len(b["text"].strip()) for b in sec["blocks"]) > 8:
-            WARNINGS.append(f"{book['id']}: section '{sec['title'][:24]}' rendered empty")
+        body = "\n".join(b["text"] for b in sec["blocks"])
+        for head in (sec["title"], _norm_line(sec["title"])):
+            body = body.replace(head, "", 1)
+        if not _norm_line(body):
+            EMPTY.append(f"{book['id']}: section '{sec['title'][:24]}' has no body text")
     sh_file = EXT / src / "subheads.json"
     if sh_file.exists():
         subheads = json.loads(sh_file.read_text(encoding="utf-8"))
@@ -323,8 +328,11 @@ for f in FEATURED:
 PENDING["books.json"] = json.dumps({"books": manifest, "featured": featured},
                                    ensure_ascii=False, indent=1)
 print(f"manifest: {len(manifest)} books, {len(featured)} featured")
-if WARNINGS:
-    print(f"BUILD FAILED — unresolved split needles: {WARNINGS}")
+if WARNINGS or EMPTY:
+    if WARNINGS:
+        print(f"BUILD FAILED — unresolved split needles: {WARNINGS}")
+    if EMPTY:
+        print(f"BUILD FAILED — sections with no body text: {EMPTY}")
     print("no files written; previous content left intact")
     sys.exit(1)
 for name, data in PENDING.items():

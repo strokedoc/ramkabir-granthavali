@@ -9,6 +9,7 @@ Two independent signals, neither of which needs the page image:
     typeset Gujarati/Devanagari, so each hit is a transcription defect.
 Outputs a ranked page list for image verification."""
 import json, re, sys
+from collections import Counter
 from pathlib import Path
 
 APP = Path('/Users/harsh/RamKabir/app/content')
@@ -55,14 +56,24 @@ for b in BOOKS:
             pg = str(bl['page'])
             t = bl['text']
             hits = per_page.setdefault(pg, {'latin': [], 'indic': []})
-            wl = sorted(whitelist.get(b, {}).get(pg, []), key=len, reverse=True)
-            # remove each approved string ONCE per occurrence, so an approved
-            # "www.ramkabir.guru" cannot also bless a stray "guru" elsewhere
+            # Whitelisting is TOKEN-BOUNDARY based, and a composite entry is a
+            # phrase — it never blesses its parts elsewhere:
+            #   "Apple"             -> the word Apple is genuine on this page
+            #   "www.ramkabir.guru" -> that exact string is genuine; a stray
+            #                          "guru" elsewhere is still flagged
+            # (substring removal was unsound: "in"+"for" erased "infor")
+            words, phrases = set(), []
+            for entry in whitelist.get(b, {}).get(pg, []):
+                if re.fullmatch(r'[A-Za-z]+', entry):
+                    words.add(entry)
+                else:
+                    phrases.append(entry)
             scan = t
-            for entry in wl:
-                scan = scan.replace(entry, ' ')
+            for ph in sorted(phrases, key=len, reverse=True):
+                scan = scan.replace(ph, ' ')
             for w in LAT.findall(scan):
-                hits['latin'].append(w)
+                if w not in words:
+                    hits['latin'].append(w)
             ok_forms = indic_ok.get(b, {}).get(pg, [])
             ok_spans = []
             for f in ok_forms:            # exact character ranges of approved forms
