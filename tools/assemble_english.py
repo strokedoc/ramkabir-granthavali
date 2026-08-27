@@ -51,6 +51,8 @@ for book in BOOKS:
             # was generated from, so a reorder/swap is detectable EXACTLY
             # rather than by fuzzy title or size heuristics
             "src_sig": hashlib.sha1(re.sub(r"\s+", "", src_txt).encode("utf-8")).hexdigest()[:12],
+            # NB: src_lines/src_order live in tools/provenance.json, not here —
+            # they are tooling-only and were 4.4MB of payload for every reader
             "title_translit": sec["title_translit"],
             "title_en": sec["title_en"],
             "translit": "\n".join(p["translit"] for p in parts if p["translit"]).strip(),
@@ -72,7 +74,21 @@ if missing:
 if errors or missing:
     print("NOTHING WRITTEN — fix the reported problems and re-run")
     sys.exit(1)
+PROV = Path("/Users/harsh/RamKabir/tools/provenance.json")
+prov = json.loads(PROV.read_text(encoding="utf-8")) if PROV.exists() else {}
 for book, data in payloads.items():
     (OUT / f"{book}.json").write_text(data, encoding="utf-8")
+    base = json.loads((APP / f"{book}.json").read_text(encoding="utf-8"))
+    prov.setdefault(book, {})
+    for i, sec in enumerate(json.loads(data)["sections"]):
+        if not sec:
+            continue
+        src_txt = "\n".join(b["text"] for b in base["sections"][i]["blocks"])
+        lines = [re.sub(r"\s+", "", l) for l in src_txt.split("\n") if l.strip()]
+        prov[book][str(i)] = {
+            "src_lines": hashlib.sha1("\n".join(sorted(lines)).encode("utf-8")).hexdigest()[:12],
+            "src_order": lines,
+        }
+PROV.write_text(json.dumps(prov, ensure_ascii=False), encoding="utf-8")
 print(f"wrote {len(payloads)} English editions")
 sys.exit(0)

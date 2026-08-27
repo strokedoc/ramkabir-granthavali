@@ -14,6 +14,10 @@ from collections import Counter
 from pathlib import Path
 
 APP = Path("/Users/harsh/RamKabir/app/content")
+PROV = Path("/Users/harsh/RamKabir/tools/provenance.json")
+prov = json.loads(PROV.read_text(encoding="utf-8")) if PROV.exists() else {}
+ORNAMENT = re.compile(r"[=~_*·•\-]{3,}")
+INDIC_LETTER = re.compile(r"[ઁ-૏ऀ-ॏॐ-ॣॱ-ॿ]")
 # SRC_DIR lets this compare against a STAGED build (the new source) while still
 # writing the English editions in their real location
 SRC = Path(os.environ.get("SRC_DIR") or APP)
@@ -37,21 +41,27 @@ for b in BOOKS:
             continue
         lines = [re.sub(r"\s+", "", l) for l in src.split("\n") if l.strip()]
         now_lines = hashlib.sha1("\n".join(sorted(lines)).encode("utf-8")).hexdigest()[:12]
-        prev_lines = es.get("src_lines")
-        moved = es.get("src_order")
+        rec = prov.get(b, {}).get(str(i), {})
+        prev_lines = rec.get("src_lines")
+        moved = rec.get("src_order")
         # SAFE only when: the set of lines is unchanged (nothing added, removed
         # or substituted) AND at most a few lines changed position. Without a
         # recorded fingerprint we cannot prove either, so it is NOT safe.
+        # Only ORNAMENT/heading lines may have moved. Allowing "a few" moves
+        # accepted a verse swap (exactly two positional changes) while the
+        # translation kept the old reading order.
         small_move = True
         if moved:
-            common = [l for l in lines if l in set(moved)]
-            shifts = sum(1 for a_, b_ in zip(common, [l for l in moved if l in set(lines)]) if a_ != b_)
-            small_move = shifts <= 4
+            before = [l for l in moved if l in set(lines)]
+            after = [l for l in lines if l in set(moved)]
+            shifted = {a_ for a_, b_ in zip(before, after) if a_ != b_} | \
+                      {b_ for a_, b_ in zip(before, after) if a_ != b_}
+            small_move = all(ORNAMENT.search(x) and not INDIC_LETTER.search(x)
+                             for x in shifted)
         if prev_lines is not None and prev_lines == now_lines and small_move:
             print(f"  SAFE  {b} #{i} '{gu['sections'][i]['title'][:26]}' (reorder only)")
             es["src_sig"] = want
-            es["src_lines"] = now_lines
-            es["src_order"] = lines
+            prov.setdefault(b, {})[str(i)] = {"src_lines": now_lines, "src_order": lines}
             safe += 1
             changed = True
         elif prev_lines is None:
@@ -64,6 +74,7 @@ for b in BOOKS:
             unsafe += 1
     if changed and apply:
         f.write_text(json.dumps(en, ensure_ascii=False), encoding="utf-8")
+        PROV.write_text(json.dumps(prov, ensure_ascii=False), encoding="utf-8")
 
 print(f"{safe} safe to re-stamp, {unsafe} require re-translation"
       + ("" if apply else "  (dry run — pass --apply to write)"))

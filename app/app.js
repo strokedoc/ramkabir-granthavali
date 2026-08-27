@@ -300,6 +300,9 @@ function scrollKey() { return (entryId || "") + "|" + location.hash; }
 ensureEntryId();
 prevKey = scrollKey();
 function rememberScroll() {
+  // also stamp the position into the history entry: sessionStorage can be
+  // denied (private browsing), but history.state survives a reload
+  try { history.replaceState({ ...(history.state || {}), y: scrollY }, "", location.href); } catch {}
   const k = scrollKey();
   delete scrollPositions[k];                 // re-insert so the cap is LRU, not FIFO
   scrollPositions[k] = scrollY;
@@ -310,7 +313,8 @@ addEventListener("visibilitychange", () => { if (document.hidden) rememberScroll
 function restoreScroll() {
   // Back/Forward returns to where the reader left off; a fresh destination
   // starts at the top
-  const y = scrollPositions[scrollKey()] || 0;
+  const st = history.state || {};
+  const y = scrollPositions[scrollKey()] ?? (st.eid === entryId ? st.y || 0 : 0);
   // scroll immediately, then once more after layout settles. NOT via
   // requestAnimationFrame alone: rAF never fires while the tab is hidden,
   // which would leave a new section showing the previous one's scroll offset.
@@ -322,6 +326,7 @@ addEventListener("hashchange", () => {
   // navigation would stamp the old position onto the new destination
   delete scrollPositions[prevHash];
   if (prevKey) scrollPositions[prevKey] = scrollY;
+  try { history.replaceState({ ...(history.state || {}), y: scrollY }, "", location.href); } catch {}
   persistScroll();
   ensureEntryId();
   prevKey = scrollKey();
