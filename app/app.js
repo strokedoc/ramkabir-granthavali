@@ -129,7 +129,7 @@ $("#lang-btn").addEventListener("click", () => {
     history.replaceState({ lang }, "", location.pathname + location.search + "#/" + p.slice(0, 3).join("/"));
     prevHash = location.hash;
   } else {
-    history.replaceState({ lang }, "", location.href);
+    history.replaceState({ ...(history.state || {}), lang, eid: entryId }, "", location.href);
   }
   route();
 });
@@ -270,6 +270,7 @@ const scrollPositions = (() => {
   catch { return {}; }
 })();
 let prevHash = location.hash;
+let prevKey = "";
 const SCROLL_MAX = 40;      // bounded: search hashes carry arbitrary queries
 function persistScroll() {
   const keys = Object.keys(scrollPositions);
@@ -282,9 +283,22 @@ function persistScroll() {
     try { sessionStorage.setItem("scrollPos", JSON.stringify(scrollPositions)); } catch {}
   }
 }
+let entryId = null;
+function ensureEntryId() {
+  const st = history.state || {};
+  if (!st.eid) {
+    entryId = "e" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    history.replaceState({ ...st, eid: entryId, lang }, "", location.href);
+  } else {
+    entryId = st.eid;
+  }
+  return entryId;
+}
+function scrollKey() { return (entryId || "") + "|" + location.hash; }
 function rememberScroll() {
-  delete scrollPositions[location.hash];     // re-insert so the cap is LRU, not FIFO
-  scrollPositions[location.hash] = scrollY;
+  const k = scrollKey();
+  delete scrollPositions[k];                 // re-insert so the cap is LRU, not FIFO
+  scrollPositions[k] = scrollY;
   persistScroll();
 }
 addEventListener("pagehide", rememberScroll);
@@ -292,7 +306,7 @@ addEventListener("visibilitychange", () => { if (document.hidden) rememberScroll
 function restoreScroll() {
   // Back/Forward returns to where the reader left off; a fresh destination
   // starts at the top
-  const y = scrollPositions[location.hash] || 0;
+  const y = scrollPositions[scrollKey()] || 0;
   // scroll immediately, then once more after layout settles. NOT via
   // requestAnimationFrame alone: rAF never fires while the tab is hidden,
   // which would leave a new section showing the previous one's scroll offset.
@@ -303,8 +317,10 @@ addEventListener("hashchange", () => {
   // record where we LEFT, keyed by the hash we are leaving — sampling during
   // navigation would stamp the old position onto the new destination
   delete scrollPositions[prevHash];
-  scrollPositions[prevHash] = scrollY;
+  scrollPositions[prevKey] = scrollY;
   persistScroll();
+  ensureEntryId();
+  prevKey = scrollKey();
   prevHash = location.hash;
   route();
 });
@@ -322,26 +338,31 @@ function stale(tok) { return tok !== routeToken; }
 
 async function route() {
   const tok = ++routeToken;
+  clearTimeout(searchTimer);       // a detached debounce must not rewrite the
+  searchGen++;                     // address or query a screen that is gone
   const parts = parseHash();
   // "#/book/<id>/<sec>/<lang>" carries the language with the link
+  ensureEntryId();
   if (parts[0] === "book" && parts.length >= 4 && (parts[3] === "en" || parts[3] === "gu")) {
     if (lang !== parts[3]) { lang = parts[3]; store.set("lang", lang); applyLang(); }
     parts.length = 3;
     // drop the segment so the toggle is not locked and Back is not re-pinned
     const clean = "#/" + parts.join("/");
-    scrollPositions[clean] = scrollPositions[location.hash] || 0;
-    history.replaceState({ lang }, "", location.pathname + location.search + clean);
-    prevHash = clean;
+    history.replaceState({ lang, eid: entryId }, "", location.pathname + location.search + clean);
+    prevHash = clean; prevKey = scrollKey();
   } else if (history.state && history.state.lang && history.state.lang !== lang) {
     // Back/Forward returns to an entry that was viewed in the other language
     lang = history.state.lang; store.set("lang", lang); applyLang();
   } else {
-    history.replaceState({ lang }, "", location.href);
+    history.replaceState({ ...(history.state || {}), lang, eid: entryId }, "", location.href);
   }
   const navKey = parts[0] === "search" ? "search" : parts[0] === "bookmarks" ? "bookmarks"
     : parts[0] === "saar" ? "saar" : "library";
-  document.querySelectorAll("#bottomnav a").forEach(a =>
-    a.classList.toggle("active", a.dataset.nav === navKey));
+  document.querySelectorAll("#bottomnav a").forEach(a => {
+    const on = a.dataset.nav === navKey;
+    a.classList.toggle("active", on);
+    if (on) a.setAttribute("aria-current", "page"); else a.removeAttribute("aria-current");
+  });
 
   const readerMode = parts[0] === "book" && parts.length >= 3;
   $("#font-plus").hidden = $("#font-minus").hidden = !readerMode;
@@ -751,9 +772,8 @@ async function renderSearch(initial, tok) {
       const q = input.value.trim();
       const want = q ? `#/search/${encodeURIComponent(q)}` : "#/search";
       if (location.hash !== want) {
-        scrollPositions[want] = scrollPositions[location.hash] || 0;
-        history.replaceState({ lang }, "", want);
-        prevHash = want;                 // else the position is filed under the old hash
+        history.replaceState({ lang, eid: entryId }, "", want);
+        prevHash = want; prevKey = scrollKey();
       }
       runSearch(input.value);
     }, 250);

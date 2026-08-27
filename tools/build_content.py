@@ -61,6 +61,10 @@ def load_splits(src):
     p = EXT / src / "splits.json"
     return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
 
+# Indic LETTERS only — deliberately excludes ૦-૯ / ०-९ so an ornament made of
+# Gujarati digits is still recognised as a separator rather than as content
+INDIC_LETTER = re.compile(r"[ઁ-૏ऀ-ॏॐ-ॣॱ-ॿ]")
+
 def _norm_line(s):
     # NB: strip dandas (। ॥ live inside the Devanagari block) so single- vs
     # double-danda variants of the same heading still match
@@ -138,7 +142,7 @@ def split_page(text, sp):
             if n in rep_norm:
                 tl.pop(i)
                 continue
-            if not re.search(r"[઀-૿ऀ-ॿ]", tl[i]):   # separator/ornament line
+            if not re.search(INDIC_LETTER, tl[i]):   # separator/ornament line
                 i += 1
                 continue
             checked += 1
@@ -149,7 +153,7 @@ def split_page(text, sp):
         # also normalizes to empty, and discarding it would drop printed ornament
         while tl and not tl[0].strip():
             tl.pop(0)
-        while tl and tl[0].strip() and not re.search(r"[઀-૿ऀ-ॿ]", tl[0]):
+        while tl and tl[0].strip() and not re.search(INDIC_LETTER, tl[0]):
             pre.append(tl.pop(0))
             while tl and not tl[0].strip():
                 tl.pop(0)
@@ -468,5 +472,11 @@ except Exception as exc:
     shutil.rmtree(STAGE, ignore_errors=True)
     print(f"PUBLISH FAILED ({exc}); previous content restored")
     sys.exit(1)
+# A crash between renames cannot be prevented without a directory swap, but it
+# CAN be made detectable: the manifest of digests is written last, so a partial
+# publish leaves a mismatch that the next build/gate reports instead of hiding.
+import hashlib as _h
+digests = {n: _h.sha256((OUT / n).read_bytes()).hexdigest()[:16] for n in PENDING}
+(OUT / ".integrity.json").write_text(json.dumps(digests, indent=1), encoding="utf-8")
 shutil.rmtree(STAGE, ignore_errors=True)
 print(f"wrote {len(PENDING)} content files (gated, verified byte-identical)")

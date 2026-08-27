@@ -15,7 +15,7 @@ OUT.mkdir(parents=True, exist_ok=True)
 IMPURE = re.compile(r"[ऀ-ॿ઀-૿]")
 BOOKS = ["samagam-purvardh", "samagam-uttarardh", "sant-darshan", "kirtan-gujarati", "jivandas-sakhi"]
 
-errors, missing = [], []
+errors, missing, payloads = [], [], {}
 for book in BOOKS:
     src_dir = EXT / book
     base = json.loads((APP / f"{book}.json").read_text(encoding="utf-8"))
@@ -56,8 +56,7 @@ for book in BOOKS:
             "translit": "\n".join(p["translit"] for p in parts if p["translit"]).strip(),
             "translation": "\n\n".join(p["translation"] for p in parts if p["translation"]).strip(),
         })
-    (OUT / f"{book}.json").write_text(json.dumps({"book": book, "sections": out_secs}, ensure_ascii=False),
-                                      encoding="utf-8")
+    payloads[book] = json.dumps({"book": book, "sections": out_secs}, ensure_ascii=False)
     done = sum(1 for s in out_secs if s)
     print(f"{book}: {done}/{n_secs} sections assembled")
 
@@ -67,6 +66,13 @@ if errors:
 if missing:
     print(f"\nMISSING sections ({len(missing)}):")
     for m in missing[:30]: print("  ", m)
-# an incomplete edition must never be publishable: a null section silently
-# falls back to rendering Gujarati text in English mode
-sys.exit(1 if (errors or missing) else 0)
+# An incomplete edition must never REACH app/content: a null section silently
+# renders Gujarati text in English mode. Nothing is written unless every
+# section of every book assembled cleanly.
+if errors or missing:
+    print("NOTHING WRITTEN — fix the reported problems and re-run")
+    sys.exit(1)
+for book, data in payloads.items():
+    (OUT / f"{book}.json").write_text(data, encoding="utf-8")
+print(f"wrote {len(payloads)} English editions")
+sys.exit(0)

@@ -239,9 +239,22 @@ for fchip in books_meta.get("featured", []):
        consonant_overlap(g, se_prefix(e, g)) < 0.6:
         fails.append(f"featured chip '{fchip['label_en']}' does not point at '{title}'")
 
+# 15. Published set must match the integrity manifest written at publish time
+#     (detects a corpus left mixed by a crash between file renames)
+intg = APP / ".integrity.json"
+if intg.exists():
+    import hashlib as _h
+    for name, want in json.loads(intg.read_text(encoding="utf-8")).items():
+        f = APP / name
+        if not f.exists():
+            fails.append(f"integrity: {name} is missing from the published set")
+        elif _h.sha256(f.read_bytes()).hexdigest()[:16] != want:
+            fails.append(f"integrity: {name} does not match the manifest "
+                         f"(partial publish or out-of-band edit)")
+
 if fails:
     print(f"INVARIANTS FAILED ({len(fails)}):")
     for f in fails:
         print("  ", f)
     sys.exit(1)
-print("INVARIANTS OK — 14 checks across 6 books")
+print("INVARIANTS OK — 15 checks across 6 books")
