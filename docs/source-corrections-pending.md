@@ -11,7 +11,24 @@ for that section (which the repair pass has already produced).
 
 | Book | Page | Printed (verified on image) | In txt-corrected | Status |
 |---|---|---|---|---|
-| samagam-purvardh | 36 | `ભાગવત દર્શન-ભા. ૮૭-પા-૫૭` | `ભા. ૮૪-પા-પછ` | open |
+| samagam-purvardh | 36 | `ભાગવત દર્શન-ભા. ૮૭-પા-૫૭` | `ભા. ૮૪-પા-પછ` | FIXED |
+| samagam-uttarardh | 215 | `લીટિંયું ૯૨ પા. ૧૦૫` | `લીટિંયું લર પા. ૧૦૫` | FIXED |
+| samagam-uttarardh | 187 | `સદોષ ક્રિયા` | `સદોષ ક્યા` | FIXED |
+
+All three verified by me at 600dpi before the corpus was touched. The ૯૨/લર
+case is the instructive one: Gujarati ૨ and ર are near-identical glyphs, so a
+citation number read as a letter pair is well-formed text that no gate can
+question. Each correction was paired with its already-re-verified translation
+through `restamp_provenance.py --source-fixed`, which names the exact sections
+and prints each one — the guard is never bypassed, only answered explicitly.
+
+## Cosmetic, left as-is
+
+Outside the printed English volume the Gujarati corpus contains 32 runs of
+ASCII digits: decorative separators (`====0000====`), the printer's phone
+number on a credits page, a contents list numbered `(3)`…`(10)`, and two
+citations (`ખંડ 32`, and `300` inside a Devanagari line). The VALUES are
+correct; only the script differs. Not worth changing the corpus for.
 
 Verified 2026-08-27 at 150/600dpi against `Samagam - Full Content.pdf` p.36.
 The English edition for this section was corrected in the same pass and already

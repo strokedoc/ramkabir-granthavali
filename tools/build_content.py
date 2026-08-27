@@ -439,7 +439,12 @@ for g in gates:
     if r.returncode != 0:
         print(r.stdout.strip()[-1200:])
         print(f"BUILD FAILED — {g} rejected the staged content; nothing published")
-        shutil.rmtree(STAGE, ignore_errors=True)
+        if "--keep-stage" in sys.argv:
+            # a source CORRECTION legitimately fails the en/gu signature check
+            # until the guarded re-stamp runs, and that needs this tree
+            print(f"staged tree kept at {STAGE}")
+        else:
+            shutil.rmtree(STAGE, ignore_errors=True)
         sys.exit(1)
 
 # --verify: prove the SHIPPED corpus is what this builder produces from the
@@ -452,7 +457,11 @@ if "--verify" in sys.argv:
         cur = (OUT / name).read_bytes() if (OUT / name).exists() else b""
         if cur != data.encode("utf-8"):
             bad.append(name)
-    shutil.rmtree(STAGE, ignore_errors=True)
+    if "--keep-stage" in sys.argv:
+        # the guarded re-stamp path needs the NEW source to compare against
+        print(f"staged tree kept at {STAGE}")
+    else:
+        shutil.rmtree(STAGE, ignore_errors=True)
     if bad:
         print("CONTENT NOT REPRODUCIBLE — these files differ from a fresh build "
               "of extraction/: " + ", ".join(bad))

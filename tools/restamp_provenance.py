@@ -30,6 +30,14 @@ BOOKS = ["samagam-purvardh", "samagam-uttarardh", "sant-darshan",
          "kirtan-gujarati", "jivandas-sakhi"]
 apply = "--apply" in sys.argv
 check = "--check" in sys.argv
+# A source CORRECTION is not a reorder, so the safe-move rule cannot clear it.
+# Naming the exact sections here is the only way to re-stamp one, and each is
+# printed loudly — the operator is asserting that the translation was
+# re-verified against the corrected page, not that nothing changed.
+fixed = set()
+for a in sys.argv:
+    if a.startswith("--source-fixed="):
+        fixed |= {x.strip() for x in a.split("=", 1)[1].split(",") if x.strip()}
 
 def write_atomic(path, text):
     tmp = path.with_suffix(path.suffix + ".tmp")
@@ -69,7 +77,14 @@ for b in BOOKS:
                       {b_ for a_, b_ in zip(before, after) if a_ != b_}
             small_move = all(ORNAMENT.search(x) and not INDIC_LETTER.search(x)
                              and not DIGIT.search(x) for x in shifted)
-        if prev_lines is not None and prev_lines == now_lines and small_move:
+        if f"{b}:{i}" in fixed:
+            print(f"  FIXED-SOURCE {b} #{i} '{gu['sections'][i]['title'][:26]}' — re-stamped "
+                  f"on an explicit assertion that the translation matches the corrected page")
+            es["src_sig"] = want
+            prov.setdefault(b, {})[str(i)] = {"src_lines": now_lines, "src_order": lines}
+            safe += 1
+            changed = True
+        elif prev_lines is not None and prev_lines == now_lines and small_move:
             print(f"  SAFE  {b} #{i} '{gu['sections'][i]['title'][:26]}' (reorder only)")
             es["src_sig"] = want
             prov.setdefault(b, {})[str(i)] = {"src_lines": now_lines, "src_order": lines}
