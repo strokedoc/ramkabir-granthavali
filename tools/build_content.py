@@ -282,11 +282,36 @@ def build_english(book):
     # the file contains 143 form-feed page markers that str.splitlines() would
     # also treat as line breaks — drifting every section after the first page.
     lines = full.read_text(encoding="utf-8", errors="replace").split("\n")
+    # One page map for the WHOLE file: form feeds advance the page, explicit
+    # "(N)" folios anchor it. Per-section maps left anchor-less sections (the
+    # closing essay) with no page at all.
+    FILE_PAGE = [None] * len(lines)
+    _pg = None
+    for _i, _raw in enumerate(lines):
+        _ln = _raw.replace("\x0c", " ")
+        _pm = re.search(r"\((\d{1,3})\)", _ln)
+        if "\x0c" in _raw and _pg is not None and _pm is None:
+            _pg += 1
+        if _pm:
+            _pg = int(_pm.group(1))
+        FILE_PAGE[_i] = _pg
+    _first = next((_i for _i, _p in enumerate(FILE_PAGE) if _p is not None), None)
+    if _first is not None:
+        _back = FILE_PAGE[_first]
+        for _i in range(_first - 1, -1, -1):
+            if "\x0c" in lines[_i + 1]:
+                _back -= 1
+            FILE_PAGE[_i] = max(_back, 1)
     spec = json.loads(sec_file.read_text(encoding="utf-8"))
     sections = []
     ATH = re.compile(r"\bATH\s+SH?R[EI]", re.I)
-    for s in spec["sections"]:
+    # the printed volume headings above the first composition (lines 1..n) are
+    # real text and must not be dropped; they belong to the opening section
+    lead = [l for l in lines[: spec["sections"][0]["start_line"] - 1] if l.strip()]
+    for si_, s in enumerate(spec["sections"]):
         seg = lines[s["start_line"] - 1 : s["end_line"]]
+        if si_ == 0 and lead:
+            seg = lead + seg
         # The printed page flow can carry the previous composition's closing
         # verses above this one's ATH heading — drop that tail. Strictly
         # bounded: only a heading in the first few lines, and only one naming
@@ -306,28 +331,11 @@ def build_english(book):
             if want and (want in here or here.endswith(want)):
                 seg = seg[i:]
                 break
-        # Page numbers: form feeds advance the page, an explicit "(N)" anchors
-        # it. A folio TRAILING a running header labels the page that header
-        # opens, so the text accumulated before it belongs to the previous page.
-        page_of = [None] * len(seg)
-        page = None
-        for i, raw in enumerate(seg):
-            ln = raw.replace("\x0c", " ")
-            pm = re.search(r"\((\d{1,3})\)", ln)
-            if "\x0c" in raw and page is not None and pm is None:
-                page += 1
-            if pm:
-                page = int(pm.group(1))
-            page_of[i] = page
-        # backfill the lines before the first anchor by counting pages backwards
-        first_known = next((i for i, p in enumerate(page_of) if p is not None), None)
-        if first_known is not None:
-            back = page_of[first_known]
-            for i in range(first_known - 1, -1, -1):
-                if "\x0c" in seg[i + 1]:
-                    back -= 1
-                page_of[i] = max(back, 1)
-
+        page_of = FILE_PAGE[s["start_line"] - 1 : s["end_line"]]
+        if si_ == 0 and lead:
+            page_of = [FILE_PAGE[0]] * len(lead) + page_of
+        if len(page_of) > len(seg):          # the ATH trim removed leading lines
+            page_of = page_of[len(page_of) - len(seg):]
         blocks, cur, cur_page = [], [], None
         def flush():
             nonlocal cur
@@ -347,6 +355,8 @@ def build_english(book):
                 if not ln.strip():
                     cur_page = page_of[i]
                     continue
+            if page_of[i] != cur_page and cur:
+                flush()                       # an unnumbered page break also ends a page
             cur_page = page_of[i]
             if not ln.strip():
                 if len(cur) > 12:
@@ -396,11 +406,35 @@ if WARNINGS or EMPTY:
         print(f"BUILD FAILED — sections with no body text: {EMPTY}")
     print("no files written; previous content left intact")
     sys.exit(1)
-# structural invariants run against the FINAL payloads before anything is
-# written — a regression fails the build instead of reaching readers
-import subprocess, tempfile as _tf
-with _tf.TemporaryDirectory() as _d:
-    pass
+# Every gate runs against STAGED output. Nothing reaches app/content unless all
+# of them pass, so a failed build can never leave invalid content deployed.
+import subprocess
+STAGE = OUT / ".staging"
+if STAGE.exists():
+    for f in STAGE.glob("*"):
+        f.unlink()
+STAGE.mkdir(exist_ok=True)
+for name in ("en",):
+    link = STAGE / name
+    if not link.exists():
+        os.symlink(OUT / name, link)
+for name, data in PENDING.items():
+    (STAGE / name).write_text(data, encoding="utf-8")
+for name in ("teachings.json", "teachings-gu.json"):
+    if (OUT / name).exists() and not (STAGE / name).exists():
+        (STAGE / name).write_text((OUT / name).read_text(encoding="utf-8"), encoding="utf-8")
+
+env = dict(os.environ, CONTENT_DIR=str(STAGE))
+gates = ["invariants.py", "find_garble.py", "qc_purity.py"]
+for g in gates:
+    r = subprocess.run([sys.executable, str(BASE / "tools" / g)],
+                       capture_output=True, text=True, env=env)
+    print(f"  [{g}] " + (r.stdout.strip().splitlines() or ["(no output)"])[-1])
+    if r.returncode != 0:
+        print(r.stdout.strip()[-1200:])
+        print(f"BUILD FAILED — {g} rejected the staged content; nothing published")
+        sys.exit(1)
+
 for name, data in PENDING.items():
     # write-then-rename: a crash mid-loop can never leave a truncated or
     # half-written content file behind
@@ -408,10 +442,4 @@ for name, data in PENDING.items():
     with os.fdopen(fd, "w", encoding="utf-8") as fh:
         fh.write(data)
     os.replace(tmp, OUT / name)
-print(f"wrote {len(PENDING)} content files")
-_inv = subprocess.run([sys.executable, str(BASE / "tools" / "invariants.py")],
-                      capture_output=True, text=True)
-print(_inv.stdout.strip())
-if _inv.returncode != 0:
-    print("BUILD FAILED — structural invariants violated")
-    sys.exit(1)
+print(f"wrote {len(PENDING)} content files (all gates passed)")

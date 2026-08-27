@@ -256,9 +256,21 @@ const scrollPositions = (() => {
   catch { return {}; }
 })();
 let prevHash = location.hash;
+const SCROLL_MAX = 40;      // bounded: search hashes carry arbitrary queries
+function persistScroll() {
+  const keys = Object.keys(scrollPositions);
+  for (const k of keys.slice(0, Math.max(0, keys.length - SCROLL_MAX))) delete scrollPositions[k];
+  try {
+    sessionStorage.setItem("scrollPos", JSON.stringify(scrollPositions));
+  } catch {
+    // quota exhausted: drop history rather than silently stop persisting
+    for (const k of Object.keys(scrollPositions).slice(0, keys.length - 5)) delete scrollPositions[k];
+    try { sessionStorage.setItem("scrollPos", JSON.stringify(scrollPositions)); } catch {}
+  }
+}
 function rememberScroll() {
   scrollPositions[location.hash] = scrollY;
-  try { sessionStorage.setItem("scrollPos", JSON.stringify(scrollPositions)); } catch {}
+  persistScroll();
 }
 addEventListener("pagehide", rememberScroll);
 addEventListener("visibilitychange", () => { if (document.hidden) rememberScroll(); });
@@ -276,7 +288,7 @@ addEventListener("hashchange", () => {
   // record where we LEFT, keyed by the hash we are leaving — sampling during
   // navigation would stamp the old position onto the new destination
   scrollPositions[prevHash] = scrollY;
-  try { sessionStorage.setItem("scrollPos", JSON.stringify(scrollPositions)); } catch {}
+  persistScroll();
   prevHash = location.hash;
   route();
 });
@@ -695,7 +707,7 @@ async function renderSearch(initial, tok) {
         placeholder="${escapeHtml(t("searchPh"))}" value="${escapeHtml(initial)}">
     </div>
     <div class="search-hint">${escapeHtml(t("searchHint"))}</div>
-    <div id="results" role="status" aria-live="polite" aria-atomic="false"></div>`;
+    <p id="search-status" role="status" aria-live="polite" class="search-hint"></p>\n    <div id="results"></div>`;
   const input = $("#search-input");
   input.addEventListener("input", () => {
     searchGen++;            // any in-flight search is stale from this instant
@@ -717,8 +729,9 @@ async function runSearch(q) {
   const gen = ++searchGen;               // clearing the field bumps this too,
   const resEl = $("#results");           // so an in-flight search cannot paint
   const nq = normalize(q);
-  if (nq.length < 2) { resEl.innerHTML = ""; return; }
-  resEl.innerHTML = `<div class="search-hint">${escapeHtml(t("searching"))}</div>`;
+  if (nq.length < 2) { resEl.innerHTML = ""; const st = $("#search-status"); if (st) st.textContent = ""; return; }
+  const statusEl = $("#search-status");
+  if (statusEl) statusEl.textContent = t("searching");
   const idx = await buildIndex();
   if (gen !== searchGen) return;
   const out = [];
@@ -729,9 +742,11 @@ async function runSearch(q) {
     }
   }
   if (!out.length) {
+    if (statusEl) statusEl.textContent = t("noResults");
     resEl.innerHTML = `<div class="empty"><span class="glyph">॥</span>${escapeHtml(t("noResults"))}</div>`;
     return;
   }
+  if (statusEl) statusEl.textContent = `${out.length}${out.length > 50 ? "+" : ""} ${t("pearls") === "pearls" ? "results" : "પરિણામ"}`;
   const books = await loadManifest();
   if (gen !== searchGen) return;
   let html = "";

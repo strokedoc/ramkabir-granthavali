@@ -7,10 +7,10 @@
    teachings-gu.json: no Latin runs.
 Exit 1 on any violation. Run after every content rebuild."""
 
-import json, re, sys
+import json, os, re, sys
 from pathlib import Path
 
-APP = Path("/Users/harsh/RamKabir/app/content")
+APP = Path(os.environ.get("CONTENT_DIR") or "/Users/harsh/RamKabir/app/content")
 LAT = re.compile(r"[A-Za-z]{2,}")
 NAT = re.compile(r"[ऀ-ॿ઀-૿]")
 fails = []

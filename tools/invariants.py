@@ -5,11 +5,11 @@ Each check encodes a defect class that actually shipped at some point, so a
 recurrence fails the build instead of reaching readers. Run after every build.
 Exit 1 on any violation."""
 
-import json, re, sys
+import json, os, re, sys
 from pathlib import Path
 
 BASE = Path("/Users/harsh/RamKabir")
-APP = BASE / "app" / "content"
+APP = Path(os.environ.get("CONTENT_DIR") or (BASE / "app" / "content"))
 EXT = BASE / "extraction"
 GU_BOOKS = ["samagam-purvardh", "samagam-uttarardh", "sant-darshan",
             "kirtan-gujarati", "jivandas-sakhi"]

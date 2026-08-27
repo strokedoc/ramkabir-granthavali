@@ -8,11 +8,11 @@ Two independent signals, neither of which needs the page image:
     a word end, stacked matras, orphan signs. These cannot occur in correctly
     typeset Gujarati/Devanagari, so each hit is a transcription defect.
 Outputs a ranked page list for image verification."""
-import json, re, sys
+import json, os, re, sys
 from collections import Counter
 from pathlib import Path
 
-APP = Path('/Users/harsh/RamKabir/app/content')
+APP = Path(os.environ.get('CONTENT_DIR') or '/Users/harsh/RamKabir/app/content')
 BOOKS = ['samagam-purvardh','samagam-uttarardh','sant-darshan','kirtan-gujarati','jivandas-sakhi']
 LAT = re.compile(r'[A-Za-z]{2,}')
 CONS = r'ક-હক-হक-ह'
