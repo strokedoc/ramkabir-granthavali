@@ -287,6 +287,29 @@ for fchip in books_meta.get("featured", []):
        consonant_overlap(g, se_prefix(e, g)) < 0.6:
         fails.append(f"featured chip '{fchip['label_en']}' does not point at '{title}'")
 
+# 12b. Translation completeness. A pass that worked from OCR alone left 14
+#      sections cut mid-sentence (their tails displaced into the NEXT section)
+#      and 136 "[unclear]" markers, many on text that is perfectly legible on
+#      the page. Neither was visible to any structural check.
+import unicodedata as _ud
+for b in GU_BOOKS:
+    f = APP / "en" / f"{b}.json"
+    if not f.exists():
+        continue
+    for i, s_ in enumerate(json.loads(f.read_text(encoding="utf-8"))["sections"]):
+        if not s_:
+            continue
+        t = (s_.get("translation") or "").strip()
+        if not t:
+            continue
+        if re.search(r"\[text continues|continues on the next page|text ends here", t, re.I):
+            fails.append(f"{b} en#{i}: translation defers its ending to another section")
+        # a trailing list/index entry legitimately has no terminal mark, so only
+        # a sentence that simply stops is reported
+        last = t.splitlines()[-1].strip()
+        if not re.search(r"[.!?\"'\)\]|]$", last) and not re.search(r"\d\s*$", last):
+            fails.append(f"{b} en#{i}: translation ends mid-sentence ({last[-40:]!r})")
+
 # 13. Published set must match the integrity manifest written at publish time
 #     (detects a corpus left mixed by a crash between file renames)
 intg = BASE / "tools" / "integrity.json"
