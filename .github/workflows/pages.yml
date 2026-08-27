@@ -21,10 +21,18 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Verify published content (integrity, invariants, script purity)
+      - name: Verify published content
         run: |
+          # the corpus must be exactly what the builder produces from the
+          # committed sources — the structural gates below run on whatever JSON
+          # is committed, so without this a hand-edit that happens to satisfy
+          # them would deploy
+          python3 tools/build_content.py --verify
           python3 tools/invariants.py
           python3 tools/aggregate_print_english.py --check
+          # every English translation must still match the source section it
+          # was made from (dry run: reports, never writes)
+          python3 tools/restamp_provenance.py --check
           python3 tools/find_garble.py
           python3 tools/qc_purity.py
       - uses: actions/configure-pages@v5

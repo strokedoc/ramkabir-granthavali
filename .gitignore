@@ -5,3 +5,5 @@ extraction/*/img/
 extraction/*/script-check/
 .DS_Store
 app/content/.staging/
+__pycache__/
+*.pyc

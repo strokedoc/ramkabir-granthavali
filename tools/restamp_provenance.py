@@ -29,6 +29,7 @@ SRC = Path(os.environ.get("SRC_DIR") or APP)
 BOOKS = ["samagam-purvardh", "samagam-uttarardh", "sant-darshan",
          "kirtan-gujarati", "jivandas-sakhi"]
 apply = "--apply" in sys.argv
+check = "--check" in sys.argv
 
 def write_atomic(path, text):
     tmp = path.with_suffix(path.suffix + ".tmp")
@@ -91,4 +92,7 @@ for b in BOOKS:
 
 print(f"{safe} safe to re-stamp, {unsafe} require re-translation"
       + ("" if apply else "  (dry run — pass --apply to write)"))
-sys.exit(1 if unsafe else 0)
+# As a CI gate, ANY mismatch blocks: even a "safe" one means the deployed
+# English edition carries a signature that no longer matches the Gujarati text
+# beside it, and re-stamping is a deliberate act, not something to assume.
+sys.exit(1 if (unsafe or (check and safe)) else 0)

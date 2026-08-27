@@ -27,6 +27,35 @@ def load(book):
     return json.loads((APP / f"{book}.json").read_text(encoding="utf-8"))
 
 
+# --- title-skeleton helpers: used by the cross-link check (7) and the
+#     featured-chip check (12), so they are defined before either runs
+_M = {"ઞ":"n","ઙ":"n","ક":"k","ખ":"k","ગ":"g","ઘ":"g","ચ":"c","છ":"c","જ":"j","ઝ":"j","ટ":"t","ઠ":"t",
+      "ડ":"d","ઢ":"d","ણ":"n","ત":"t","થ":"t","દ":"d","ધ":"d","ન":"n","પ":"p","ફ":"p",
+      "બ":"b","ભ":"b","મ":"m","ય":"y","ર":"r","લ":"l","વ":"v","ળ":"l","શ":"s","ષ":"s",
+      "સ":"s","હ":"h"}
+
+def skel_gu(t):
+    return "".join(_M.get(c, "") for c in t)
+
+def skel_en(t):
+    t = re.sub(r"[^a-z]", "", t.lower())
+    for a_, b_ in (("chh", "c"), ("ch", "c"), ("kh", "k"), ("gh", "g"), ("th", "t"),
+                   ("dh", "d"), ("ph", "p"), ("bh", "b"), ("sh", "s"), ("w", "v"),
+                   ("gn", "n"), ("jn", "n")):
+        t = t.replace(a_, b_)
+    return re.sub(r"[aeiou]", "", t)
+
+def se_prefix(label_skel, target_skel):
+    """the chip label starts with the composition name, so compare like-for-like"""
+    return label_skel[:max(len(target_skel), 3)]
+
+def consonant_overlap(a, b):
+    """Order-independent consonant agreement. Calibrated on the real corpus:
+    correct title/transliteration pairs score >=0.60, a swapped pair 0.27."""
+    from collections import Counter
+    ca, cb = Counter(a), Counter(b)
+    return sum((ca & cb).values()) / max(1, max(len(a), len(b)))
+
 # 1. No section may render empty (shipped: 4 emptied Sant Darshan sections)
 for b in GU_BOOKS + ["kirtan-english"]:
     for s in load(b)["sections"]:
@@ -76,6 +105,21 @@ for b in GU_BOOKS:
     missing = [p for p in range(lo, hi + 1) if p not in seen]
     if missing:
         fails.append(f"{b}: pages never rendered: {missing[:6]}")
+    # ...and the converse: a page from OUTSIDE this volume's range (the two
+    # volumes that share a scan make this easy to do by accident) was invisible
+    # to a subset-only test, and check 5 self-balances because it sums source
+    # chars over whatever pages rendered
+    extra = sorted(p for p in seen if not (lo <= p <= hi))
+    if extra:
+        fails.append(f"{b}: pages rendered that are not in this volume: {extra[:6]}")
+    # page labels must not go backwards inside a section: swapping two of them
+    # leaves the text byte-identical and drives both the reader's page display
+    # and the per-page garble whitelist lookup
+    for s_ in j["sections"]:
+        pg = [x["page"] for x in s_["blocks"]]
+        if pg != sorted(pg):
+            fails.append(f"{b}: '{s_['title'][:24]}' has out-of-order page labels")
+            break
 
 # 5. Content conservation: rendered text must match the source pages (shipped:
 #    77 chars lost to a bad fuzzy match; 8k lost in the English volume)
@@ -95,8 +139,13 @@ for b in GU_BOOKS:
             # total and slip under the 3% drift allowance
             fails.append(f"{b}: source page {p} is missing from extraction/{src}")
     got = sum(len(norm(x["text"])) for s in j["sections"] for x in s["blocks"])
-    if src_chars and abs(got - src_chars) > src_chars * 0.03:
-        fails.append(f"{b}: rendered {got} chars vs {src_chars} in source (>3% drift)")
+    # 3% was ~16k characters on the larger volumes — wide enough to hide a
+    # 14,954-char deletion. Measured drift is 0.000% on ALL five books, so the
+    # bound is 0.1%: still slack for header stripping, but no room to lose a
+    # paragraph of scripture unnoticed.
+    if src_chars and abs(got - src_chars) > src_chars * 0.001:
+        pct = abs(got - src_chars) / src_chars * 100
+        fails.append(f"{b}: rendered {got} chars vs {src_chars} in source ({pct:.2f}% drift)")
 
 # 6. English volume: every section must open with its own heading (shipped:
 #    the splitlines() drift put each composition's text under the wrong title)
@@ -110,10 +159,20 @@ for s in ke["sections"]:
 # 7. Cross-links must land on the matching composition (shipped: mislabeled
 #    links after the English drift)
 gu = load("kirtan-gujarati")
-for i in range(1, 32):
+# bounded by BOTH volumes so a shorter one fails loudly instead of crashing
+for i in range(1, min(32, len(gu["sections"]), len(ke["sections"]) + 1)):
     g, e = gu["sections"][i], ke["sections"][i - 1]
-    if not g["blocks"] or not e["blocks"]:
-        fails.append(f"cross-link gu#{i} <-> en#{i-1}: empty side")
+    # the two sides must be the SAME composition: compare the Gujarati title's
+    # consonant skeleton against the English title's. Testing only for empty
+    # blocks (as this did) merely repeated check 1 and proved nothing about
+    # the pairing the reader is offered.
+    gs, es = skel_gu(g["title"]), skel_en(e["title"])
+    if gs and es and consonant_overlap(gs, se_prefix(es, gs)) < 0.5:
+        fails.append(f"cross-link gu#{i} '{g['title'][:20]}' <-> en#{i-1} "
+                     f"'{e['title'][:20]}': titles do not match")
+if len(ke["sections"]) < 31:
+    fails.append(f"kirtan-english has {len(ke['sections'])} sections; "
+                 f"the cross-link map expects at least 31")
 
 # 8. English editions must exist and align with their Gujarati books
 for b in GU_BOOKS:
@@ -153,33 +212,6 @@ for b in GU_BOOKS:
 
 # 11. Each English section must correspond to ITS Gujarati section, not merely
 #     exist (catches two translations swapped between sections)
-_M = {"ઞ":"n","ઙ":"n","ક":"k","ખ":"k","ગ":"g","ઘ":"g","ચ":"c","છ":"c","જ":"j","ઝ":"j","ટ":"t","ઠ":"t",
-      "ડ":"d","ઢ":"d","ણ":"n","ત":"t","થ":"t","દ":"d","ધ":"d","ન":"n","પ":"p","ફ":"p",
-      "બ":"b","ભ":"b","મ":"m","ય":"y","ર":"r","લ":"l","વ":"v","ળ":"l","શ":"s","ષ":"s",
-      "સ":"s","હ":"h"}
-
-def skel_gu(t):
-    return "".join(_M.get(c, "") for c in t)
-
-def skel_en(t):
-    t = re.sub(r"[^a-z]", "", t.lower())
-    for a_, b_ in (("chh", "c"), ("ch", "c"), ("kh", "k"), ("gh", "g"), ("th", "t"),
-                   ("dh", "d"), ("ph", "p"), ("bh", "b"), ("sh", "s"), ("w", "v"),
-                   ("gn", "n"), ("jn", "n")):
-        t = t.replace(a_, b_)
-    return re.sub(r"[aeiou]", "", t)
-
-def se_prefix(label_skel, target_skel):
-    """the chip label starts with the composition name, so compare like-for-like"""
-    return label_skel[:max(len(target_skel), 3)]
-
-def consonant_overlap(a, b):
-    """Order-independent consonant agreement. Calibrated on the real corpus:
-    correct title/transliteration pairs score >=0.60, a swapped pair 0.27."""
-    from collections import Counter
-    ca, cb = Counter(a), Counter(b)
-    return sum((ca & cb).values()) / max(1, max(len(a), len(b)))
-
 # Correspondence is checked by SIZE CORRELATION rather than by transliteration
 # similarity: a fuzzy script comparison produced false positives on legitimate
 # conjuncts (જ્ઞાનીજી -> "Gnaniji", સોરંગી -> "Sorangi"). If two translations are
@@ -255,7 +287,7 @@ for fchip in books_meta.get("featured", []):
        consonant_overlap(g, se_prefix(e, g)) < 0.6:
         fails.append(f"featured chip '{fchip['label_en']}' does not point at '{title}'")
 
-# 15. Published set must match the integrity manifest written at publish time
+# 13. Published set must match the integrity manifest written at publish time
 #     (detects a corpus left mixed by a crash between file renames)
 intg = BASE / "tools" / "integrity.json"
 if os.environ.get("CONTENT_DIR"):
@@ -271,10 +303,22 @@ else:
         elif _h.sha256(f.read_bytes()).hexdigest()[:16] != want:
             fails.append(f"integrity: {name} does not match the manifest "
                          f"(partial publish or out-of-band edit)")
+    # the manifest is a whitelist, not just a checksum list: a file added to
+    # app/content that no manifest entry names would otherwise ship unexamined
+    named = set(json.loads(intg.read_text(encoding="utf-8")))
+    for f in APP.rglob("*.json"):
+        rel = f.relative_to(APP).as_posix()
+        if rel not in named:
+            fails.append(f"integrity: {rel} is published but not in the manifest")
 
 if fails:
     print(f"INVARIANTS FAILED ({len(fails)}):")
     for f in fails:
         print("  ", f)
     sys.exit(1)
-print("INVARIANTS OK — 15 checks across 6 books")
+# the banner counts the check blocks that actually RAN: the manifest check is
+# skipped on a staged tree, and claiming 15 when 12 ran is the kind of quiet
+# over-report these gates exist to prevent
+_ran = 13 - (1 if os.environ.get("CONTENT_DIR") else 0)
+print(f"INVARIANTS OK — {_ran} checks across 6 books"
+      + ("  (staged: manifest checked post-publish)" if os.environ.get("CONTENT_DIR") else ""))

@@ -78,6 +78,33 @@ if errors or missing:
     sys.exit(1)
 PROV = BASE / "tools/provenance.json"
 prov = json.loads(PROV.read_text(encoding="utf-8")) if PROV.exists() else {}
+
+# src_sig is the ONLY check that ties a translation to the exact source text it
+# was made from. Recomputing it from whatever is in app/content today, and then
+# overwriting provenance.json with fresh fingerprints, destroys that tie and the
+# evidence needed to re-establish it — so a source section that changed after it
+# was translated would silently look correct again. Re-stamping is the job of
+# restamp_provenance.py, which only does it for a proven pure reorder.
+drifted = []
+for book, data in payloads.items():
+    base = json.loads((APP / f"{book}.json").read_text(encoding="utf-8"))
+    for i, sec in enumerate(json.loads(data)["sections"]):
+        rec = prov.get(book, {}).get(str(i))
+        if not sec or not rec:
+            continue                      # never translated before: nothing to drift from
+        src_txt = "\n".join(x["text"] for x in base["sections"][i]["blocks"])
+        lines = [re.sub(r"\s+", "", l) for l in src_txt.split("\n") if l.strip()]
+        now = hashlib.sha1("\n".join(sorted(lines)).encode("utf-8")).hexdigest()[:12]
+        if rec.get("src_lines") != now:
+            drifted.append(f"{book} #{i} '{base['sections'][i]['title'][:26]}'")
+if drifted:
+    print(f"SOURCE DRIFT ({len(drifted)}) — these sections changed since they were "
+          f"translated, so a fresh signature would hide the change:")
+    for d in drifted[:20]: print("  ", d)
+    print("Re-translate them, or run tools/restamp_provenance.py --apply if the "
+          "change is a pure reorder. NOTHING WRITTEN.")
+    sys.exit(1)
+
 for book, data in payloads.items():
     (OUT / f"{book}.json").write_text(data, encoding="utf-8")
     base = json.loads((APP / f"{book}.json").read_text(encoding="utf-8"))
@@ -92,5 +119,16 @@ for book, data in payloads.items():
             "src_order": lines,
         }
 PROV.write_text(json.dumps(prov, ensure_ascii=False), encoding="utf-8")
+# the integrity manifest covers app/content/**.json, including the English
+# editions the builder never writes. Refreshing OUR entries here keeps the
+# documented translation workflow from turning CI red and training someone
+# into regenerating the whole manifest by hand.
+MAN = BASE / "tools/integrity.json"
+if MAN.exists():
+    man = json.loads(MAN.read_text(encoding="utf-8"))
+    for book in payloads:
+        rel = f"en/{book}.json"
+        man[rel] = hashlib.sha256((OUT / f"{book}.json").read_bytes()).hexdigest()[:16]
+    MAN.write_text(json.dumps(man, indent=1), encoding="utf-8")
 print(f"wrote {len(payloads)} English editions")
 sys.exit(0)

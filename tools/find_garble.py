@@ -134,7 +134,15 @@ for b in BOOKS:
                          'latin': h['latin'][:8], 'indic': h['indic'][:4]})
 
 rows.sort(key=lambda r: -r['n'])
-json.dump(rows, open(str(BASE / "tools/garble_report.json"), 'w'), ensure_ascii=False, indent=1)
+# a gate must not write into the repo it is judging: when this runs against a
+# STAGED tree the report belongs beside that tree, and on a read-only checkout
+# an unwritable path must not turn a passing scan into a failure
+_rep = Path(os.environ["CONTENT_DIR"]) / "garble_report.json" if os.environ.get("CONTENT_DIR") \
+       else BASE / "tools/garble_report.json"
+try:
+    _rep.write_text(json.dumps(rows, ensure_ascii=False, indent=1), encoding='utf-8')
+except OSError as e:
+    print(f"(report not written: {e})")
 by_book = {}
 for r in rows:
     by_book.setdefault(r['book'], [0, 0])

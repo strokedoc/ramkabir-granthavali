@@ -442,6 +442,26 @@ for g in gates:
         shutil.rmtree(STAGE, ignore_errors=True)
         sys.exit(1)
 
+# --verify: prove the SHIPPED corpus is what this builder produces from the
+# committed sources, without touching it. CI runs its gates against whatever
+# JSON happens to be committed; without this, a hand-edited app/content that
+# still satisfies the structural checks deploys unnoticed.
+if "--verify" in sys.argv:
+    bad = []
+    for name, data in PENDING.items():
+        cur = (OUT / name).read_bytes() if (OUT / name).exists() else b""
+        if cur != data.encode("utf-8"):
+            bad.append(name)
+    shutil.rmtree(STAGE, ignore_errors=True)
+    if bad:
+        print("CONTENT NOT REPRODUCIBLE — these files differ from a fresh build "
+              "of extraction/: " + ", ".join(bad))
+        print("Either they were edited by hand, or the sources changed without "
+              "a rebuild. Run tools/build_content.py and review the diff.")
+        sys.exit(1)
+    print(f"content verified — all {len(PENDING)} files reproduce byte-for-byte")
+    sys.exit(0)
+
 backup = {n: (OUT / n).read_bytes() for n in PENDING if (OUT / n).exists()}
 added = [n for n in PENDING if not (OUT / n).exists()]
 try:
