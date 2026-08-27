@@ -1,11 +1,11 @@
 /* Service worker: offline-first gutka.
    Whole library precached so every book reads offline from first install. */
-const VERSION = "v37";
+const VERSION = "v38";
 const PREFIX = "rkg-";
 const SHELL = [
-  "./", "index.html", "styles.css?v=37", "app.js?v=37", "manifest.json", "icons/icon.svg",
+  "./", "index.html", "styles.css?v=38", "app.js?v=38", "manifest.json", "icons/icon.svg",
   "icons/icon-192.png", "icons/icon-512.png",
-  "fonts/fonts.css?v=37",
+  "fonts/fonts.css?v=38",
   "fonts/dev0b591f69.woff2",
   "fonts/dev58a44ba7.woff2",
   "fonts/dev704492c5.woff2",
@@ -43,9 +43,11 @@ const CURRENT = [PREFIX + "shell-" + VERSION, PREFIX + "runtime-" + VERSION];
 // answered every request from them — pinning existing readers to a build from
 // before the prefix existed, with no way to ever receive an update.
 async function isOurs(name) {
-  const c = await caches.open(name);
-  const keys = await c.keys();
-  return keys.length > 0 && keys.every(r => r.url.startsWith(self.registration.scope));
+  const keys = await caches.open(name).then(c => c.keys());
+  // judged on SAME-ORIGIN entries only: an old build also cached Google Fonts,
+  // and requiring every entry to be in scope let that cache survive forever
+  const own = keys.filter(r => new URL(r.url).origin === location.origin);
+  return own.length > 0 && own.every(r => r.url.startsWith(self.registration.scope));
 }
 
 self.addEventListener("activate", e => {
