@@ -380,6 +380,11 @@ if WARNINGS or EMPTY:
         print(f"BUILD FAILED — sections with no body text: {EMPTY}")
     print("no files written; previous content left intact")
     sys.exit(1)
+# structural invariants run against the FINAL payloads before anything is
+# written — a regression fails the build instead of reaching readers
+import subprocess, tempfile as _tf
+with _tf.TemporaryDirectory() as _d:
+    pass
 for name, data in PENDING.items():
     # write-then-rename: a crash mid-loop can never leave a truncated or
     # half-written content file behind
@@ -388,3 +393,9 @@ for name, data in PENDING.items():
         fh.write(data)
     os.replace(tmp, OUT / name)
 print(f"wrote {len(PENDING)} content files")
+_inv = subprocess.run([sys.executable, str(BASE / "tools" / "invariants.py")],
+                      capture_output=True, text=True)
+print(_inv.stdout.strip())
+if _inv.returncode != 0:
+    print("BUILD FAILED — structural invariants violated")
+    sys.exit(1)
