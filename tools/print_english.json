@@ -669,52 +669,5 @@
    }
   ]
  },
- "jivandas-sakhi": {
-  "16": [
-   {
-    "t": "ApD",
-    "n": 1
-   },
-   {
-    "t": "Apple",
-    "n": 1
-   },
-   {
-    "t": "Phone",
-    "n": 1
-   },
-   {
-    "t": "f",
-    "n": 1
-   },
-   {
-    "t": "google",
-    "n": 1
-   },
-   {
-    "t": "i",
-    "n": 1
-   },
-   {
-    "t": "online",
-    "n": 1
-   },
-   {
-    "t": "play",
-    "n": 1
-   },
-   {
-    "t": "stor",
-    "n": 1
-   },
-   {
-    "t": "www.ramkabir.guru",
-    "n": 1
-   },
-   {
-    "t": "www.ramkabir.org",
-    "n": 1
-   }
-  ]
- }
+ "jivandas-sakhi": {}
 }

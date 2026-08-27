@@ -199,6 +199,13 @@ function loadEn(id) {
   return enCache[id];
 }
 function enSec(en, idx) { return (en && en.sections && en.sections[idx]) || null; }
+/* predominantly-Devanagari text needs the Devanagari face first, otherwise the
+   Gujarati subset claims its dandas (। ॥) and the punctuation mismatches */
+function devClass(text) {
+  const d = (text.match(/[\u0900-\u094f\u0958-\u097f]/g) || []).length;
+  const g = (text.match(/[\u0a80-\u0aff]/g) || []).length;
+  return d > g ? " dev" : "";
+}
 function secTitle(book, en, idx) {
   const s = book.sections[idx];
   if (lang !== "en") return s.title;
@@ -290,7 +297,12 @@ $("#back-btn").addEventListener("click", () => {
   else location.hash = "#/";
 });
 
-function setTitle(t) { $("#topbar-text").textContent = t; }
+function setTitle(text) {
+  $("#topbar-text").textContent = text;
+  // announce the destination to assistive tech and reset the reading position
+  document.title = text === t("appTitle") ? text : `${text} · ${t("appTitle")}`;
+  view.focus({ preventScroll: true });
+}
 function escapeHtml(s) {
   return s.replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
 }
@@ -425,9 +437,7 @@ async function renderReader(bookId, idx, tok) {
       if (blk.page && blk.page !== lastPage) { body += `<div class="pageref">${blk.page}</div>`; lastPage = blk.page; }
       // a predominantly Devanagari block gets the Devanagari face first, so
       // its dandas (। ॥) match the verse rather than borrowing the Gujarati cut
-      const dev = (blk.text.match(/[\u0900-\u094f\u0958-\u097f]/g) || []).length >
-                  (blk.text.match(/[\u0a80-\u0aff]/g) || []).length;
-      const cls = (blk.sub ? "subhead" : "block") + (dev ? " dev" : "");
+      const cls = (blk.sub ? "subhead" : "block") + devClass(blk.text);
       body += `<div class="${cls}">${escapeHtml(blk.text)}</div>`;
     }
   }
@@ -508,7 +518,7 @@ async function renderStory(tok) {
     <div class="section-head"><div class="deco">${lang === "en" ? "|| ✦ ||" : "॥ ✦ ॥"}</div>
     <h2>${escapeHtml(lang === "en" ? s.title_en : s.title_gu)}</h2></div>`;
   for (const p of body) html += `<p class="story-p">${escapeHtml(p)}</p>`;
-  html += `<div class="unit-verse">${escapeHtml(verse)}</div>
+  html += `<div class="unit-verse${devClass(verse)}">${escapeHtml(verse)}</div>
     <p class="story-p muted">${escapeHtml(lang === "en" ? s.anchor_meaning_en : (s.anchor_meaning_gu || s.anchor_meaning_en))}</p>
     <div class="src-link"><a href="#/book/${s.anchor_source.book}/${s.anchor_source.section}">${escapeHtml(t("readInBook"))} ${escapeHtml(pageLabel(s.anchor_source))}</a></div>
     <p class="caveat">${escapeHtml(lang === "en" ? s.caveat_en : (s.caveat_gu || s.caveat_en))}</p></article>`;
@@ -560,7 +570,7 @@ async function renderUnit(ti, ui, tok) {
     <div class="section-head"><div class="deco">${lang === "en" ? "|| ✦ ||" : "॥ ✦ ॥"}</div>
       <h2>${escapeHtml(uTitle(u))}</h2>
       ${lang === "en" ? `<div class="sub-en">${escapeHtml(u.title_translit || "")}</div>` : ""}</div>
-    <div class="unit-verse">${escapeHtml(verse)}</div>
+    <div class="unit-verse${devClass(verse)}">${escapeHtml(verse)}</div>
     ${translitLine}
     <div class="src-link"><a href="#/book/${src.book}/${src.section}">${escapeHtml(t("readInBook"))} ${escapeHtml(pageLabel(src))}</a>${alt}</div>
     <h4 class="saar-h">${escapeHtml(t("gloss"))}</h4><div class="gloss">${gloss}</div>

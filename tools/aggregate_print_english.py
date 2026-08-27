@@ -50,14 +50,27 @@ for d in sorted(EXT.glob('*/print_english')):
             # so a repeated OCR artifact can never hide behind a real word
             entry = []
             for tk in sorted(set(ok)):
+                # count BOUNDARY occurrences; an approval that never appears as
+                # a standalone token is a worker error, not a licence
                 n = len(re.findall(r'(?<![A-Za-z])' + re.escape(tk) + r'(?![A-Za-z])', page_txt))
-                entry.append({"t": tk, "n": max(n, 1)})
-            per[pg] = entry
+                if n == 0:
+                    rejected.append(f'{book} p{pg}: {tk!r} has no standalone occurrence')
+                    continue
+                entry.append({"t": tk, "n": n})
+            if entry:
+                per[pg] = entry
     if per:
         out[book] = per
+# an aliased book shares its source scan but renders only part of it: copy just
+# the pages it actually contains, so approvals land on the right namespace
+ALIAS_PAGES = {'jivandas-sakhi': range(177, 366)}
 for alias, src in BOOK_SRC.items():
     if src in out:
-        out[alias] = out[src]
+        rng = ALIAS_PAGES.get(alias)
+        out[alias] = {p: v for p, v in out[src].items()
+                      if rng is None or int(p) in rng}
+        if rng is not None:
+            out[src] = {p: v for p, v in out[src].items() if int(p) not in rng}
 Path('/Users/harsh/RamKabir/tools/print_english.json').write_text(
     json.dumps(out, ensure_ascii=False, indent=1), encoding='utf-8')
 print({b: len(v) for b, v in out.items()}, '->', sum(len(v) for v in out.values()), 'pages whitelisted')

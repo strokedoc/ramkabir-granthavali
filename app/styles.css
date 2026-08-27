@@ -165,7 +165,7 @@ body {
 .reader .section-head h2 { color: var(--maroon); font-size: 1.25em; font-weight: 700; }
 .reader .section-head .deco { color: var(--gold); letter-spacing: 0.4em; font-size: 0.85em; }
 .reader .block { white-space: pre-wrap; margin-bottom: 1.15em; overflow-wrap: break-word; }
-.reader .block.dev, .reader .subhead.dev {
+.reader .block.dev, .reader .subhead.dev, .unit-verse.dev {
   font-family: "Noto Serif Devanagari", "Noto Serif Gujarati", serif;
 }
 .reader .subhead {

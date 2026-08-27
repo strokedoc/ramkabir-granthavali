@@ -91,12 +91,15 @@ def split_page(text, sp):
                 if best_score is None or score < best_score:   # earliest on tie
                     best, best_score = i, score
         return best
+    matched_heading = False
     k = find(_norm_line(sp[mode]))
     if k is None and "replace" in sp:
+        matched_heading = True
         # a repair may have rewritten the garbled needle line into clean text —
         # which is exactly what "replace" holds; that is the precise target
         k = find(_norm_line(sp["replace"].split("\n")[0]))
     if k is None and sp.get("fallback_title"):
+        matched_heading = True
         # last resort, and never at line 0: a title matching the page's FIRST
         # line means we found the heading of a section that owns the page top,
         # not the boundary we were looking for
@@ -105,7 +108,9 @@ def split_page(text, sp):
             k = kk
     if k is None:
         return None, None
-    cut = k if mode == "before" else k + 1
+    # an "after" needle points at the line BEFORE the heading; but when we fell
+    # back to the heading text itself, k already IS the heading line
+    cut = k if (mode == "before" or matched_heading) else k + 1
     head = "\n".join(lines[:cut]).rstrip()
     tail_lines = lines[cut:]
     extras = [_norm_line(x) for x in sp.get("extra_heading_lines", [])]
@@ -209,6 +214,11 @@ def build_gujarati(book):
             parts = page_parts(pg)
             if parts is None:
                 t = page_text(src, pg).strip()
+            elif pg == s["start_page"] and si == 0 and starters[pg][0] == 0 \
+                    and len(parts) - 1 == len(starters[pg]):
+                # nothing precedes the first section, so the page's opening
+                # part (e.g. the ।। रामकबीर ।। invocation) belongs to it
+                t = "\n".join(x for x in (parts[0], parts[1]) if x.strip())
             elif pg == s["start_page"]:
                 # k splits, m starters: k==m → part 0 belongs to the section
                 # arriving from the previous page; k==m-1 → the first starter
@@ -316,7 +326,8 @@ def build_english(book):
                 continue
             cur.append(ln)
         flush()
-        sections.append({"title": s["title"].strip(), "page_start": None, "blocks": blocks})
+        first_pg = next((b["page"] for b in blocks if b.get("page")), None)
+        sections.append({"title": s["title"].strip(), "page_start": first_pg, "blocks": blocks})
     return dict(book, pages=143, sections=sections)
 
 manifest = []
