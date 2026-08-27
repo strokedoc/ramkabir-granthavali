@@ -47,14 +47,22 @@ chrome = re.sub(r'(content|placeholder)="[^"]*"', "", chrome)
 # actually in its table rather than silently stripping them from the scan
 js = Path("/Users/harsh/RamKabir/app/app.js").read_text(encoding="utf-8")
 aria_ids = set(re.findall(r'"#([\w-]+)":\s*"a11y', js))
-for m in re.finditer(r'id="([\w-]+)"[^>]*aria-label="([^"]*)"', html):
-    if NAT.search(m.group(2)) and m.group(1) not in aria_ids:
-        fails.append(f"aria-label on #{m.group(1)} is Indic and never localized by applyLang()")
+# attribute order and quote style must not matter
+for tag in re.finditer(r"<[^>]*\baria-label\s*=\s*['\"]([^'\"]*)['\"][^>]*>", html):
+    if not NAT.search(tag.group(1)):
+        continue
+    idm = re.search(r"\bid\s*=\s*['\"]([\w-]+)['\"]", tag.group(0))
+    if not idm or idm.group(1) not in aria_ids:
+        fails.append(f"Indic aria-label not localized by applyLang(): {tag.group(0)[:70]}")
 chrome = re.sub(r'aria-label="[^"]*"', "", chrome)
 # data-i18n is only legitimate where applyLang() rewrites it (ornaments, nav)
+# data-i18n is legitimate ONLY on the ornaments and the bottom-nav labels,
+# which are exactly what applyLang() rewrites — checked structurally
 for m in re.finditer(r"<(\w+)([^>]*\bdata-i18n\b[^>]*)>", html):
-    attrs = m.group(2)
-    if "ornament" not in attrs and "nav" not in html[max(0, m.start()-120):m.start()]:
+    attrs, before = m.group(2), html[:m.start()]
+    is_ornament = re.search(r"class\s*=\s*['\"][^'\"]*\bornament\b", attrs)
+    inside_nav = before.rfind("<nav") > before.rfind("</nav>")
+    if not (is_ornament or inside_nav):
         fails.append(f"data-i18n on <{m.group(1)}> is outside applyLang()'s reach")
 chrome = re.sub(r"<h1[^>]*>.*?</h1>", "", chrome, flags=re.S)
 # elements marked data-i18n are language defaults that applyLang() rewrites

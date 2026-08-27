@@ -1,10 +1,14 @@
 /* Service worker: offline-first gutka.
    Whole library precached so every book reads offline from first install. */
-const VERSION = "v13";
+const VERSION = "v14";
 const PREFIX = "rkg-";
 const SHELL = [
-  "./", "index.html", "styles.css?v=13", "app.js?v=13", "manifest.json", "icons/icon.svg",
-  "fonts/fonts.css?v=13",
+  "./", "index.html", "styles.css?v=14", "app.js?v=14", "manifest.json", "icons/icon.svg",
+  "icons/icon-192.png", "icons/icon-512.png",
+  "fonts/fonts.css?v=14",
+  "fonts/dev0b591f69.woff2",
+  "fonts/dev58a44ba7.woff2",
+  "fonts/dev704492c5.woff2",
   "fonts/1fba8b406f.woff2",
   "fonts/62135b8fb7.woff2",
   "fonts/63f1654d1e.woff2",
@@ -42,14 +46,15 @@ self.addEventListener("activate", e => {
 self.addEventListener("fetch", e => {
   const url = new URL(e.request.url);
   if (e.request.method !== "GET") return;
-  const runtime = false;   // everything is self-hosted and precached
   e.respondWith(
     caches.match(e.request).then(hit => {
       if (hit) return hit;
       return fetch(e.request).then(resp => {
-        if (resp.ok || resp.type === "opaque") {
+        // anything not precached is a genuine runtime miss: keep it in its own
+        // bucket so it can never masquerade as a verified shell asset
+        if (resp.ok && url.origin === location.origin) {
           const copy = resp.clone();
-          caches.open(PREFIX + (runtime ? "runtime-" : "shell-") + VERSION).then(c => c.put(e.request, copy));
+          caches.open(PREFIX + "runtime-" + VERSION).then(c => c.put(e.request, copy));
         }
         return resp;
       }).catch(() => caches.match("index.html"));

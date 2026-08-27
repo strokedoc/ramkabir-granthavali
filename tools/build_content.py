@@ -113,12 +113,32 @@ def split_page(text, sp):
         tail_lines = [ln for ln in tail_lines if _norm_line(ln) not in extras]
     head, tail = head, "\n".join(tail_lines).strip()
     if "replace" in sp and tail:
+        # The repair pass may already have corrected this heading in the page
+        # text. Re-inserting it then DUPLICATES the heading inside the body, so
+        # drop any leading tail lines that the replacement already provides.
+        rep_lines = sp["replace"].split("\n")
+        rep_norm = {_norm_line(x) for x in rep_lines if _norm_line(x)}
+        tl = tail.split("\n")
         if mode == "before":
-            tl = tail.split("\n")
-            tl[0] = sp["replace"]
-            tail = "\n".join(tl)
-        else:
-            tail = sp["replace"] + "\n" + tail
+            tl = tl[1:]                      # the matched heading line itself
+        # scan the opening lines (past blanks and decorative separators like
+        # "=====00000=====") and drop any that the replacement already supplies
+        checked = 0
+        i = 0
+        while i < len(tl) and checked < 5:
+            n = _norm_line(tl[i])
+            if not n:                        # blank
+                i += 1
+                continue
+            if n in rep_norm:
+                tl.pop(i)
+                continue
+            if not re.search(r"[઀-૿ऀ-ॿ]", tl[i]):   # separator/ornament line
+                i += 1
+                continue
+            checked += 1
+            i += 1
+        tail = "\n".join(rep_lines + [""] + tl).strip()
     return head, tail
 
 def build_gujarati(book):

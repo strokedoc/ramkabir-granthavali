@@ -34,7 +34,7 @@
 html { -webkit-text-size-adjust: 100%; }
 
 body {
-  font-family: "Noto Serif Gujarati", "Fraunces", serif;
+  font-family: "Noto Serif Gujarati", "Noto Serif Devanagari", "Fraunces", serif;
   background: var(--paper);
   background-image: radial-gradient(ellipse 120% 60% at 50% -10%, var(--paper-deep), transparent 60%);
   color: var(--ink);
@@ -253,10 +253,10 @@ body {
 .gloss { display: flex; flex-direction: column; gap: 0.35em; }
 .gloss-item { display: flex; gap: 0.8em; align-items: baseline; font-size: 0.9em; }
 .g-word { color: var(--maroon); font-weight: 600; min-width: 6.5em; }
-.g-mean { color: var(--ink-soft); font-family: "Fraunces", "Noto Serif Gujarati", serif; font-size: 0.88em; }
-.story-p { font-family: "Fraunces", "Noto Serif Gujarati", serif; font-size: 0.88em; line-height: 1.75; margin-bottom: 0.9em; }
+.g-mean { color: var(--ink-soft); font-family: "Fraunces", "Noto Serif Gujarati", "Noto Serif Devanagari", serif; font-size: 0.88em; }
+.story-p { font-family: "Fraunces", "Noto Serif Gujarati", "Noto Serif Devanagari", serif; font-size: 0.88em; line-height: 1.75; margin-bottom: 0.9em; }
 .story-p.muted { color: var(--ink-soft); font-style: italic; }
-.theme-intro { font-family: "Fraunces", "Noto Serif Gujarati", serif; color: var(--ink-soft); font-size: 0.95rem; padding: 0.4rem 0.2rem 1rem; line-height: 1.7; }
+.theme-intro { font-family: "Fraunces", "Noto Serif Gujarati", "Noto Serif Devanagari", serif; color: var(--ink-soft); font-size: 0.95rem; padding: 0.4rem 0.2rem 1rem; line-height: 1.7; }
 .reflect {
   background: var(--mark-bg); border-left: 3px solid var(--saffron);
   border-radius: 0 0.5rem 0.5rem 0;

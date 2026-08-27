@@ -77,11 +77,18 @@ for b in BOOKS:
             # phrase removal is BOUNDARY-AWARE: an approved URL glued to a
             # stray letter ("www.ramkabir.guruX") must not be erased
             scan = t
-            for ph in sorted(phrases, key=len, reverse=True):
+            # budgeted phrases (M.A., infor-) are removed only as many times as
+            # the verified page actually contains them
+            for ph in sorted([x for x in phrases if x in budget], key=len, reverse=True):
+                scan = re.sub(r'(?<![A-Za-z઀-૿ऀ-ॿ])' + re.escape(ph) + r'(?![A-Za-z઀-૿ऀ-ॿ])',
+                              ' ', scan, count=budget[ph])
+            for ph in sorted([x for x in phrases if x not in budget], key=len, reverse=True):
                 scan = re.sub(r'(?<![A-Za-z઀-૿ऀ-ॿ])' + re.escape(ph) + r'(?![A-Za-z઀-૿ऀ-ॿ])',
                               ' ', scan)
+            seen_word = {}
             for w in LAT.findall(scan):
-                if w not in words:
+                seen_word[w] = seen_word.get(w, 0) + 1
+                if w not in words or (w in budget and seen_word[w] > budget[w]):
                     hits['latin'].append(w)
             # a lone Latin letter left in Indic text is a transcription artifact
             seen_short = {}
