@@ -302,17 +302,24 @@ body {
    the column count comes from available width, and dvh keeps the page inside
    mobile browser chrome. */
 /* the reader is the one view allowed a two-page spread on wide screens */
-#view.reading { max-width: 76rem; }
+/* the reader is the one view allowed a two-page spread on wide screens; its
+   bottom padding is dropped because the pager is sized to the space that is
+   actually left, and the padding would push the page back off-screen */
+#view.reading { max-width: 76rem; padding-bottom: 0; }
 .pager {
   position: relative;
   margin-inline: auto;
-  height: calc(100dvh - 7.6rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  /* first-paint estimate only — setupPager() measures the real height against
+     the bottom nav and overwrites this before the reader is shown */
+  height: calc(100dvh - 9.9rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   overflow: hidden;
   outline: none;
   touch-action: pan-y;
 }
 .pages {
-  columns: 1;
+  /* column-count and column-width are BOTH set inline by measure(). A
+     `columns: 1` here pinned the used count to 1, so the two-page spread
+     silently rendered as one 1148px line instead. */
   column-fill: auto;
   transition: transform 0.28s cubic-bezier(0.22, 0.7, 0.25, 1);
   will-change: transform;

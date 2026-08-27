@@ -1,11 +1,11 @@
 /* Service worker: offline-first gutka.
    Whole library precached so every book reads offline from first install. */
-const VERSION = "v38";
+const VERSION = "v39";
 const PREFIX = "rkg-";
 const SHELL = [
-  "./", "index.html", "styles.css?v=38", "app.js?v=38", "manifest.json", "icons/icon.svg",
+  "./", "index.html", "styles.css?v=39", "app.js?v=39", "manifest.json", "icons/icon.svg",
   "icons/icon-192.png", "icons/icon-512.png",
-  "fonts/fonts.css?v=38",
+  "fonts/fonts.css?v=39",
   "fonts/dev0b591f69.woff2",
   "fonts/dev58a44ba7.woff2",
   "fonts/dev704492c5.woff2",

@@ -284,8 +284,11 @@ function persistScroll() {
   try {
     sessionStorage.setItem("scrollPos", JSON.stringify(scrollPositions));
   } catch {
-    // quota exhausted: drop history rather than silently stop persisting
-    for (const k of Object.keys(scrollPositions).slice(0, keys.length - 5)) delete scrollPositions[k];
+    // quota exhausted: drop the oldest half rather than silently stop
+    // persisting — never the current destination, which is what the caller
+    // is trying to save
+    const victims = Object.keys(scrollPositions).filter(k => k !== keep && k !== keepPg);
+    for (const k of victims.slice(0, Math.ceil(victims.length / 2))) delete scrollPositions[k];
     try { sessionStorage.setItem("scrollPos", JSON.stringify(scrollPositions)); } catch {}
   }
 }
@@ -341,7 +344,6 @@ function restoreScroll() {
 addEventListener("hashchange", () => {
   // record where we LEFT, keyed by the hash we are leaving — sampling during
   // navigation would stamp the old position onto the new destination
-  delete scrollPositions[prevHash];
   if (prevKey) scrollPositions[prevKey] = scrollY;
   // NOT stamped into history.state here: by hashchange time the new entry is
   // already current, so this would write the position we are LEAVING onto the
@@ -377,7 +379,8 @@ async function route() {
     parts.length = 3;
     // drop the segment so the toggle is not locked and Back is not re-pinned
     const clean = "#/" + parts.join("/");
-    history.replaceState({ lang, eid: entryId }, "", location.pathname + location.search + clean);
+    history.replaceState({ ...(history.state || {}), lang, eid: entryId }, "",
+      location.pathname + location.search + clean);
     prevHash = clean; prevKey = scrollKey();
   } else if (history.state && history.state.lang && history.state.lang !== lang) {
     // Back/Forward returns to an entry that was viewed in the other language
@@ -526,8 +529,9 @@ async function renderReader(bookId, idx, tok) {
     // replaceState, not a hash assignment: pushing a new entry would let Back
     // return to the hidden volume and bounce forward again forever
     const target = back ? `#/book/${back.book}/${back.section}` : "#/";
-    history.replaceState({ lang }, "", location.pathname + location.search + target);
-    prevHash = target;
+    history.replaceState({ ...(history.state || {}), lang, eid: entryId }, "",
+      location.pathname + location.search + target);
+    prevHash = target; prevKey = scrollKey();
     return route();
   }
   const en = lang === "en" ? await loadEn(bookId) : null;
@@ -703,14 +707,12 @@ async function renderUnit(ti, ui, tok) {
   const prev = ui > 0 ? `<a href="#/saar/${ti}/${ui - 1}">‹ ${escapeHtml(uTitle(th.units[ui - 1]))}</a>` : "<span></span>";
   const next = ui < th.units.length - 1 ? `<a href="#/saar/${ti}/${ui + 1}">${escapeHtml(uTitle(th.units[ui + 1]))} ›</a>` : "<span></span>";
   const verse = lang === "en" ? u.verse_translit : u.verse_gu;
-  const translitLine = lang === "en" ? "" : "";
   if (stale(tok)) return;
   view.innerHTML = `<article class="reader saar-unit reveal">
     <div class="section-head"><div class="deco">${lang === "en" ? "|| ✦ ||" : "॥ ✦ ॥"}</div>
       <h2>${escapeHtml(uTitle(u))}</h2>
       ${lang === "en" ? `<div class="sub-en">${escapeHtml(u.title_translit || "")}</div>` : ""}</div>
     <div class="unit-verse${devClass(verse)}">${escapeHtml(verse)}</div>
-    ${translitLine}
     <div class="src-link"><a href="#/book/${src.book}/${src.section}">${escapeHtml(t("readInBook"))} ${escapeHtml(pageLabel(src))}</a>${alt}</div>
     <h4 class="saar-h">${escapeHtml(t("gloss"))}</h4><div class="gloss">${gloss}</div>
     <h4 class="saar-h">${escapeHtml(t("meaning"))}</h4><p class="story-p">${escapeHtml(uf(u, "meaning"))}</p>
@@ -735,7 +737,7 @@ function setupPager(bookId, idx, book, tok) {
   if (!pager || !track) return;
 
   const FOOT = 26, GAP = 32;
-  let lastW = 0;
+  let lastW = "";
   const measure = () => {
     // one column per ~29rem: phone = 1, iPad/unfolded = 2. The page itself is
     // capped so a single column never becomes an uncomfortably long line.
@@ -743,11 +745,19 @@ function setupPager(bookId, idx, book, tok) {
     const cols = Math.max(1, Math.min(2, Math.floor(avail / 460)));
     pager.style.maxWidth = (cols === 1 ? 680 : 1180) + "px";
     const w = track.clientWidth;
+    track.style.columnCount = cols;
     track.style.columnWidth = ((w - GAP * (cols - 1)) / cols) + "px";
     track.style.columnGap = GAP + "px";
-    // leave room for the page counter so the last line never sits under it
+    // The height is measured against the bottom nav rather than derived from a
+    // rem constant: the constant under-counted the chrome by 35px, so the page
+    // overflowed the viewport and one vertical flick hid the first line of
+    // every page behind the sticky topbar for the rest of the session.
+    const nav = document.querySelector("#bottomnav");
+    const navTop = nav ? nav.getBoundingClientRect().top : innerHeight;
+    const fits = navTop - pager.getBoundingClientRect().top - 4;
+    if (fits > 200) pager.style.height = fits + "px";
     track.style.height = Math.max(120, pager.clientHeight - FOOT) + "px";
-    lastW = w;
+    lastW = w + ":" + avail;
     const step = w + GAP;
     const total = Math.max(1, Math.ceil((track.scrollWidth + GAP) / step));
     return { step, total, cols };
@@ -773,7 +783,7 @@ function setupPager(bookId, idx, book, tok) {
   const go = (delta) => {
     // a resize delivered while the tab was hidden never reached the observer,
     // so the first interaction after it re-measures rather than jumping wrong
-    if (track.clientWidth !== lastW) relayout();
+    if (track.clientWidth + ":" + (pager.parentElement || pager).clientWidth !== lastW) relayout();
     const next = page + delta;
     if (next < 0 || next >= total) {
       // past either end, continue into the neighbouring section — like a book
