@@ -306,7 +306,28 @@ def build_english(book):
             if want and (want in here or here.endswith(want)):
                 seg = seg[i:]
                 break
-        # split into blocks on blank lines; track "(N)" page markers
+        # Page numbers: form feeds advance the page, an explicit "(N)" anchors
+        # it. A folio TRAILING a running header labels the page that header
+        # opens, so the text accumulated before it belongs to the previous page.
+        page_of = [None] * len(seg)
+        page = None
+        for i, raw in enumerate(seg):
+            ln = raw.replace("\x0c", " ")
+            pm = re.search(r"\((\d{1,3})\)", ln)
+            if "\x0c" in raw and page is not None and pm is None:
+                page += 1
+            if pm:
+                page = int(pm.group(1))
+            page_of[i] = page
+        # backfill the lines before the first anchor by counting pages backwards
+        first_known = next((i for i, p in enumerate(page_of) if p is not None), None)
+        if first_known is not None:
+            back = page_of[first_known]
+            for i in range(first_known - 1, -1, -1):
+                if "\x0c" in seg[i + 1]:
+                    back -= 1
+                page_of[i] = max(back, 1)
+
         blocks, cur, cur_page = [], [], None
         def flush():
             nonlocal cur
@@ -316,22 +337,17 @@ def build_english(book):
             if t.strip():
                 blocks.append({"page": cur_page, "text": t})
             cur = []
-        for raw in seg:
-            # form feeds are page breaks inside the line; the printed folio
-            # "(N)" may sit at either end of a running-header line
+        for i, raw in enumerate(seg):
             ln = raw.replace("\x0c", " ")
             pm = re.search(r"\((\d{1,3})\)", ln)
-            if pm and not re.search(r"[A-Za-z]{3,}", ln[:pm.start()]):
-                flush()
-                cur_page = int(pm.group(1))
-                ln = (ln[:pm.start()] + ln[pm.end():])
+            if pm and (not re.search(r"[A-Za-z]{3,}", ln[:pm.start()])
+                       or re.fullmatch(r"[\s\dIVX|]*", ln[pm.end():])):
+                flush()                      # close the page that just ended
+                ln = ln[:pm.start()] + ln[pm.end():]
                 if not ln.strip():
+                    cur_page = page_of[i]
                     continue
-            elif pm and re.fullmatch(r"[\s\dIVX|]*", ln[pm.end():]):
-                cur_page = int(pm.group(1))       # folio trailing a header line
-                ln = (ln[:pm.start()] + ln[pm.end():])
-                if not ln.strip():
-                    continue
+            cur_page = page_of[i]
             if not ln.strip():
                 if len(cur) > 12:
                     flush()

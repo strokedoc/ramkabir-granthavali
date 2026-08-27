@@ -113,6 +113,7 @@ $("#theme-btn").addEventListener("click", () => {
 if (systemDark() && !store.get("theme", null)) document.documentElement.setAttribute("data-theme", "dark");
 applyTheme();
 $("#lang-btn").addEventListener("click", () => {
+  rememberScroll();          // a language switch re-routes without a hashchange
   lang = lang === "gu" ? "en" : "gu";
   store.set("lang", lang);
   applyLang();
@@ -250,8 +251,17 @@ function todaysPearl(t) {
 // take over scroll restoration: the browser's automatic restore runs AFTER our
 // own and would re-apply the previous section's offset to a new destination
 if ("scrollRestoration" in history) history.scrollRestoration = "manual";
-const scrollPositions = {};
+const scrollPositions = (() => {
+  try { return JSON.parse(sessionStorage.getItem("scrollPos") || "{}"); }
+  catch { return {}; }
+})();
 let prevHash = location.hash;
+function rememberScroll() {
+  scrollPositions[location.hash] = scrollY;
+  try { sessionStorage.setItem("scrollPos", JSON.stringify(scrollPositions)); } catch {}
+}
+addEventListener("pagehide", rememberScroll);
+addEventListener("visibilitychange", () => { if (document.hidden) rememberScroll(); });
 function restoreScroll() {
   // Back/Forward returns to where the reader left off; a fresh destination
   // starts at the top
@@ -266,6 +276,7 @@ addEventListener("hashchange", () => {
   // record where we LEFT, keyed by the hash we are leaving — sampling during
   // navigation would stamp the old position onto the new destination
   scrollPositions[prevHash] = scrollY;
+  try { sessionStorage.setItem("scrollPos", JSON.stringify(scrollPositions)); } catch {}
   prevHash = location.hash;
   route();
 });
@@ -293,17 +304,20 @@ async function route() {
   $("#font-plus").hidden = $("#font-minus").hidden = !readerMode;
   $("#back-btn").hidden = parts.length === 0;
 
+  // one place guarantees the scroll reset for EVERY route, including the
+  // early-return paths inside individual renderers
+  const done = (p) => Promise.resolve(p).then(v => { if (!stale(tok)) restoreScroll(); return v; });
   try {
-    if (parts.length === 0) return renderLibrary(tok);
-    if (parts[0] === "search") return renderSearch(decodeURIComponent(parts[1] || ""), tok);
-    if (parts[0] === "bookmarks") return renderBookmarks(tok);
-    if (parts[0] === "saar" && parts[1] === "story") return renderStory(tok);
-    if (parts[0] === "saar" && parts.length === 3) return renderUnit(+parts[1], +parts[2], tok);
-    if (parts[0] === "saar" && parts.length === 2) return renderTheme(+parts[1], tok);
-    if (parts[0] === "saar") return renderSaar(tok);
-    if (parts[0] === "book" && parts.length === 2) return renderToc(parts[1], tok);
-    if (parts[0] === "book" && parts.length >= 3) return renderReader(parts[1], parseInt(parts[2], 10), tok);
-    renderLibrary(tok);
+    if (parts.length === 0) return done(renderLibrary(tok));
+    if (parts[0] === "search") return done(renderSearch(decodeURIComponent(parts[1] || ""), tok));
+    if (parts[0] === "bookmarks") return done(renderBookmarks(tok));
+    if (parts[0] === "saar" && parts[1] === "story") return done(renderStory(tok));
+    if (parts[0] === "saar" && parts.length === 3) return done(renderUnit(+parts[1], +parts[2], tok));
+    if (parts[0] === "saar" && parts.length === 2) return done(renderTheme(+parts[1], tok));
+    if (parts[0] === "saar") return done(renderSaar(tok));
+    if (parts[0] === "book" && parts.length === 2) return done(renderToc(parts[1], tok));
+    if (parts[0] === "book" && parts.length >= 3) return done(renderReader(parts[1], parseInt(parts[2], 10), tok));
+    done(renderLibrary(tok));
   } catch (err) {
     if (stale(tok)) return;
     view.innerHTML = `<div class="empty"><span class="glyph">✻</span>
@@ -633,6 +647,7 @@ async function renderBookmarks(tok) {
   }
   if (stale(tok)) return;
   view.innerHTML = html + `</div>`;
+  restoreScroll();
 }
 
 /* ---------------- search ---------------- */
@@ -680,9 +695,10 @@ async function renderSearch(initial, tok) {
         placeholder="${escapeHtml(t("searchPh"))}" value="${escapeHtml(initial)}">
     </div>
     <div class="search-hint">${escapeHtml(t("searchHint"))}</div>
-    <div id="results"></div>`;
+    <div id="results" role="status" aria-live="polite" aria-atomic="false"></div>`;
   const input = $("#search-input");
   input.addEventListener("input", () => {
+    searchGen++;            // any in-flight search is stale from this instant
     clearTimeout(searchTimer);
     searchTimer = setTimeout(() => {
       // mirror the query into the hash so a language switch or reload keeps it
