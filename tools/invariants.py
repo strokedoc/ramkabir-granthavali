@@ -7,6 +7,8 @@ Exit 1 on any violation."""
 
 import json, os, re, sys
 from pathlib import Path
+import sys as _sys; _sys.path.insert(0, str(Path(__file__).resolve().parent))
+from book_spec import BOOKS
 
 BASE = Path(__file__).resolve().parents[1]
 APP = Path(os.environ.get("CONTENT_DIR") or (BASE / "app" / "content"))
@@ -61,10 +63,16 @@ for b in GU_BOOKS:
 for b in GU_BOOKS:
     src = SRC.get(b, b)
     spec = json.loads((EXT / src / "sections.json").read_text(encoding="utf-8"))["sections"]
+    # an aliased volume renders only its slice of a shared scan
+    rng = next((x.get("idx_range") for x in BOOKS if x["id"] == b), None)
+    if rng:
+        spec = [x for x in spec if rng[0] <= x["idx"] <= rng[1]]
     j = load(b)
-    lo = min(x["page"] for s in j["sections"] for x in s["blocks"])
-    hi = max(x["page"] for s in j["sections"] for x in s["blocks"])
     seen = {x["page"] for s in j["sections"] for x in s["blocks"]}
+    # the range comes from sections.json, NOT from the pages that happened to
+    # render: deriving `hi` from the output cannot notice a dropped LAST page
+    lo = min(x["start_page"] for x in spec)
+    hi = max(x["end_page"] for x in spec)
     missing = [p for p in range(lo, hi + 1) if p not in seen]
     if missing:
         fails.append(f"{b}: pages never rendered: {missing[:6]}")
@@ -133,6 +141,10 @@ if ke_pages:
 for b in GU_BOOKS:
     src = SRC.get(b, b)
     spec = json.loads((EXT / src / "sections.json").read_text(encoding="utf-8"))["sections"]
+    # an aliased volume renders only its slice of a shared scan
+    rng = next((x.get("idx_range") for x in BOOKS if x["id"] == b), None)
+    if rng:
+        spec = [x for x in spec if rng[0] <= x["idx"] <= rng[1]]
     got = [s["title"] for s in load(b)["sections"]]
     if len(got) > 1 and len(spec) >= len(got):
         pages = [x["blocks"][0]["page"] for x in load(b)["sections"] if x["blocks"]]

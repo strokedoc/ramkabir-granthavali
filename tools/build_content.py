@@ -11,6 +11,7 @@ display blocks. Re-runnable; overwrites app/content."""
 
 import json, os, re, sys, tempfile
 from pathlib import Path
+import sys as _sys; _sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 BASE = Path(__file__).resolve().parents[1]
 EXT = BASE / "extraction"
@@ -20,16 +21,7 @@ WARNINGS = []  # fail-loud: split-needle misses abort the build
 EMPTY = []     # sections that rendered with no body text
 PENDING = {}   # nothing is written until the whole build is known good
 
-BOOKS = [
-    dict(id="samagam-purvardh",  title_gu="સમાગમ (પૂર્વાર્ધ)",  title_en="Samagam — Purvardh",  language="gu"),
-    dict(id="samagam-uttarardh", title_gu="સમાગમ (ઉત્તરાર્ધ)", title_en="Samagam — Uttarardh", language="gu"),
-    dict(id="kirtan-gujarati",   title_gu="શ્રી અધ્યારુજીનાં કીર્તન", title_en="Shree Padmanabhji Adhyaruji na Kirtan", language="gu",
-         idx_range=(1, 38)),
-    dict(id="jivandas-sakhi",    title_gu="વૈષ્ણવ જીવણદાસજીકી સાખી", title_en="Vaishnav Jivandasji ki Sakhi", language="gu",
-         src="kirtan-gujarati", idx_range=(39, 64)),
-    dict(id="kirtan-english",    title_gu="અધ્યારુજીનાં કીર્તન (અંગ્રેજી)", title_en="Adhyaruji na Kirtan — English transliteration", language="translit"),
-    dict(id="sant-darshan",      title_gu="સંત દર્શન",           title_en="Sant Darshan",        language="gu"),
-]
+from book_spec import BOOKS
 
 # Leading sections to collapse into one "front matter" TOC entry, per book.
 # (Purvardh: cover + 6 front-matter sections, several of which are the Kirtan

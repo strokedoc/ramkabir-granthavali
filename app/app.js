@@ -276,8 +276,10 @@ let prevHash = location.hash;
 let prevKey = null;                  // set once the first entry has an id
 const SCROLL_MAX = 40;      // bounded: search hashes carry arbitrary queries
 function persistScroll() {
-  const keep = scrollKey();          // the current destination is never evicted
-  const keys = Object.keys(scrollPositions).filter(k => k !== keep);
+  // the current destination is never evicted — both its scroll offset and its
+  // reader page, which are separate entries under the same key
+  const keep = scrollKey(), keepPg = "pg:" + keep;
+  const keys = Object.keys(scrollPositions).filter(k => k !== keep && k !== keepPg);
   for (const k of keys.slice(0, Math.max(0, keys.length - SCROLL_MAX))) delete scrollPositions[k];
   try {
     sessionStorage.setItem("scrollPos", JSON.stringify(scrollPositions));
@@ -311,6 +313,18 @@ function rememberScroll() {
   scrollPositions[k] = scrollY;
   persistScroll();
 }
+// history.state is the only store that survives sessionStorage being denied,
+// and an entry can only be written while it is current — by hashchange time
+// the destination has already replaced it. So the position is stamped as the
+// reader scrolls, throttled to keep replaceState off the scroll path.
+let stampTimer = 0;
+addEventListener("scroll", () => {
+  if (stampTimer) return;
+  stampTimer = setTimeout(() => {
+    stampTimer = 0;
+    try { history.replaceState({ ...(history.state || {}), y: scrollY }, "", location.href); } catch {}
+  }, 500);
+}, { passive: true });
 addEventListener("pagehide", rememberScroll);
 addEventListener("visibilitychange", () => { if (document.hidden) rememberScroll(); });
 function restoreScroll() {
@@ -740,14 +754,19 @@ function setupPager(bookId, idx, book, tok) {
   };
 
   let { step, total } = measure();
-  let page = Math.min(scrollPositions[pagerKey()] || 0, total - 1);
+  const savedFrac = scrollPositions[pagerKey()] ?? ((history.state || {}).pg);
+  // a fraction survives a layout that repaginates (rotate, fold, font size):
+  // a stored page NUMBER would land far from where the reader left off
+  let page = Math.min(Math.round((savedFrac || 0) * (total - 1)), total - 1);
 
   const paint = () => {
     track.style.transform = `translateX(${-page * step}px)`;
     $("#page-count").textContent = total > 1 ? `${page + 1} / ${total}` : "";
     pager.classList.toggle("at-start", page === 0);
     pager.classList.toggle("at-end", page >= total - 1);
-    scrollPositions[pagerKey()] = page;
+    const frac = total > 1 ? page / (total - 1) : 0;
+    scrollPositions[pagerKey()] = frac;
+    try { history.replaceState({ ...(history.state || {}), pg: frac }, "", location.href); } catch {}
     persistScroll();
   };
 
@@ -760,7 +779,7 @@ function setupPager(bookId, idx, book, tok) {
       // past either end, continue into the neighbouring section — like a book
       const target = delta > 0 ? idx + 1 : idx - 1;
       if (target >= 0 && target < book.sections.length) {
-        if (delta < 0) pendingLastPage = true;
+        if (delta < 0) pendingLastPage = `${bookId}/${target}`;
         location.hash = `#/book/${bookId}/${target}`;
       }
       return;
@@ -776,7 +795,10 @@ function setupPager(bookId, idx, book, tok) {
     paint();
   };
 
-  if (pendingLastPage) { page = total - 1; pendingLastPage = false; }
+  // consumed ONLY by the section it was set for: an interrupted navigation
+  // must not open an unrelated section on its last page
+  if (pendingLastPage === `${bookId}/${idx}`) page = total - 1;
+  pendingLastPage = null;
   paint();
 
   // swipe
@@ -820,7 +842,7 @@ function setupPager(bookId, idx, book, tok) {
     ro.disconnect(); clearTimeout(settle);
   }, relayout };
 }
-let pendingLastPage = false;
+let pendingLastPage = null;
 
 /* ---------------- bookmarks ---------------- */
 async function renderBookmarks(tok) {

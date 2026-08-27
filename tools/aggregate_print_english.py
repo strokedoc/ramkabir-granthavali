@@ -12,6 +12,9 @@ BASE = Path(__file__).resolve().parents[1]
 
 EXT = BASE / "extraction"
 rejected = []
+# a file that will not parse, or is not a list, is a CORRUPT or tampered
+# approval record — distinct from a single token that simply fails the rules
+bad_files = []
 
 def page_text(book, n):
     for sub in ('txt-corrected', 'txt'):
@@ -30,9 +33,9 @@ for d in sorted(EXT.glob('*/print_english')):
         try:
             toks = json.loads(f.read_text(encoding='utf-8'))
         except Exception:
-            rejected.append(f'{book}/{f.name}: unparseable'); continue
+            bad_files.append(f'{book}/{f.name}: unparseable'); continue
         if not isinstance(toks, list):
-            rejected.append(f'{book}/{f.name}: not a list'); continue
+            bad_files.append(f'{book}/{f.name}: not a list'); continue
         pg = str(int(f.stem.split('-')[1]))
         page_txt = page_text(book, int(pg))
         ok = []
@@ -79,13 +82,20 @@ payload = json.dumps(out, ensure_ascii=False, indent=1)
 # image workers wrote. Without it a commit could add an approval by hand and
 # the garble gate would strip real garble before ever scanning it.
 if "--check" in sys.argv:
+    # an unreadable approval file means the shipped whitelist cannot be said to
+    # reflect every per-page approval, even when the payload happens to match
+    if bad_files:
+        print(f"CORRUPT {len(bad_files)} per-page approval files:")
+        for r in bad_files[:20]: print("  ", r)
+        sys.exit(1)
     have = TARGET.read_text(encoding="utf-8") if TARGET.exists() else ""
     if have.strip() != payload.strip():
         print("WHITELIST MISMATCH — tools/print_english.json does not match the "
               "per-page approvals in extraction/*/print_english/. Re-run this "
               "tool without --check and review the diff.")
         sys.exit(1)
-    print("whitelist OK — derived from", sum(len(v) for v in out.values()), "verified pages")
+    print("whitelist OK — derived from", sum(len(v) for v in out.values()),
+          f"verified pages ({len(rejected)} tokens did not qualify)")
     sys.exit(0)
 TARGET.write_text(payload, encoding='utf-8')
 print({b: len(v) for b, v in out.items()}, '->', sum(len(v) for v in out.values()), 'pages whitelisted')
