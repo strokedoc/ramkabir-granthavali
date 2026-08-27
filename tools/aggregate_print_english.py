@@ -73,8 +73,21 @@ for alias, src in BOOK_SRC.items():
                       if rng is None or int(p) in rng}
         if rng is not None:
             out[src] = {p: v for p, v in out[src].items() if int(p) not in rng}
-(BASE / "tools/print_english.json").write_text(
-    json.dumps(out, ensure_ascii=False, indent=1), encoding='utf-8')
+TARGET = BASE / "tools/print_english.json"
+payload = json.dumps(out, ensure_ascii=False, indent=1)
+# --check proves the SHIPPED whitelist was derived from the per-page files the
+# image workers wrote. Without it a commit could add an approval by hand and
+# the garble gate would strip real garble before ever scanning it.
+if "--check" in sys.argv:
+    have = TARGET.read_text(encoding="utf-8") if TARGET.exists() else ""
+    if have.strip() != payload.strip():
+        print("WHITELIST MISMATCH — tools/print_english.json does not match the "
+              "per-page approvals in extraction/*/print_english/. Re-run this "
+              "tool without --check and review the diff.")
+        sys.exit(1)
+    print("whitelist OK — derived from", sum(len(v) for v in out.values()), "verified pages")
+    sys.exit(0)
+TARGET.write_text(payload, encoding='utf-8')
 print({b: len(v) for b, v in out.items()}, '->', sum(len(v) for v in out.values()), 'pages whitelisted')
 allt = sorted({(t['t'] if isinstance(t, dict) else t)
                 for v in out.values() for toks in v.values() for t in toks})

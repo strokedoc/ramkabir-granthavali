@@ -82,6 +82,10 @@ for b in GU_BOOKS:
             if f.exists():
                 src_chars += len(norm(f.read_text(encoding="utf-8", errors="replace")))
                 break
+        else:
+            # a partially committed scan would otherwise just shrink the source
+            # total and slip under the 3% drift allowance
+            fails.append(f"{b}: source page {p} is missing from extraction/{src}")
     got = sum(len(norm(x["text"])) for s in j["sections"] for x in s["blocks"])
     if src_chars and abs(got - src_chars) > src_chars * 0.03:
         fails.append(f"{b}: rendered {got} chars vs {src_chars} in source (>3% drift)")

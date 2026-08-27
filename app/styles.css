@@ -295,3 +295,54 @@ body {
   #topbar-text { font-size: 1.2rem; }
   .reader { font-size: calc(1.22rem * var(--gu-size)); }
 }
+
+
+/* ---------- paginated reader ----------
+   Sized from the viewport so it adapts to phones, foldables and tablets:
+   the column count comes from available width, and dvh keeps the page inside
+   mobile browser chrome. */
+/* the reader is the one view allowed a two-page spread on wide screens */
+#view.reading { max-width: 76rem; }
+.pager {
+  position: relative;
+  margin-inline: auto;
+  height: calc(100dvh - 7.6rem - env(safe-area-inset-top) - env(safe-area-inset-bottom));
+  overflow: hidden;
+  outline: none;
+  touch-action: pan-y;
+}
+.pages {
+  columns: 1;
+  column-fill: auto;
+  transition: transform 0.28s cubic-bezier(0.22, 0.7, 0.25, 1);
+  will-change: transform;
+}
+@media (prefers-reduced-motion: reduce) {
+  .pages { transition: none; }
+}
+/* Long prose MUST flow across pages — forcing whole blocks to a column left
+   most of a page empty. Only short units are kept intact. */
+.pages .block { break-inside: auto; }
+.pages .subhead, .pages .pageref, .pages .section-head h2 { break-inside: avoid-column; }
+.pages .section-head { break-after: avoid-column; }
+.pages .reader-nav, .pages .bookmark-row { break-inside: avoid-column; }
+
+.page-count {
+  position: absolute; left: 0; right: 0; bottom: 0.1rem;
+  text-align: center; font-family: "Fraunces", serif;
+  font-size: 0.7rem; letter-spacing: 0.14em; color: var(--ink-soft);
+  pointer-events: none; user-select: none;
+}
+/* subtle affordance that there is more to either side */
+.page-edge {
+  position: absolute; top: 0; bottom: 0; width: 1.6rem; pointer-events: none;
+  opacity: 0.55; transition: opacity 0.2s;
+}
+.page-edge.left  { left: 0;  background: linear-gradient(to right, var(--paper), transparent); }
+.page-edge.right { right: 0; background: linear-gradient(to left,  var(--paper), transparent); }
+.pager.at-start .page-edge.left, .pager.at-end .page-edge.right { opacity: 0; }
+
+/* wider screens (tablet, unfolded foldable, desktop) read as a two-page spread */
+@media (min-width: 1040px) {
+  .page-count { bottom: 0.25rem; }
+}

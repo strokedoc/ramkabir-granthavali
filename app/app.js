@@ -126,7 +126,9 @@ $("#lang-btn").addEventListener("click", () => {
   applyLang();
   const p = parseHash();
   if (p[0] === "book" && p.length >= 4) {     // never let a URL segment win
-    history.replaceState({ lang }, "", location.pathname + location.search + "#/" + p.slice(0, 3).join("/"));
+    // keep eid/y: dropping them orphans this entry's saved reading position
+    history.replaceState({ ...(history.state || {}), lang, eid: entryId }, "",
+      location.pathname + location.search + "#/" + p.slice(0, 3).join("/"));
     prevHash = location.hash;
   } else {
     history.replaceState({ ...(history.state || {}), lang, eid: entryId }, "", location.href);
@@ -143,6 +145,7 @@ $("#font-minus").addEventListener("click", () => bumpFont(-0.1));
 function bumpFont(d) {
   const s = Math.min(1.8, Math.max(0.7, +(store.get("fontScale", 1) + d).toFixed(2)));
   store.set("fontScale", s); applyFontScale();
+  if (pagerState) pagerState.relayout();
 }
 applyFontScale();
 
@@ -326,7 +329,9 @@ addEventListener("hashchange", () => {
   // navigation would stamp the old position onto the new destination
   delete scrollPositions[prevHash];
   if (prevKey) scrollPositions[prevKey] = scrollY;
-  try { history.replaceState({ ...(history.state || {}), y: scrollY }, "", location.href); } catch {}
+  // NOT stamped into history.state here: by hashchange time the new entry is
+  // already current, so this would write the position we are LEAVING onto the
+  // destination. pagehide/visibilitychange stamp the correct entry.
   persistScroll();
   ensureEntryId();
   prevKey = scrollKey();
@@ -347,7 +352,8 @@ function stale(tok) { return tok !== routeToken; }
 
 async function route() {
   const tok = ++routeToken;
-  clearTimeout(searchTimer);       // a detached debounce must not rewrite the
+  if (pagerState) { pagerState.dispose(); pagerState = null; }
+  clearTimeout(searchTimer);     // a detached debounce must not rewrite the
   searchGen++;                     // address or query a screen that is gone
   const parts = parseHash();
   // "#/book/<id>/<sec>/<lang>" carries the language with the link
@@ -374,6 +380,7 @@ async function route() {
   });
 
   const readerMode = parts[0] === "book" && parts.length >= 3;
+  view.classList.toggle("reading", readerMode);
   $("#font-plus").hidden = $("#font-minus").hidden = !readerMode;
   $("#back-btn").hidden = parts.length === 0;
 
@@ -563,19 +570,26 @@ async function renderReader(bookId, idx, tok) {
 
   if (stale(tok)) return;
 
-  view.innerHTML = `<article class="reader">
-    <div class="section-head">
-      <div class="deco">${lang === "en" ? "|| ✻ ||" : "॥ ✻ ॥"}</div>
-      <h2>${escapeHtml(secTitle(book, en, idx))}</h2>${headSub}
-    </div>
-    ${xlHtml}
-    ${body}
-    <div class="bookmark-row">
-      <button id="bm-toggle" class="${marked ? "on" : ""}">${marked ? t("bmOn") : t("bmOff")}</button>
-    </div>
-    <div class="reader-nav">${prev}${next}</div>
-  </article>`;
-  restoreScroll();
+  // Paginated (book-like) reading: the content is laid out in CSS columns the
+  // width of the viewport and moved sideways one page at a time.
+  view.innerHTML = `<div id="pager" class="pager">
+    <div id="pages" class="pages"><article class="reader">
+      <div class="section-head">
+        <div class="deco">${lang === "en" ? "|| ✻ ||" : "॥ ✻ ॥"}</div>
+        <h2>${escapeHtml(secTitle(book, en, idx))}</h2>${headSub}
+      </div>
+      ${xlHtml}
+      ${body}
+      <div class="bookmark-row">
+        <button id="bm-toggle" class="${marked ? "on" : ""}">${marked ? t("bmOn") : t("bmOff")}</button>
+      </div>
+      <div class="reader-nav">${prev}${next}</div>
+    </article></div>
+    <div class="page-edge left" aria-hidden="true"></div>
+    <div class="page-edge right" aria-hidden="true"></div>
+    <div id="page-count" class="page-count" role="status" aria-live="polite"></div>
+  </div>`;
+  setupPager(bookId, idx, book, tok);
 
   $("#bm-toggle").addEventListener("click", () => {
     let bms = store.get("bookmarks", []);
@@ -692,6 +706,121 @@ async function renderUnit(ti, ui, tok) {
   </article>`;
   restoreScroll();
 }
+
+
+/* ---------------- paginated reader (book-style pages) ----------------
+   Content flows into CSS columns exactly one viewport wide, and turning a page
+   translates the column track. Works for any script, respects the font-size
+   control, and re-lays out on resize / rotation / device fold. */
+let pagerState = null;
+
+function pagerKey() { return "pg:" + scrollKey(); }
+
+function setupPager(bookId, idx, book, tok) {
+  const pager = $("#pager"), track = $("#pages");
+  if (!pager || !track) return;
+
+  const FOOT = 26, GAP = 32;
+  let lastW = 0;
+  const measure = () => {
+    // one column per ~29rem: phone = 1, iPad/unfolded = 2. The page itself is
+    // capped so a single column never becomes an uncomfortably long line.
+    const avail = (pager.parentElement || pager).clientWidth;
+    const cols = Math.max(1, Math.min(2, Math.floor(avail / 460)));
+    pager.style.maxWidth = (cols === 1 ? 680 : 1180) + "px";
+    const w = track.clientWidth;
+    track.style.columnWidth = ((w - GAP * (cols - 1)) / cols) + "px";
+    track.style.columnGap = GAP + "px";
+    // leave room for the page counter so the last line never sits under it
+    track.style.height = Math.max(120, pager.clientHeight - FOOT) + "px";
+    lastW = w;
+    const step = w + GAP;
+    const total = Math.max(1, Math.ceil((track.scrollWidth + GAP) / step));
+    return { step, total, cols };
+  };
+
+  let { step, total } = measure();
+  let page = Math.min(scrollPositions[pagerKey()] || 0, total - 1);
+
+  const paint = () => {
+    track.style.transform = `translateX(${-page * step}px)`;
+    $("#page-count").textContent = total > 1 ? `${page + 1} / ${total}` : "";
+    pager.classList.toggle("at-start", page === 0);
+    pager.classList.toggle("at-end", page >= total - 1);
+    scrollPositions[pagerKey()] = page;
+    persistScroll();
+  };
+
+  const go = (delta) => {
+    // a resize delivered while the tab was hidden never reached the observer,
+    // so the first interaction after it re-measures rather than jumping wrong
+    if (track.clientWidth !== lastW) relayout();
+    const next = page + delta;
+    if (next < 0 || next >= total) {
+      // past either end, continue into the neighbouring section — like a book
+      const target = delta > 0 ? idx + 1 : idx - 1;
+      if (target >= 0 && target < book.sections.length) {
+        if (delta < 0) pendingLastPage = true;
+        location.hash = `#/book/${bookId}/${target}`;
+      }
+      return;
+    }
+    page = next;
+    paint();
+  };
+
+  const relayout = () => {
+    const before = total > 1 ? page / (total - 1) : 0;
+    ({ step, total } = measure());
+    page = Math.min(Math.round(before * (total - 1)) || 0, total - 1);
+    paint();
+  };
+
+  if (pendingLastPage) { page = total - 1; pendingLastPage = false; }
+  paint();
+
+  // swipe
+  let x0 = null, y0 = null;
+  pager.addEventListener("pointerdown", (e) => { x0 = e.clientX; y0 = e.clientY; });
+  pager.addEventListener("pointerup", (e) => {
+    if (x0 === null) return;
+    const dx = e.clientX - x0, dy = e.clientY - y0;
+    x0 = null;
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.5) { go(dx < 0 ? 1 : -1); return; }
+    // a tap near either edge turns the page, like a reader app
+    if (Math.abs(dx) < 12 && Math.abs(dy) < 12 && !e.target.closest("a,button")) {
+      const rel = (e.clientX - pager.getBoundingClientRect().left) / pager.clientWidth;
+      if (rel > 0.75) go(1); else if (rel < 0.25) go(-1);
+    }
+  });
+  pager.addEventListener("keydown", (e) => {
+    if (e.key === "ArrowRight" || e.key === "PageDown") { go(1); e.preventDefault(); }
+    if (e.key === "ArrowLeft" || e.key === "PageUp") { go(-1); e.preventDefault(); }
+  });
+  pager.tabIndex = 0;
+
+  // a rotate/fold reports its new size before the layout around it has settled,
+  // so every resize is followed by one deferred re-measure
+  let settle = 0;
+  const onResize = () => {
+    if (stale(tok)) return;
+    relayout();
+    clearTimeout(settle);
+    settle = setTimeout(() => { if (!stale(tok)) relayout(); }, 90);
+  };
+  addEventListener("resize", onResize);
+  document.addEventListener("visibilitychange", onResize);
+  const ro = new ResizeObserver(onResize);
+  ro.observe(pager);
+  // fonts finish loading after first paint and change the column count
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!stale(tok)) relayout(); });
+  pagerState = { dispose() {
+    removeEventListener("resize", onResize);
+    document.removeEventListener("visibilitychange", onResize);
+    ro.disconnect(); clearTimeout(settle);
+  }, relayout };
+}
+let pendingLastPage = false;
 
 /* ---------------- bookmarks ---------------- */
 async function renderBookmarks(tok) {

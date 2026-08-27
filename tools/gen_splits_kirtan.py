@@ -10,7 +10,7 @@ body text above it) get no entry."""
 import json, re, unicodedata
 from pathlib import Path
 
-EXT = Path("/Users/harsh/RamKabir/extraction/kirtan-gujarati")
+EXT = Path(__file__).resolve().parents[1] / "extraction/kirtan-gujarati"
 spec = json.loads((EXT / "sections.json").read_text(encoding="utf-8"))
 
 def dev_to_guj(s):

@@ -20,12 +20,20 @@ PROV = BASE / "tools/provenance.json"
 prov = json.loads(PROV.read_text(encoding="utf-8")) if PROV.exists() else {}
 ORNAMENT = re.compile(r"[=~_*·•\-]{3,}")
 INDIC_LETTER = re.compile(r"[ઁ-૏ऀ-ॏॐ-ॣॱ-ॿ]")
+# a NUMBERED divider (====૧====) identifies a verse group, so moving one
+# reorders meaning even though it carries no letter
+DIGIT = re.compile(r"[0-9૦-૯०-९]")
 # SRC_DIR lets this compare against a STAGED build (the new source) while still
 # writing the English editions in their real location
 SRC = Path(os.environ.get("SRC_DIR") or APP)
 BOOKS = ["samagam-purvardh", "samagam-uttarardh", "sant-darshan",
          "kirtan-gujarati", "jivandas-sakhi"]
 apply = "--apply" in sys.argv
+
+def write_atomic(path, text):
+    tmp = path.with_suffix(path.suffix + ".tmp")
+    tmp.write_text(text, encoding="utf-8")
+    os.replace(tmp, path)
 safe = unsafe = 0
 
 for b in BOOKS:
@@ -59,7 +67,7 @@ for b in BOOKS:
             shifted = {a_ for a_, b_ in zip(before, after) if a_ != b_} | \
                       {b_ for a_, b_ in zip(before, after) if a_ != b_}
             small_move = all(ORNAMENT.search(x) and not INDIC_LETTER.search(x)
-                             for x in shifted)
+                             and not DIGIT.search(x) for x in shifted)
         if prev_lines is not None and prev_lines == now_lines and small_move:
             print(f"  SAFE  {b} #{i} '{gu['sections'][i]['title'][:26]}' (reorder only)")
             es["src_sig"] = want
@@ -75,8 +83,11 @@ for b in BOOKS:
                   f"re-translate rather than re-stamp")
             unsafe += 1
     if changed and apply:
-        f.write_text(json.dumps(en, ensure_ascii=False), encoding="utf-8")
-        PROV.write_text(json.dumps(prov, ensure_ascii=False), encoding="utf-8")
+        # provenance first: a tear then leaves provenance AHEAD of the edition,
+        # which the next run reports UNSAFE. The reverse order would leave a
+        # re-stamped edition that nothing can prove was a reorder.
+        write_atomic(PROV, json.dumps(prov, ensure_ascii=False))
+        write_atomic(f, json.dumps(en, ensure_ascii=False))
 
 print(f"{safe} safe to re-stamp, {unsafe} require re-translation"
       + ("" if apply else "  (dry run — pass --apply to write)"))
