@@ -408,21 +408,17 @@ if WARNINGS or EMPTY:
     sys.exit(1)
 # Every gate runs against STAGED output. Nothing reaches app/content unless all
 # of them pass, so a failed build can never leave invalid content deployed.
-import subprocess
-STAGE = OUT / ".staging"
-if STAGE.exists():
-    for f in STAGE.glob("*"):
-        f.unlink()
-STAGE.mkdir(exist_ok=True)
-for name in ("en",):
-    link = STAGE / name
-    if not link.exists():
-        os.symlink(OUT / name, link)
+import shutil, subprocess
+# stage OUTSIDE the published tree: a staging dir inside app/ was picked up by
+# the Pages artifact upload (its symlink failed the build)
+STAGE = Path(tempfile.mkdtemp(prefix="rkg-stage-"))
 for name, data in PENDING.items():
     (STAGE / name).write_text(data, encoding="utf-8")
 for name in ("teachings.json", "teachings-gu.json"):
-    if (OUT / name).exists() and not (STAGE / name).exists():
-        (STAGE / name).write_text((OUT / name).read_text(encoding="utf-8"), encoding="utf-8")
+    if (OUT / name).exists():
+        shutil.copy2(OUT / name, STAGE / name)
+if (OUT / "en").exists():
+    shutil.copytree(OUT / "en", STAGE / "en")
 
 env = dict(os.environ, CONTENT_DIR=str(STAGE))
 gates = ["invariants.py", "find_garble.py", "qc_purity.py"]
@@ -433,6 +429,7 @@ for g in gates:
     if r.returncode != 0:
         print(r.stdout.strip()[-1200:])
         print(f"BUILD FAILED — {g} rejected the staged content; nothing published")
+        shutil.rmtree(STAGE, ignore_errors=True)
         sys.exit(1)
 
 for name, data in PENDING.items():
@@ -442,4 +439,5 @@ for name, data in PENDING.items():
     with os.fdopen(fd, "w", encoding="utf-8") as fh:
         fh.write(data)
     os.replace(tmp, OUT / name)
+shutil.rmtree(STAGE, ignore_errors=True)
 print(f"wrote {len(PENDING)} content files (all gates passed)")
