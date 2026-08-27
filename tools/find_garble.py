@@ -19,9 +19,12 @@ MATRA = r'ા-ૌा-ौ'
 ANUS = r'ઁ-ઃँ-ः'
 HAL = r'્्'
 BAD = [
-    # ૂ+ા is the conventional રૂા. (rupees) ligature — genuine print, not garble
-    (re.compile(f'(?!ૂા|ूा)[{MATRA}]{{2,}}'), 'stacked matras'),
-    (re.compile(f'(?<![{CONS}{MATRA}{ANUS}{HAL}])[{MATRA}]'), 'orphan matra'),
+    # Genuine printed forms that look like stacked matras:
+    #   ૂ+ા  → the રૂા. (rupees) ligature
+    #   digit+ાા → traditional Gujarati fraction mark (૪ાા = 4½)
+    (re.compile(f'(?<![૦-૯0-9])(?!ૂા|ूा)[{MATRA}]{{2,}}'), 'stacked matras'),
+    # (digits may legitimately carry the fraction matras: ૪ાા = 4½)
+    (re.compile(f'(?<![{CONS}{MATRA}{ANUS}{HAL}૦-૯0-9०-९])[{MATRA}]'), 'orphan matra'),
     # A halant at word end is VALID (અર્થાત્, ભગવદ્‌, विद्युत् …) — only a halant
     # followed by a matra/another halant, or one opening a word, is malformed.
     (re.compile(f'[{HAL}][{MATRA}{HAL}]'), 'halant fault'),
@@ -33,6 +36,12 @@ whitelist = {}
 wl_file = Path('/Users/harsh/RamKabir/tools/print_english.json')
 if wl_file.exists():
     whitelist = json.loads(wl_file.read_text())
+# Indic forms an image-verification worker confirmed the book really prints
+# (e.g. કૃીપાનાથ in samagam-uttarardh p163/164 — the manuscript's own spelling)
+indic_ok = {}
+ind_file = Path('/Users/harsh/RamKabir/tools/print_indic.json')
+if ind_file.exists():
+    indic_ok = json.loads(ind_file.read_text())
 
 rows = []
 for b in BOOKS:
@@ -50,8 +59,12 @@ for b in BOOKS:
             for w in LAT.findall(t):
                 if w not in allowed:
                     hits['latin'].append(w)
+            ok_forms = indic_ok.get(b, {}).get(pg, [])
             for rx, name in BAD:
                 for m in rx.finditer(t):
+                    ctx = t[max(0, m.start()-14):m.end()+14]
+                    if any(f in ctx for f in ok_forms):
+                        continue
                     frag = t[max(0, m.start()-12):m.end()+12].replace('\n', ' ')
                     hits['indic'].append(f'{name}: …{frag}…')
     for pg, h in sorted(per_page.items(), key=lambda kv: int(kv[0])):
