@@ -6,8 +6,8 @@
   "title_en": "Our Story — who we are",
   "body_en": [
    "In the fifteenth century, in Kashi, a weaver named Kabir sang something dangerous and simple: God is one, beyond every form, and no ritual, caste, or scripture-recitation can reach Him — only love can. Tradition holds Kabir as the disciple of the Vaishnav teacher Ramanand, and from that meeting of streams — Ram's devotion and Kabir's fearless plainness — our path takes its name: Ramkabir.",
-   "Kabir's teaching travelled to Gujarat. In the 1470s, at Patan, two figures organized it into a living community: Shri Padmanabhji and Dhanraj Pandya, whom we remember as Adhyaruji Maharaj. The kirtans Adhyaruji composed — the Ganpati no Ras, the Vani, the Dhols — are the very ones this app carries, still sung five and a half centuries later.",
-   "Two centuries after that, the flame was carried by Sadguru Shri Jivanji Maharaj (1649–1737). After long years of seeking he met his guru, Gopaldas, in 1683, and on Sharad Purnima of 1688 the Uda parampara emerged. The Patidar families who followed this path stopped observing caste rules at the thali — they ate together, with everyone. Other Patels called them 'juda' — different. Juda became Uda, and what began as a taunt was worn as a badge: Uda Bhakt. Different, on purpose, for bhakti's sake.",
+   "Kabir's teaching travelled to Gujarat. Padmanabhji, born at Patan in Samvat 1458, went to Kashi and took diksha from Kabir himself, then returned to Patan on his guru's instruction. Dhanraj Pandya, the prime minister of the Patan state, was drawn to him and became his disciple — and it is Dhanraj whom we remember as Adhyaruji. Guru and disciple together spread the Ramkabir parampara at Patan, and on Kartak sud 14, Samvat 1470, they built the Padma Wadi there. Sant Darshan is careful to say that Padmanabhji does not come in our guru parampara — he and Gyaniji Maharaj were guru-brothers who worked together to carry Kabir's thought through Gujarat. The kirtans Adhyaruji composed are the ones this app carries, and Jivanji Maharaj himself brought them into the community's daily, social and spiritual observance.",
+   "Two centuries later the flame was carried by Sadguru Shri Jivanji Maharaj (Samvat 1649–1737; Vikram Samvat runs about 57 years ahead of the Common Era). After long years of seeking he met his guru Gopaldas, and on Sharad Purnima, Samvat 1688, the Uda parampara emerged. The Patidar families who followed this path stopped observing caste rules at the thali — they ate together, with everyone. The books derive the name from what these devotees did rather than from anything said about them: uda kudya Jivana, jap tap tirath daan — the Uda bhaktas leapt clean over japa, tapa, pilgrimage and ritual giving, left the path of rites behind, and went straight to the Name. ‘Uda sabse juda’ — Uda, different from all — is the saying by which the community came to be known, and the difference it names is this one, chosen on purpose, for bhakti's sake.",
    "Jivanji Maharaj settled at Puniyad, near Dabhoi, which remains a dham of the parampara. His sakhis and Adhyaruji's kirtans together form our Parayan. The Samagam of Shree Haridas Nadiyada explains the path's philosophy; Sant Darshan tells the lives of its saints. From the villages of South Gujarat the community travelled — to Africa and Fiji, to England and America — carrying pothis, building mandirs, and singing the same Vani in every new country.",
    "The sakhi below — from the Jivandasji ki Sakhi in this app — is the tradition telling its own origin. Read the village names slowly: this is not mythology from far away. This is your family's own address."
   ],
@@ -19,7 +19,7 @@
    "page_label": "પા. ૧૬૪",
    "page_label_en": "p. 164"
   },
-  "caveat_en": "Dates and lineage follow the community's own tradition (Sadguru Shree Jivanji Maharaj Memorial Foundation).",
+  "caveat_en": "Dates are given in Vikram Samvat, as the books print them, and follow the community's own tradition (Sadguru Shree Jivanji Maharaj Memorial Foundation).",
   "anchor_verse_translit": "Kanam pe karuna kari, pragate Gahej gaam ||\nShahpare samagam kari, aaye hai Puniyad dhaam ||1||\nKanbi kul odharva, Jivan liya avtar ||\nKrishnadas pe kripa suni, Dhana huva taiyar ||2||\nBharam Bhojako todva, Keshav karva sahay ||\nRambaike dukh fedva, Dwaparse Kaljug aay ||3||\nSant Gopalko sharan diya, pahoche manke kod ||\nEse Sadguru Jivan bhaye, bhavke bandhan chhod ||4||\nNana Gopal ke sang chale, aaye Puniyad dhaam ||\nUdit dharam Uda kahai, Ramkabirka naam ||5||"
  },
  "themes": [
@@ -315,38 +315,38 @@
    "intro_en": "Two pearls: what the guru IS in this tradition, and how — very concretely, with village names — grace arrived at our own doorstep.",
    "units": [
     {
-     "id": "guru-swarup",
-     "title_gu": "પરબ્રહ્મ સ્વરૂપ",
-     "title_en": "The Guru is the Divine's own form",
-     "verse_gu": "બૂડી હું જમ ધણી વહુણી । સલૂણી એ ॥\nતે સમે સમરિયા સ્વામી । સોભાગ્ય સલૂણી એ ॥૧૫॥\nગુરૂઓ એ પ્રભુ પરબ્રહ્મ સ્વરૂપ । સલૂણી એ ॥\nઅખિલ ભુવન તણો ઈશ । સોભાગ્ય સલૂણી એ ॥૧૬॥",
-     "verse_translit": "Budi hun jam dhani vahuni, saluni e; te same samariya Swami, sobhagya saluni e. Guruo e Prabhu Parbrahm swarup, saluni e; akhil bhuvan tano Ish, sobhagya saluni e.",
+     "id": "sadguru-haath",
+     "title_gu": "સદ્‌ગુરુ હાથ પકડે",
+     "title_translit": "Sadguru Haath Pakade",
+     "title_en": "When the Sadguru takes your hand",
+     "verse_gu": "कुशल पडी रे जीवणा । जब सद्गुरु पकडे हाथ ।।\nअनेक जनम राम नाम बिन । बावल दीनी बाथ ।।९।।",
+     "verse_translit": "Kushal padi re Jivana, jab Sadguru pakade haath ||\nAnek janam Ram naam bin, baval dini baath ||9||",
      "source": {
-      "book": "kirtan-gujarati",
-      "section": 20,
-      "page_label": "પૃથ્વી ધોળ, પા. ૭૮",
-      "page_label_en": "Pruthvi Dhol, p. 78"
+      "book": "jivandas-sakhi",
+      "section": 3,
+      "page_label": "ગુરુદેવકા અંગ, પા. ૧૫૮",
+      "page_label_en": "Gurudevka Ang, p. 158"
      },
      "gloss": [
       {
-       "word": "બૂડી",
-       "meaning": "drowning",
-       "word_translit": "budi"
+       "word": "कुशल",
+       "word_translit": "kushal",
+       "meaning": "well-being, safety"
       },
       {
-       "word": "જમ ધણી વહુણી",
-       "meaning": "with Yama as master, without my Lord — i.e. death closing in",
-       "word_translit": "jam dhani vahuni"
+       "word": "बावल",
+       "word_translit": "baval",
+       "meaning": "the thorn tree (babul) — to embrace one is to hold what can only wound"
       },
       {
-       "word": "સલૂણી / સોભાગ્ય",
-       "meaning": "the dhol's refrain — 'O graceful one / O fortunate one'",
-       "word_translit": "saluni / sobhagya"
+       "word": "बाथ दीनी",
+       "word_translit": "baath dini",
+       "meaning": "took into an embrace"
       }
      ],
-     "meaning_en": "The soul speaks: I was drowning, death already my master — and in exactly that moment I remembered the Swami. Then the declaration: the Guru is Parabrahma's own form, the Lord of all worlds. Not God's messenger, not God's employee — God's own shape, appearing at the drowning-point.",
-     "why_en": "This is the tradition's answer to 'why a guru at all?' — because at the moment you are actually drowning, an idea of God cannot reach into the water. A form can. This is the reverence behind every 'Sadguru' in our books.",
-     "reflect_en": "At my last real drowning-point, what did I actually reach for?",
-     "title_translit": "Parbrahm Swarup"
+     "meaning_en": "Safety came, Jivana, the moment the Sadguru took hold of my hand. For countless births, without Rama's name, all I had embraced was a thorn tree.",
+     "why_en": "This is the tradition's answer to ‘why a guru at all?’ — not because the guru replaces God, but because when you are actually drowning an idea cannot reach into the water and a hand can. The same anga sets the guard on it: guru kije vicharke, jehi batave Ram ||3|| — choose a guru with discernment, the one who shows you Rama. The guru points; Rama is where you are going.",
+     "reflect_en": "What have I been holding on to that only leaves me with thorns?"
     },
     {
      "id": "grace-address",
