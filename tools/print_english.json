@@ -4,7 +4,9 @@
    "ApD",
    "Apple",
    "Phone",
+   "f",
    "google",
+   "i",
    "online",
    "play",
    "stor",
@@ -13,6 +15,10 @@
   ]
  },
  "samagam-purvardh": {
+  "2": [
+   "L.L.B.",
+   "M.A."
+  ],
   "9": [
    "P.",
    "hd."
@@ -32,6 +38,15 @@
    "explination",
    "with"
   ],
+  "37": [
+   "X"
+  ],
+  "38": [
+   "x"
+  ],
+  "59": [
+   "x"
+  ],
   "60": [
    "oooo"
   ],
@@ -47,6 +62,9 @@
   ],
   "85": [
    "ooooo"
+  ],
+  "89": [
+   "X"
   ],
   "108": [
    "column",
@@ -204,13 +222,16 @@
    "YS"
   ],
   "98": [
+   "I",
    "II",
    "III",
    "IV",
    "IX",
+   "V",
    "VI",
    "VII",
-   "VIII"
+   "VIII",
+   "X"
   ],
   "143": [
    "Valley"
@@ -221,7 +242,9 @@
    "ApD",
    "Apple",
    "Phone",
+   "f",
    "google",
+   "i",
    "online",
    "play",
    "stor",

@@ -44,6 +44,8 @@ html = Path("/Users/harsh/RamKabir/app/index.html").read_text(encoding="utf-8")
 chrome = re.sub(r"<title>.*?</title>", "", html, flags=re.S)
 chrome = re.sub(r'(aria-label|content|placeholder)="[^"]*"', "", chrome)
 chrome = re.sub(r"<h1[^>]*>.*?</h1>", "", chrome, flags=re.S)
+# elements marked data-i18n are language defaults that applyLang() rewrites
+chrome = re.sub(r"<(\w+)[^>]*\bdata-i18n\b[^>]*>.*?</\1>", "", chrome, flags=re.S)
 baked = NAT.findall(re.sub(r"<[^>]+>", " ", chrome))
 if baked:
     fails.append(f"index.html bakes Indic text into language-switchable chrome: {''.join(baked)[:60]}")

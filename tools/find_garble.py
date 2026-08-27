@@ -68,12 +68,23 @@ for b in BOOKS:
                     words.add(entry)
                 else:
                     phrases.append(entry)
+            # phrase removal is BOUNDARY-AWARE: an approved URL glued to a
+            # stray letter ("www.ramkabir.guruX") must not be erased
             scan = t
             for ph in sorted(phrases, key=len, reverse=True):
-                scan = scan.replace(ph, ' ')
+                scan = re.sub(r'(?<![A-Za-z઀-૿ऀ-ॿ])' + re.escape(ph) + r'(?![A-Za-z઀-૿ऀ-ॿ])',
+                              ' ', scan)
             for w in LAT.findall(scan):
                 if w not in words:
                     hits['latin'].append(w)
+            # a lone Latin letter left in Indic text is a transcription artifact
+            for m in re.finditer(r'(?<![A-Za-z])[A-Za-z](?![A-Za-z])', scan):
+                if m.group(0) not in words:
+                    hits['latin'].append(m.group(0))
+            # an immediately repeated Latin token is garble even when the word
+            # itself is genuinely printed ("Apple Apple")
+            for m in re.finditer(r'\b([A-Za-z]{2,})\s+\1\b', t):
+                hits['latin'].append(m.group(0))
             ok_forms = indic_ok.get(b, {}).get(pg, [])
             ok_spans = []
             for f in ok_forms:            # exact character ranges of approved forms

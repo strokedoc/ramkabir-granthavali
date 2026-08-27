@@ -37,7 +37,7 @@ for d in sorted(EXT.glob('*/print_english')):
         for tk in toks:
             # a whitelist entry must be a plausible token AND actually occur on
             # the page — otherwise a stray entry could hide garble forever
-            if not isinstance(tk, str) or not re.fullmatch(r"[A-Za-z][A-Za-z.&'/-]{1,30}", tk):
+            if not isinstance(tk, str) or not re.fullmatch(r"[A-Za-z][A-Za-z.&'/-]{0,30}", tk):
                 rejected.append(f'{book} p{pg}: bad token {tk!r}'); continue
             if tk not in page_txt:
                 rejected.append(f'{book} p{pg}: {tk!r} not present on page'); continue
