@@ -32,19 +32,32 @@ for b in BOOKS:
             continue
         src = "\n".join(x["text"] for x in gu["sections"][i]["blocks"])
         norm = re.sub(r"\s+", "", src)
-        want = hashlib.sha1(norm[:400].encode("utf-8")).hexdigest()[:12]
+        want = hashlib.sha1(norm.encode("utf-8")).hexdigest()[:12]
         if es.get("src_sig") == want:
             continue
-        # safe only if nothing was added/removed/substituted anywhere
-        prev_full = es.get("src_full")
-        now_full = "".join(sorted(Counter(norm).elements()))
-        now_hash = hashlib.sha1(now_full.encode("utf-8")).hexdigest()[:12]
-        if prev_full is None or prev_full == now_hash:
+        lines = [re.sub(r"\s+", "", l) for l in src.split("\n") if l.strip()]
+        now_lines = hashlib.sha1("\n".join(sorted(lines)).encode("utf-8")).hexdigest()[:12]
+        prev_lines = es.get("src_lines")
+        moved = es.get("src_order")
+        # SAFE only when: the set of lines is unchanged (nothing added, removed
+        # or substituted) AND at most a few lines changed position. Without a
+        # recorded fingerprint we cannot prove either, so it is NOT safe.
+        small_move = True
+        if moved:
+            common = [l for l in lines if l in set(moved)]
+            shifts = sum(1 for a_, b_ in zip(common, [l for l in moved if l in set(lines)]) if a_ != b_)
+            small_move = shifts <= 4
+        if prev_lines is not None and prev_lines == now_lines and small_move:
             print(f"  SAFE  {b} #{i} '{gu['sections'][i]['title'][:26]}' (reorder only)")
             es["src_sig"] = want
-            es["src_full"] = now_hash          # multiset fingerprint for next time
+            es["src_lines"] = now_lines
+            es["src_order"] = lines
             safe += 1
             changed = True
+        elif prev_lines is None:
+            print(f"  UNSAFE {b} #{i} '{gu['sections'][i]['title'][:26]}' — no recorded "
+                  f"fingerprint; cannot prove the change was a reorder")
+            unsafe += 1
         else:
             print(f"  UNSAFE {b} #{i} '{gu['sections'][i]['title'][:26]}' — content changed; "
                   f"re-translate rather than re-stamp")

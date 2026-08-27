@@ -217,7 +217,7 @@ for b in GU_BOOKS:
             bad_sig.append(f"{gu_secs[i]['title'][:18]} (no provenance signature)")
             continue
         src_txt = "\n".join(x["text"] for x in gu_secs[i]["blocks"])
-        want = hashlib.sha1(re.sub(r"\s+", "", src_txt)[:400].encode("utf-8")).hexdigest()[:12]
+        want = hashlib.sha1(re.sub(r"\s+", "", src_txt).encode("utf-8")).hexdigest()[:12]
         if es["src_sig"] != want:
             bad_sig.append(gu_secs[i]["title"][:20])
     if bad_sig:
@@ -241,8 +241,12 @@ for fchip in books_meta.get("featured", []):
 
 # 15. Published set must match the integrity manifest written at publish time
 #     (detects a corpus left mixed by a crash between file renames)
-intg = APP / ".integrity.json"
-if intg.exists():
+intg = BASE / "tools" / "integrity.json"
+if os.environ.get("CONTENT_DIR"):
+    pass                      # staged tree has no manifest yet; checked post-publish
+elif not intg.exists():
+    fails.append("integrity manifest missing — run tools/build_content.py")
+else:
     import hashlib as _h
     for name, want in json.loads(intg.read_text(encoding="utf-8")).items():
         f = APP / name

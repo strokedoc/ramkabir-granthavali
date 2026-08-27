@@ -50,7 +50,7 @@ for book in BOOKS:
             # provenance: ties this translation to the exact source section it
             # was generated from, so a reorder/swap is detectable EXACTLY
             # rather than by fuzzy title or size heuristics
-            "src_sig": hashlib.sha1(re.sub(r"\s+", "", src_txt)[:400].encode("utf-8")).hexdigest()[:12],
+            "src_sig": hashlib.sha1(re.sub(r"\s+", "", src_txt).encode("utf-8")).hexdigest()[:12],
             "title_translit": sec["title_translit"],
             "title_en": sec["title_en"],
             "translit": "\n".join(p["translit"] for p in parts if p["translit"]).strip(),

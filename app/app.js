@@ -270,10 +270,11 @@ const scrollPositions = (() => {
   catch { return {}; }
 })();
 let prevHash = location.hash;
-let prevKey = "";
+let prevKey = null;                  // set once the first entry has an id
 const SCROLL_MAX = 40;      // bounded: search hashes carry arbitrary queries
 function persistScroll() {
-  const keys = Object.keys(scrollPositions);
+  const keep = scrollKey();          // the current destination is never evicted
+  const keys = Object.keys(scrollPositions).filter(k => k !== keep);
   for (const k of keys.slice(0, Math.max(0, keys.length - SCROLL_MAX))) delete scrollPositions[k];
   try {
     sessionStorage.setItem("scrollPos", JSON.stringify(scrollPositions));
@@ -295,6 +296,9 @@ function ensureEntryId() {
   return entryId;
 }
 function scrollKey() { return (entryId || "") + "|" + location.hash; }
+// stamp the initial history entry so even the first screen's position is keyed
+ensureEntryId();
+prevKey = scrollKey();
 function rememberScroll() {
   const k = scrollKey();
   delete scrollPositions[k];                 // re-insert so the cap is LRU, not FIFO
@@ -317,7 +321,7 @@ addEventListener("hashchange", () => {
   // record where we LEFT, keyed by the hash we are leaving — sampling during
   // navigation would stamp the old position onto the new destination
   delete scrollPositions[prevHash];
-  scrollPositions[prevKey] = scrollY;
+  if (prevKey) scrollPositions[prevKey] = scrollY;
   persistScroll();
   ensureEntryId();
   prevKey = scrollKey();
