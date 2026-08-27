@@ -208,7 +208,13 @@ for b in GU_BOOKS:
     import hashlib
     bad_sig = []
     for i, es in enumerate(en["sections"]):
-        if not es or i >= len(gu_secs) or not es.get("src_sig"):
+        if i >= len(gu_secs):
+            continue
+        if not es:
+            bad_sig.append(f"{gu_secs[i]['title'][:18]} (MISSING translation)")
+            continue
+        if not es.get("src_sig"):          # fail closed: no signature, no pass
+            bad_sig.append(f"{gu_secs[i]['title'][:18]} (no provenance signature)")
             continue
         src_txt = "\n".join(x["text"] for x in gu_secs[i]["blocks"])
         want = hashlib.sha1(re.sub(r"\s+", "", src_txt)[:400].encode("utf-8")).hexdigest()[:12]

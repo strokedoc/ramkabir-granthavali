@@ -443,22 +443,28 @@ for g in gates:
         shutil.rmtree(STAGE, ignore_errors=True)
         sys.exit(1)
 
-backup = {n: (OUT / n).read_text(encoding="utf-8") for n in PENDING if (OUT / n).exists()}
+backup = {n: (OUT / n).read_bytes() for n in PENDING if (OUT / n).exists()}
+added = [n for n in PENDING if not (OUT / n).exists()]
 try:
+    # write EVERY temp file first, then rename them back-to-back: the window in
+    # which a crash could leave a mixed corpus is as small as the filesystem allows
+    temps = {}
     for name, data in PENDING.items():
-        # write-then-rename: a crash mid-loop can never leave a truncated or
-        # half-written content file behind
         fd, tmp = tempfile.mkstemp(dir=OUT, suffix=".tmp")
-        with os.fdopen(fd, "w", encoding="utf-8") as fh:
-            fh.write(data)
+        with os.fdopen(fd, "wb") as fh:
+            fh.write(data.encode("utf-8"))
+        temps[name] = tmp
+    for name, tmp in temps.items():
         os.replace(tmp, OUT / name)
-    # what is now published must be byte-identical to what the gates approved
+    # compare BYTES against the copy the gates actually inspected
     for name in PENDING:
-        if (OUT / name).read_text(encoding="utf-8") != (STAGE / name).read_text(encoding="utf-8"):
+        if (OUT / name).read_bytes() != (STAGE / name).read_bytes():
             raise RuntimeError(f"published {name} differs from the gated copy")
 except Exception as exc:
     for name, data in backup.items():        # roll back to the previous corpus
-        (OUT / name).write_text(data, encoding="utf-8")
+        (OUT / name).write_bytes(data)
+    for name in added:                       # and remove files that did not exist
+        (OUT / name).unlink(missing_ok=True)
     shutil.rmtree(STAGE, ignore_errors=True)
     print(f"PUBLISH FAILED ({exc}); previous content restored")
     sys.exit(1)

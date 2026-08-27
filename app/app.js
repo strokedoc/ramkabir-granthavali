@@ -124,6 +124,13 @@ $("#lang-btn").addEventListener("click", () => {
   lang = lang === "gu" ? "en" : "gu";
   store.set("lang", lang);
   applyLang();
+  const p = parseHash();
+  if (p[0] === "book" && p.length >= 4) {     // never let a URL segment win
+    history.replaceState({ lang }, "", location.pathname + location.search + "#/" + p.slice(0, 3).join("/"));
+    prevHash = location.hash;
+  } else {
+    history.replaceState({ lang }, "", location.href);
+  }
   route();
 });
 applyLang();
@@ -320,6 +327,16 @@ async function route() {
   if (parts[0] === "book" && parts.length >= 4 && (parts[3] === "en" || parts[3] === "gu")) {
     if (lang !== parts[3]) { lang = parts[3]; store.set("lang", lang); applyLang(); }
     parts.length = 3;
+    // drop the segment so the toggle is not locked and Back is not re-pinned
+    const clean = "#/" + parts.join("/");
+    scrollPositions[clean] = scrollPositions[location.hash] || 0;
+    history.replaceState({ lang }, "", location.pathname + location.search + clean);
+    prevHash = clean;
+  } else if (history.state && history.state.lang && history.state.lang !== lang) {
+    // Back/Forward returns to an entry that was viewed in the other language
+    lang = history.state.lang; store.set("lang", lang); applyLang();
+  } else {
+    history.replaceState({ lang }, "", location.href);
   }
   const navKey = parts[0] === "search" ? "search" : parts[0] === "bookmarks" ? "bookmarks"
     : parts[0] === "saar" ? "saar" : "library";
@@ -458,7 +475,8 @@ async function renderReader(bookId, idx, tok) {
     // replaceState, not a hash assignment: pushing a new entry would let Back
     // return to the hidden volume and bounce forward again forever
     const target = back ? `#/book/${back.book}/${back.section}` : "#/";
-    history.replaceState(null, "", location.pathname + location.search + target);
+    history.replaceState({ lang }, "", location.pathname + location.search + target);
+    prevHash = target;
     return route();
   }
   const en = lang === "en" ? await loadEn(bookId) : null;
@@ -732,7 +750,11 @@ async function renderSearch(initial, tok) {
       // mirror the query into the hash so a language switch or reload keeps it
       const q = input.value.trim();
       const want = q ? `#/search/${encodeURIComponent(q)}` : "#/search";
-      if (location.hash !== want) history.replaceState(null, "", want);
+      if (location.hash !== want) {
+        scrollPositions[want] = scrollPositions[location.hash] || 0;
+        history.replaceState({ lang }, "", want);
+        prevHash = want;                 // else the position is filed under the old hash
+      }
       runSearch(input.value);
     }, 250);
   });

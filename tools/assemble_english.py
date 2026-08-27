@@ -67,4 +67,6 @@ if errors:
 if missing:
     print(f"\nMISSING sections ({len(missing)}):")
     for m in missing[:30]: print("  ", m)
-sys.exit(1 if errors else 0)
+# an incomplete edition must never be publishable: a null section silently
+# falls back to rendering Gujarati text in English mode
+sys.exit(1 if (errors or missing) else 0)
