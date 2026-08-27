@@ -1,70 +1,12 @@
 [
  {
   "book": "samagam-uttarardh",
-  "page": 6,
-  "n": 2,
-  "latin": [],
-  "indic": [
-   "stacked matras: …ोत्रा सांन्याारू । मुखा पण…",
-   "stacked matras: …देवरसचात त्पिित्तिरू । आमि…"
-  ]
- },
- {
-  "book": "samagam-uttarardh",
   "page": 15,
-  "n": 2,
-  "latin": [],
-  "indic": [
-   "stacked matras: …्रुतिश्च ઇંયિોને વાસુ કહે …",
-   "orphan matra: …ेख मिलता है ैर अवतैर अनन्…"
-  ]
- },
- {
-  "book": "samagam-uttarardh",
-  "page": 46,
-  "n": 2,
-  "latin": [],
-  "indic": [
-   "stacked matras: …रोकु कर्म बताावे, हमकु बता…",
-   "stacked matras: …ावे, हमकु बताावे नाहीं।।२।…"
-  ]
- },
- {
-  "book": "samagam-uttarardh",
-  "page": 395,
-  "n": 2,
-  "latin": [],
-  "indic": [
-   "stacked matras: … નં.૨૬-પા. ૪ાા પાછળ લખે છે…",
-   "orphan matra: … નં.૨૬-પા. ૪ાા પાછળ લખે છ…"
-  ]
- },
- {
-  "book": "samagam-purvardh",
-  "page": 20,
   "n": 1,
   "latin": [],
   "indic": [
-   "stacked matras: … एकु काजा ॥टेा॥ चारो वेद प…"
+   "stacked matras: …्रुतिश्च ઇંયિોને વાસુ કહે …"
   ]
- },
- {
-  "book": "samagam-purvardh",
-  "page": 309,
-  "n": 1,
-  "latin": [
-   "ooooo"
-  ],
-  "indic": []
- },
- {
-  "book": "samagam-purvardh",
-  "page": 329,
-  "n": 1,
-  "latin": [
-   "ooooo"
-  ],
-  "indic": []
  },
  {
   "book": "samagam-uttarardh",
@@ -77,29 +19,11 @@
  },
  {
   "book": "samagam-uttarardh",
-  "page": 47,
-  "n": 1,
-  "latin": [],
-  "indic": [
-   "stacked matras: … પ્રેમ લક્ષણાાભક્તિનો મહાત…"
-  ]
- },
- {
-  "book": "samagam-uttarardh",
-  "page": 155,
-  "n": 1,
-  "latin": [],
-  "indic": [
-   "stacked matras: …  सर्वग्रन्थीीनां    विप्र…"
-  ]
- },
- {
-  "book": "samagam-uttarardh",
   "page": 163,
   "n": 1,
   "latin": [],
   "indic": [
-   "stacked matras: … ફૂવાતી તે કૃીપાનાથ, રોપા …"
+   "stacked matras: … કૂવાતી તે કૃીપાનાથ, રોપા …"
   ]
  },
  {
@@ -122,15 +46,6 @@
  },
  {
   "book": "samagam-uttarardh",
-  "page": 288,
-  "n": 1,
-  "latin": [],
-  "indic": [
-   "stacked matras: …ना फूंक्यो काा ज बेहेरो रे…"
-  ]
- },
- {
-  "book": "samagam-uttarardh",
   "page": 300,
   "n": 1,
   "latin": [],
@@ -140,20 +55,11 @@
  },
  {
   "book": "samagam-uttarardh",
-  "page": 302,
+  "page": 395,
   "n": 1,
   "latin": [],
   "indic": [
-   "stacked matras: … गया है कि साात्विक, सदाचा…"
-  ]
- },
- {
-  "book": "samagam-uttarardh",
-  "page": 381,
-  "n": 1,
-  "latin": [],
-  "indic": [
-   "stacked matras: …ાર કરવા કર્યાા તે વાણીનો સ…"
+   "orphan matra: … નં.૨૬-પા. ૪ા પાછળ લખે છે…"
   ]
  },
  {
