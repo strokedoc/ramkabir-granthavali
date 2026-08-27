@@ -616,8 +616,6 @@ async function renderReader(bookId, idx, tok) {
       </div>
       <div class="reader-nav">${prev}${next}</div>
     </article></div>
-    <div class="page-edge left" aria-hidden="true"></div>
-    <div class="page-edge right" aria-hidden="true"></div>
     <div id="page-count" class="page-count" role="status" aria-live="polite"></div>
   </div>`;
   setupPager(bookId, idx, book, tok);
@@ -792,8 +790,6 @@ function setupPager(bookId, idx, book, tok) {
   const paint = () => {
     track.style.transform = `translateX(${-page * step}px)`;
     $("#page-count").textContent = total > 1 ? `${page + 1} / ${total}` : "";
-    pager.classList.toggle("at-start", page === 0);
-    pager.classList.toggle("at-end", page >= total - 1);
     const frac = total > 1 ? page / (total - 1) : 0;
     scrollPositions[pagerKey()] = frac;
     try { history.replaceState({ ...(history.state || {}), pg: frac }, "", location.href); } catch {}

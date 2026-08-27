@@ -340,14 +340,6 @@ body {
   font-size: 0.7rem; letter-spacing: 0.14em; color: var(--ink-soft);
   pointer-events: none; user-select: none;
 }
-/* subtle affordance that there is more to either side */
-.page-edge {
-  position: absolute; top: 0; bottom: 0; width: 1.6rem; pointer-events: none;
-  opacity: 0.55; transition: opacity 0.2s;
-}
-.page-edge.left  { left: 0;  background: linear-gradient(to right, var(--paper), transparent); }
-.page-edge.right { right: 0; background: linear-gradient(to left,  var(--paper), transparent); }
-.pager.at-start .page-edge.left, .pager.at-end .page-edge.right { opacity: 0; }
 
 /* wider screens (tablet, unfolded foldable, desktop) read as a two-page spread */
 @media (min-width: 1040px) {
