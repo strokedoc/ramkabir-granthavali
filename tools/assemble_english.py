@@ -4,7 +4,7 @@
 Enforces script purity: any Gujarati/Devanagari codepoint in an English field is
 a hard error (reported, file skipped). Missing parts are reported loudly."""
 
-import json, re, sys
+import hashlib, json, re, sys
 from pathlib import Path
 
 EXT = Path("/Users/harsh/RamKabir/extraction/en")
@@ -45,7 +45,12 @@ for book in BOOKS:
             continue
         sec = sections[si]
         parts = [sec["parts"][k] for k in sorted(sec["parts"])]
+        src_txt = "\n".join(b["text"] for b in base["sections"][si]["blocks"])
         out_secs.append({
+            # provenance: ties this translation to the exact source section it
+            # was generated from, so a reorder/swap is detectable EXACTLY
+            # rather than by fuzzy title or size heuristics
+            "src_sig": hashlib.sha1(re.sub(r"\s+", "", src_txt)[:400].encode("utf-8")).hexdigest()[:12],
             "title_translit": sec["title_translit"],
             "title_en": sec["title_en"],
             "translit": "\n".join(p["translit"] for p in parts if p["translit"]).strip(),

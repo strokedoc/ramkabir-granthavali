@@ -18,12 +18,8 @@ fails = []
 # Latin in the Gujarati books is checked by tools/find_garble.py against the
 # evidence-based whitelist (tokens confirmed present in the printed page by an
 # image-verification worker). No blanket baseline: unverified Latin = failure.
-import subprocess
-r = subprocess.run([sys.executable, "/Users/harsh/RamKabir/tools/find_garble.py"],
-                   capture_output=True, text=True)
-print(r.stdout.strip())
-if r.returncode != 0:
-    fails.append("garble detector reports unverified Latin / malformed Indic text")
+# NB: the garble scan is run separately by the build (and can be run directly);
+# invoking it here too made a single build perform four full corpus scans.
 
 en_dir = APP / "en"
 for f in sorted(en_dir.glob("*.json")) if en_dir.exists() else []:

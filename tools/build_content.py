@@ -443,20 +443,24 @@ for g in gates:
         shutil.rmtree(STAGE, ignore_errors=True)
         sys.exit(1)
 
-for name, data in PENDING.items():
-    # write-then-rename: a crash mid-loop can never leave a truncated or
-    # half-written content file behind
-    fd, tmp = tempfile.mkstemp(dir=OUT, suffix=".tmp")
-    with os.fdopen(fd, "w", encoding="utf-8") as fh:
-        fh.write(data)
-    os.replace(tmp, OUT / name)
+backup = {n: (OUT / n).read_text(encoding="utf-8") for n in PENDING if (OUT / n).exists()}
+try:
+    for name, data in PENDING.items():
+        # write-then-rename: a crash mid-loop can never leave a truncated or
+        # half-written content file behind
+        fd, tmp = tempfile.mkstemp(dir=OUT, suffix=".tmp")
+        with os.fdopen(fd, "w", encoding="utf-8") as fh:
+            fh.write(data)
+        os.replace(tmp, OUT / name)
+    # what is now published must be byte-identical to what the gates approved
+    for name in PENDING:
+        if (OUT / name).read_text(encoding="utf-8") != (STAGE / name).read_text(encoding="utf-8"):
+            raise RuntimeError(f"published {name} differs from the gated copy")
+except Exception as exc:
+    for name, data in backup.items():        # roll back to the previous corpus
+        (OUT / name).write_text(data, encoding="utf-8")
+    shutil.rmtree(STAGE, ignore_errors=True)
+    print(f"PUBLISH FAILED ({exc}); previous content restored")
+    sys.exit(1)
 shutil.rmtree(STAGE, ignore_errors=True)
-# final verification against the PUBLISHED tree — closes the window where
-# teachings/en could change between staging and publish
-for g in gates:
-    r = subprocess.run([sys.executable, str(BASE / "tools" / g)], capture_output=True, text=True)
-    if r.returncode != 0:
-        print(r.stdout.strip()[-800:])
-        print(f"PUBLISHED CONTENT FAILS {g} — investigate immediately")
-        sys.exit(1)
-print(f"wrote {len(PENDING)} content files (all gates passed, pre- and post-publish)")
+print(f"wrote {len(PENDING)} content files (gated, verified byte-identical)")

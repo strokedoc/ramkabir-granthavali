@@ -94,10 +94,15 @@ function bts(b) { return lang === "en" ? b.title_gu : b.title_en; }
 /* Gujarati kirtan sections 1..31 ↔ English volume sections 0..30 */
 function crossLink(bookId, idx) {
   if (bookId === "kirtan-gujarati" && idx >= 1 && idx <= 31)
-    return { book: "kirtan-english", section: idx - 1, label: t("toEnglish") };
+    return { book: "kirtan-english", section: idx - 1, label: t("toEnglish"), lang: "en" };
   if (bookId === "kirtan-english" && idx <= 30)
-    return { book: "kirtan-gujarati", section: idx + 1, label: t("toGujarati") };
+    return { book: "kirtan-gujarati", section: idx + 1, label: t("toGujarati"), lang: "gu" };
   return null;
+}
+/* "#/book/<id>/<section>/<lang>" — the language travels WITH the URL so the
+   link behaves correctly in a new tab, on middle-click, and when bookmarked */
+function bookHref(book, section, forceLang) {
+  return `#/book/${book}/${section}` + (forceLang ? `/${forceLang}` : "");
 }
 
 /* ---------------- theme & font size ---------------- */
@@ -311,6 +316,11 @@ function stale(tok) { return tok !== routeToken; }
 async function route() {
   const tok = ++routeToken;
   const parts = parseHash();
+  // "#/book/<id>/<sec>/<lang>" carries the language with the link
+  if (parts[0] === "book" && parts.length >= 4 && (parts[3] === "en" || parts[3] === "gu")) {
+    if (lang !== parts[3]) { lang = parts[3]; store.set("lang", lang); applyLang(); }
+    parts.length = 3;
+  }
   const navKey = parts[0] === "search" ? "search" : parts[0] === "bookmarks" ? "bookmarks"
     : parts[0] === "saar" ? "saar" : "library";
   document.querySelectorAll("#bottomnav a").forEach(a =>
@@ -324,7 +334,7 @@ async function route() {
   // early-return paths inside individual renderers
   const done = async (p) => { const v = await p; if (!stale(tok)) restoreScroll(); return v; };
   try {
-    if (parts.length === 0) return done(renderLibrary(tok));
+    if (parts.length === 0) return await done(renderLibrary(tok));
     if (parts[0] === "search") return await done(renderSearch(decodeURIComponent(parts[1] || ""), tok));
     if (parts[0] === "bookmarks") return await done(renderBookmarks(tok));
     if (parts[0] === "saar" && parts[1] === "story") return await done(renderStory(tok));
@@ -340,12 +350,6 @@ async function route() {
       ${escapeHtml(t("loadFail"))} ${escapeHtml(String(err.message || err))}</div>`;
   }
 }
-view.addEventListener("click", (e) => {
-  const a = e.target.closest("a[data-xlang]");
-  if (!a) return;
-  const want = a.dataset.xlang;
-  if (lang !== want) { lang = want; store.set("lang", lang); applyLang(); }
-});
 $("#back-btn").addEventListener("click", () => {
   const parts = parseHash();
   if (parts[0] === "book" && parts.length >= 3) location.hash = `#/book/${parts[1]}`;
@@ -503,8 +507,7 @@ async function renderReader(bookId, idx, tok) {
   const xl = crossLink(bookId, idx);
   // switching volumes must switch LANGUAGE too: the English volume is hidden in
   // Gujarati mode and would immediately redirect back, making the link a no-op
-  const xlHtml = xl ? `<div class="src-link"><a href="#/book/${xl.book}/${xl.section}"
-      data-xlang="${xl.book === "kirtan-english" ? "en" : "gu"}">${escapeHtml(xl.label)}</a></div>` : "";
+  const xlHtml = xl ? `<div class="src-link"><a href="${bookHref(xl.book, xl.section, xl.lang)}">${escapeHtml(xl.label)}</a></div>` : "";
   const prev = idx > 0 ? `<a href="#/book/${bookId}/${idx - 1}">‹ ${escapeHtml(secTitle(book, en, idx - 1))}</a>` : "<span></span>";
   const next = idx < book.sections.length - 1 ? `<a href="#/book/${bookId}/${idx + 1}">${escapeHtml(secTitle(book, en, idx + 1))} ›</a>` : "<span></span>";
   const headSub = lang === "en" && e && e.title_en
@@ -619,7 +622,7 @@ async function renderUnit(ti, ui, tok) {
     const mean = lang === "en" ? g.meaning : ((u.gloss_gu || [])[gi] || g.meaning);
     return `<div class="gloss-item"><span class="g-word">${escapeHtml(word)}</span><span class="g-mean">${escapeHtml(mean)}</span></div>`;
   }).join("");
-  const alt = src.alt_book ? ` · <a href="#/book/${src.alt_book}/${src.alt_section}">${lang === "en" ? "English" : "અંગ્રેજી"}</a>` : "";
+  const alt = src.alt_book ? ` · <a href="${bookHref(src.alt_book, src.alt_section, "en")}">${lang === "en" ? "English" : "અંગ્રેજી"}</a>` : "";
   const uTitle = x => lang === "en" ? x.title_en : x.title_gu;
   const prev = ui > 0 ? `<a href="#/saar/${ti}/${ui - 1}">‹ ${escapeHtml(uTitle(th.units[ui - 1]))}</a>` : "<span></span>";
   const next = ui < th.units.length - 1 ? `<a href="#/saar/${ti}/${ui + 1}">${escapeHtml(uTitle(th.units[ui + 1]))} ›</a>` : "<span></span>";

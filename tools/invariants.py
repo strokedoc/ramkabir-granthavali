@@ -153,6 +153,10 @@ def skel_en(t):
         t = t.replace(a_, b_)
     return re.sub(r"[aeiou]", "", t)
 
+def se_prefix(label_skel, target_skel):
+    """the chip label starts with the composition name, so compare like-for-like"""
+    return label_skel[:max(len(target_skel), 3)]
+
 def consonant_overlap(a, b):
     """Order-independent consonant agreement. Calibrated on the real corpus:
     correct title/transliteration pairs score >=0.60, a swapped pair 0.27."""
@@ -191,10 +195,28 @@ for b in GU_BOOKS:
     if len(ratios) >= 6:
         vals = sorted(r[0] for r in ratios)
         med = vals[len(vals) // 2]
-        odd = [r for r in ratios if r[0] > med * 6 or r[0] < med / 6]
-        if len(odd) > max(2, len(ratios) * 0.1):
-            fails.append(f"{b}: {len(odd)} English sections are wildly out of "
+        odd = [r for r in ratios if r[0] > med * 4 or r[0] < med / 4]
+        if odd:                       # report ANY outlier — a two-record swap
+            fails.append(f"{b}: {len(odd)} English sections are out of "        # slipped through the old allowance
                          f"proportion to their source, e.g. {[o[2] for o in odd[:3]]}")
+
+    # EXACT correspondence via provenance signature. Fuzzy alternatives were
+    # measured and rejected: title similarity passed a Vedpuran<->Vadi swap at
+    # 0.80, and "title appears in its own translation" holds for only 44% of
+    # legitimate pairs. The signature ties each translation to the source
+    # section it was generated from, with no threshold to tune.
+    import hashlib
+    bad_sig = []
+    for i, es in enumerate(en["sections"]):
+        if not es or i >= len(gu_secs) or not es.get("src_sig"):
+            continue
+        src_txt = "\n".join(x["text"] for x in gu_secs[i]["blocks"])
+        want = hashlib.sha1(re.sub(r"\s+", "", src_txt)[:400].encode("utf-8")).hexdigest()[:12]
+        if es["src_sig"] != want:
+            bad_sig.append(gu_secs[i]["title"][:20])
+    if bad_sig:
+        fails.append(f"{b}: {len(bad_sig)} English sections are attached to the "
+                     f"wrong source section, e.g. {bad_sig[:3]}")
 
 # 12. Featured chips must point at the section they name
 books_meta = json.loads((APP / "books.json").read_text(encoding="utf-8"))
@@ -207,7 +229,8 @@ for fchip in books_meta.get("featured", []):
     # the chip must name the section it opens, in either script
     g = skel_gu(title) or skel_en(title)   # Latin-titled volumes use the same skeleton
     e = skel_en(fchip["label_en"]) or re.sub(r"[^a-z]", "", fchip["label_en"].lower())
-    if norm(title) not in norm(fchip["label_gu"]) and not (len(g) >= 2 and g[:2] in e[:10]):
+    if norm(title) not in norm(fchip["label_gu"]) and \
+       consonant_overlap(g, se_prefix(e, g)) < 0.6:
         fails.append(f"featured chip '{fchip['label_en']}' does not point at '{title}'")
 
 if fails:
@@ -215,4 +238,4 @@ if fails:
     for f in fails:
         print("  ", f)
     sys.exit(1)
-print("INVARIANTS OK — 13 checks across 6 books")
+print("INVARIANTS OK — 14 checks across 6 books")
