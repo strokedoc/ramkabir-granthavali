@@ -61,6 +61,9 @@ function applyLang() {
   document.documentElement.lang = lang;
   const btn = $("#lang-btn");
   if (btn) btn.textContent = lang === "gu" ? "EN" : "ગુ";
+  document.querySelectorAll("#topbar-title .ornament").forEach(o => {
+    o.textContent = lang === "en" ? "||" : "॥";
+  });
   document.querySelectorAll("#bottomnav a").forEach(a => {
     const key = { library: "navBooks", saar: "navSaar", search: "navSearch", bookmarks: "navMarks" }[a.dataset.nav];
     a.querySelector("span:last-child").textContent = t(key);

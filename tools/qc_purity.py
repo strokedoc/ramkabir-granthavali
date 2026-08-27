@@ -38,6 +38,17 @@ for f in sorted(en_dir.glob("*.json")) if en_dir.exists() else []:
         fails.append(f"en/{f.name}: {bad} native chars in English fields")
     print(f"en/{f.name}: native-chars={bad}")
 
+# index.html chrome: any Indic text there is baked in and cannot switch
+# language at runtime (the nav "search" icon was literally the word શોધ)
+html = Path("/Users/harsh/RamKabir/app/index.html").read_text(encoding="utf-8")
+chrome = re.sub(r"<title>.*?</title>", "", html, flags=re.S)
+chrome = re.sub(r'(aria-label|content|placeholder)="[^"]*"', "", chrome)
+chrome = re.sub(r"<h1[^>]*>.*?</h1>", "", chrome, flags=re.S)
+baked = NAT.findall(re.sub(r"<[^>]+>", " ", chrome))
+if baked:
+    fails.append(f"index.html bakes Indic text into language-switchable chrome: {''.join(baked)[:60]}")
+print(f"index.html baked-Indic chrome chars: {len(baked)}")
+
 tj = json.loads((APP / "teachings.json").read_text(encoding="utf-8"))
 leaks = []
 def scan(o, path):
