@@ -143,7 +143,17 @@ def split_page(text, sp):
                 continue
             checked += 1
             i += 1
-        tail = "\n".join(rep_lines + [""] + tl).strip()
+        # printed order is: separator, then heading, then body
+        pre = []
+        # NB: blank means literally empty — a separator line like "=====000====="
+        # also normalizes to empty, and discarding it would drop printed ornament
+        while tl and not tl[0].strip():
+            tl.pop(0)
+        while tl and tl[0].strip() and not re.search(r"[઀-૿ऀ-ॿ]", tl[0]):
+            pre.append(tl.pop(0))
+            while tl and not tl[0].strip():
+                tl.pop(0)
+        tail = "\n".join(pre + ([""] if pre else []) + rep_lines + [""] + tl).strip()
     return head, tail
 
 def build_gujarati(book):
@@ -322,8 +332,9 @@ def build_english(book):
         # If the slice ALREADY opens with this section's heading there is no
         # previous-composition tail to remove. Trimming here would match the
         # running page header further down and delete the opening verses.
-        opens_correctly = bool(seg) and ATH.search(seg[0]) and \
-            want in re.sub(r"[^a-z]", "", seg[0].lower())
+        opens_correctly = (si_ == 0 and bool(lead)) or (
+            bool(seg) and ATH.search(seg[0]) and
+            want in re.sub(r"[^a-z]", "", seg[0].lower()))
         for i, ln in enumerate([] if opens_correctly else seg[:8]):
             if i == 0 or not ATH.search(ln):
                 continue
@@ -384,10 +395,10 @@ for book in BOOKS:
 
 featured = []
 for f in FEATURED:
-    built_file = OUT / f"{f['book']}.json"
-    if not built_file.exists():
+    key = f"{f['book']}.json"
+    if key not in PENDING:
         continue
-    secs = json.loads(built_file.read_text(encoding="utf-8"))["sections"]
+    secs = json.loads(PENDING[key])["sections"]
     hits = [i for i, s in enumerate(secs) if s["title"].strip() == f["title"]]
     if len(hits) == 1:
         featured.append({"book": f["book"], "section": hits[0],
@@ -440,4 +451,12 @@ for name, data in PENDING.items():
         fh.write(data)
     os.replace(tmp, OUT / name)
 shutil.rmtree(STAGE, ignore_errors=True)
-print(f"wrote {len(PENDING)} content files (all gates passed)")
+# final verification against the PUBLISHED tree — closes the window where
+# teachings/en could change between staging and publish
+for g in gates:
+    r = subprocess.run([sys.executable, str(BASE / "tools" / g)], capture_output=True, text=True)
+    if r.returncode != 0:
+        print(r.stdout.strip()[-800:])
+        print(f"PUBLISHED CONTENT FAILS {g} — investigate immediately")
+        sys.exit(1)
+print(f"wrote {len(PENDING)} content files (all gates passed, pre- and post-publish)")

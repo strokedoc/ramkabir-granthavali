@@ -54,6 +54,8 @@ const STR = {
   toEnglish:  { gu: "આ કીર્તન અંગ્રેજીમાં →", en: "This kirtan in English →" },
   toGujarati: { gu: "આ કીર્તન ગુજરાતીમાં →", en: "This kirtan in Gujarati →" },
   loadFail:   { gu: "સામગ્રી લોડ ન થઈ.", en: "Content failed to load." },
+  searchCleared: { gu: "શોધ ખાલી કરી", en: "Search cleared" },
+  results:    { gu: "પરિણામ", en: "results" },
   // control labels announced by screen readers
   a11yBack:   { gu: "પાછળ", en: "Back" },
   a11ySmaller:{ gu: "નાના અક્ષર", en: "Smaller text" },
@@ -269,6 +271,7 @@ function persistScroll() {
   }
 }
 function rememberScroll() {
+  delete scrollPositions[location.hash];     // re-insert so the cap is LRU, not FIFO
   scrollPositions[location.hash] = scrollY;
   persistScroll();
 }
@@ -287,6 +290,7 @@ function restoreScroll() {
 addEventListener("hashchange", () => {
   // record where we LEFT, keyed by the hash we are leaving — sampling during
   // navigation would stamp the old position onto the new destination
+  delete scrollPositions[prevHash];
   scrollPositions[prevHash] = scrollY;
   persistScroll();
   prevHash = location.hash;
@@ -318,24 +322,30 @@ async function route() {
 
   // one place guarantees the scroll reset for EVERY route, including the
   // early-return paths inside individual renderers
-  const done = (p) => Promise.resolve(p).then(v => { if (!stale(tok)) restoreScroll(); return v; });
+  const done = async (p) => { const v = await p; if (!stale(tok)) restoreScroll(); return v; };
   try {
     if (parts.length === 0) return done(renderLibrary(tok));
-    if (parts[0] === "search") return done(renderSearch(decodeURIComponent(parts[1] || ""), tok));
-    if (parts[0] === "bookmarks") return done(renderBookmarks(tok));
-    if (parts[0] === "saar" && parts[1] === "story") return done(renderStory(tok));
-    if (parts[0] === "saar" && parts.length === 3) return done(renderUnit(+parts[1], +parts[2], tok));
-    if (parts[0] === "saar" && parts.length === 2) return done(renderTheme(+parts[1], tok));
-    if (parts[0] === "saar") return done(renderSaar(tok));
-    if (parts[0] === "book" && parts.length === 2) return done(renderToc(parts[1], tok));
-    if (parts[0] === "book" && parts.length >= 3) return done(renderReader(parts[1], parseInt(parts[2], 10), tok));
-    done(renderLibrary(tok));
+    if (parts[0] === "search") return await done(renderSearch(decodeURIComponent(parts[1] || ""), tok));
+    if (parts[0] === "bookmarks") return await done(renderBookmarks(tok));
+    if (parts[0] === "saar" && parts[1] === "story") return await done(renderStory(tok));
+    if (parts[0] === "saar" && parts.length === 3) return await done(renderUnit(+parts[1], +parts[2], tok));
+    if (parts[0] === "saar" && parts.length === 2) return await done(renderTheme(+parts[1], tok));
+    if (parts[0] === "saar") return await done(renderSaar(tok));
+    if (parts[0] === "book" && parts.length === 2) return await done(renderToc(parts[1], tok));
+    if (parts[0] === "book" && parts.length >= 3) return await done(renderReader(parts[1], parseInt(parts[2], 10), tok));
+    return await done(renderLibrary(tok));
   } catch (err) {
     if (stale(tok)) return;
     view.innerHTML = `<div class="empty"><span class="glyph">✻</span>
       ${escapeHtml(t("loadFail"))} ${escapeHtml(String(err.message || err))}</div>`;
   }
 }
+view.addEventListener("click", (e) => {
+  const a = e.target.closest("a[data-xlang]");
+  if (!a) return;
+  const want = a.dataset.xlang;
+  if (lang !== want) { lang = want; store.set("lang", lang); applyLang(); }
+});
 $("#back-btn").addEventListener("click", () => {
   const parts = parseHash();
   if (parts[0] === "book" && parts.length >= 3) location.hash = `#/book/${parts[1]}`;
@@ -491,7 +501,10 @@ async function renderReader(bookId, idx, tok) {
   const bmKey = `${bookId}/${idx}`;
   const marked = store.get("bookmarks", []).some(b => b.key === bmKey);
   const xl = crossLink(bookId, idx);
-  const xlHtml = xl ? `<div class="src-link"><a href="#/book/${xl.book}/${xl.section}">${escapeHtml(xl.label)}</a></div>` : "";
+  // switching volumes must switch LANGUAGE too: the English volume is hidden in
+  // Gujarati mode and would immediately redirect back, making the link a no-op
+  const xlHtml = xl ? `<div class="src-link"><a href="#/book/${xl.book}/${xl.section}"
+      data-xlang="${xl.book === "kirtan-english" ? "en" : "gu"}">${escapeHtml(xl.label)}</a></div>` : "";
   const prev = idx > 0 ? `<a href="#/book/${bookId}/${idx - 1}">‹ ${escapeHtml(secTitle(book, en, idx - 1))}</a>` : "<span></span>";
   const next = idx < book.sections.length - 1 ? `<a href="#/book/${bookId}/${idx + 1}">${escapeHtml(secTitle(book, en, idx + 1))} ›</a>` : "<span></span>";
   const headSub = lang === "en" && e && e.title_en
@@ -729,7 +742,12 @@ async function runSearch(q) {
   const gen = ++searchGen;               // clearing the field bumps this too,
   const resEl = $("#results");           // so an in-flight search cannot paint
   const nq = normalize(q);
-  if (nq.length < 2) { resEl.innerHTML = ""; const st = $("#search-status"); if (st) st.textContent = ""; return; }
+  if (nq.length < 2) {
+    resEl.innerHTML = "";
+    const st = $("#search-status");
+    if (st) st.textContent = q ? "" : t("searchCleared");
+    return;
+  }
   const statusEl = $("#search-status");
   if (statusEl) statusEl.textContent = t("searching");
   const idx = await buildIndex();
@@ -746,7 +764,7 @@ async function runSearch(q) {
     resEl.innerHTML = `<div class="empty"><span class="glyph">॥</span>${escapeHtml(t("noResults"))}</div>`;
     return;
   }
-  if (statusEl) statusEl.textContent = `${out.length}${out.length > 50 ? "+" : ""} ${t("pearls") === "pearls" ? "results" : "પરિણામ"}`;
+  if (statusEl) statusEl.textContent = `${out.length}${out.length > 50 ? "+" : ""} ${t("results")}`;
   const books = await loadManifest();
   if (gen !== searchGen) return;
   let html = "";
