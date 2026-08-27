@@ -9,7 +9,7 @@ Inputs per book (skipped gracefully if missing):
 Body text is NEVER altered — only split at section boundaries and into
 display blocks. Re-runnable; overwrites app/content."""
 
-import json, re, sys
+import json, os, re, sys, tempfile
 from pathlib import Path
 
 BASE = Path("/Users/harsh/RamKabir")
@@ -71,21 +71,36 @@ def split_page(text, sp):
     lines = text.split("\n")
     mode = "before" if "before" in sp else "after"
     def find(needle):
+        """Exact line match wins. Fuzzy fallbacks must be SUBSTANTIAL: a short
+        line that merely appears inside a long needle (e.g. the word 'થુવાવી'
+        inside a whole sentence about Thuvavi) must not win — that silently
+        cuts the page at the wrong place and empties a section."""
         if not needle:
             return None
         k = next((i for i, ln in enumerate(lines) if _norm_line(ln) == needle), None)
-        if k is None:
-            k = next((i for i, ln in enumerate(lines)
-                      if needle in _norm_line(ln) or
-                         (len(_norm_line(ln)) >= 6 and _norm_line(ln) in needle)), None)
-        return k
+        if k is not None:
+            return k
+        best, best_len = None, 0
+        for i, ln in enumerate(lines):
+            n = _norm_line(ln)
+            if not n:
+                continue
+            if needle in n or (n in needle and len(n) >= 0.7 * len(needle)):
+                if len(n) > best_len:
+                    best, best_len = i, len(n)
+        return best
     k = find(_norm_line(sp[mode]))
-    if k is None and sp.get("fallback_title"):
-        k = find(_norm_line(sp["fallback_title"]))
     if k is None and "replace" in sp:
-        # the repair pass may have replaced the garbled needle line with clean
-        # text — which is exactly what "replace" holds; match on that instead
+        # a repair may have rewritten the garbled needle line into clean text —
+        # which is exactly what "replace" holds; that is the precise target
         k = find(_norm_line(sp["replace"].split("\n")[0]))
+    if k is None and sp.get("fallback_title"):
+        # last resort, and never at line 0: a title matching the page's FIRST
+        # line means we found the heading of a section that owns the page top,
+        # not the boundary we were looking for
+        kk = find(_norm_line(sp["fallback_title"]))
+        if kk:
+            k = kk
     if k is None:
         return None, None
     cut = k if mode == "before" else k + 1
@@ -135,7 +150,13 @@ def build_gujarati(book):
         sps = sp if isinstance(sp, list) else [sp]
         # titles of the sections that start on this page — a repair pass may
         # have rewritten a garbled heading, which would strand a needle
-        titles = [specs[i].get("title_gu", "") for i in starters.get(pg, [])]
+        st = starters.get(pg, [])
+        # split j creates the boundary before part j+1. When the first starter
+        # owns the page top (k == m-1) that part belongs to starter j+1, so the
+        # titles must be shifted or a fallback matches the WRONG section.
+        shift = 1 if len(sps) == len(st) - 1 else 0
+        titles = [specs[st[i + shift]].get("title_gu", "") if i + shift < len(st) else ""
+                  for i in range(len(sps))]
         rest = page_text(src, pg).strip()
         parts = []
         for n, one in enumerate(sps):
@@ -190,6 +211,9 @@ def build_gujarati(book):
         sections.append({"title": title.strip(), "page_start": s["start_page"], "blocks": blocks})
     # inline sub-headings (extraction/<src>/subheads.json: {"<page>": [lines]}):
     # split blocks so each sub-heading becomes its own block with sub:true
+    for sec in sections:
+        if not sec["blocks"] or not sum(len(b["text"].strip()) for b in sec["blocks"]) > 8:
+            WARNINGS.append(f"{book['id']}: section '{sec['title'][:24]}' rendered empty")
     sh_file = EXT / src / "subheads.json"
     if sh_file.exists():
         subheads = json.loads(sh_file.read_text(encoding="utf-8"))
@@ -250,10 +274,14 @@ def build_english(book):
                 blocks.append({"page": cur_page, "text": t})
             cur = []
         for ln in seg:
-            m = re.fullmatch(r"\s*\((\d+)\)\s*", ln)
+            # page markers sit alone OR inside a running header, e.g.
+            # "(18)                 II ATH SHRI VANI II7II"
+            m = re.fullmatch(r"\s*\((\d+)\)\s*", ln) or re.match(r"\s*\((\d+)\)\s+\S", ln)
             if m:
                 flush()
                 cur_page = int(m.group(1))
+                if ln.strip().startswith("(") and not re.fullmatch(r"\s*\(\d+\)\s*", ln):
+                    continue
                 continue
             if not ln.strip():
                 if len(cur) > 12:
@@ -300,5 +328,10 @@ if WARNINGS:
     print("no files written; previous content left intact")
     sys.exit(1)
 for name, data in PENDING.items():
-    (OUT / name).write_text(data, encoding="utf-8")
+    # write-then-rename: a crash mid-loop can never leave a truncated or
+    # half-written content file behind
+    fd, tmp = tempfile.mkstemp(dir=OUT, suffix=".tmp")
+    with os.fdopen(fd, "w", encoding="utf-8") as fh:
+        fh.write(data)
+    os.replace(tmp, OUT / name)
 print(f"wrote {len(PENDING)} content files")

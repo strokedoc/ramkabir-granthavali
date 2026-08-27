@@ -19,16 +19,19 @@ MATRA = r'ા-ૌा-ौ'
 ANUS = r'ઁ-ઃँ-ः'
 HAL = r'્्'
 BAD = [
-    # Genuine printed forms that look like stacked matras:
-    #   ૂ+ા  → the રૂા. (rupees) ligature
-    #   digit+ાા → traditional Gujarati fraction mark (૪ાા = 4½)
-    (re.compile(f'(?<![૦-૯0-9])(?!ૂા|ूा)[{MATRA}]{{2,}}'), 'stacked matras'),
-    # (digits may legitimately carry the fraction matras: ૪ાા = 4½)
-    (re.compile(f'(?<![{CONS}{MATRA}{ANUS}{HAL}૦-૯0-9०-९])[{MATRA}]'), 'orphan matra'),
+    # Genuine printed forms that only LOOK like stacked matras:
+    #   ર+ૂ+ા     → the રૂા. (rupees) ligature
+    #   digit+ાા  → traditional Gujarati fraction mark (૪ાા = 4½)
+    (re.compile(f'(?<![૦-૯0-9])(?<!ર)(?<!र)(?!ૂા(?![{MATRA}])|ूा(?![{MATRA}]))[{MATRA}]{{2,}}'),
+     'stacked matras'),
+    (re.compile(f'(?<=[૦-૯0-9])(?!ાા(?![{MATRA}]))[{MATRA}]'), 'bad digit matra'),
+    # (digits may legitimately carry the fraction matra pair — checked above)
+    (re.compile(f'(?<![{CONS}{MATRA}{ANUS}{HAL}૦-૯0-9०-९\u200c\u200d])[{MATRA}]'), 'orphan matra'),
     # A halant at word end is VALID (અર્થાત્, ભગવદ્‌, विद्युत् …) — only a halant
     # followed by a matra/another halant, or one opening a word, is malformed.
-    (re.compile(f'[{HAL}][{MATRA}{HAL}]'), 'halant fault'),
-    (re.compile(f'(?<![{CONS}{MATRA}{ANUS}])[{HAL}]'), 'orphan halant'),
+    # halant + (optional joiner) + matra/halant is malformed in every case
+    (re.compile(f'[{HAL}][\u200c\u200d]?[{MATRA}{HAL}]'), 'halant fault'),
+    (re.compile(f'(?<![{CONS}])[{HAL}]'), 'orphan halant'),
     (re.compile(f'[{ANUS}][{MATRA}]'), 'sign-order fault'),
 ]
 
@@ -52,18 +55,24 @@ for b in BOOKS:
             pg = str(bl['page'])
             t = bl['text']
             hits = per_page.setdefault(pg, {'latin': [], 'indic': []})
-            wl = whitelist.get(b, {}).get(pg, [])
-            allowed = set(wl)
-            for entry in wl:            # "www.ramkabir.guru" -> www, ramkabir, guru
-                allowed.update(re.findall(r'[A-Za-z]{2,}', entry))
-            for w in LAT.findall(t):
-                if w not in allowed:
-                    hits['latin'].append(w)
+            wl = sorted(whitelist.get(b, {}).get(pg, []), key=len, reverse=True)
+            # remove each approved string ONCE per occurrence, so an approved
+            # "www.ramkabir.guru" cannot also bless a stray "guru" elsewhere
+            scan = t
+            for entry in wl:
+                scan = scan.replace(entry, ' ')
+            for w in LAT.findall(scan):
+                hits['latin'].append(w)
             ok_forms = indic_ok.get(b, {}).get(pg, [])
+            ok_spans = []
+            for f in ok_forms:            # exact character ranges of approved forms
+                start = t.find(f)
+                while start != -1:
+                    ok_spans.append((start, start + len(f)))
+                    start = t.find(f, start + 1)
             for rx, name in BAD:
                 for m in rx.finditer(t):
-                    ctx = t[max(0, m.start()-14):m.end()+14]
-                    if any(f in ctx for f in ok_forms):
+                    if any(a <= m.start() and m.end() <= b_ for a, b_ in ok_spans):
                         continue
                     frag = t[max(0, m.start()-12):m.end()+12].replace('\n', ' ')
                     hits['indic'].append(f'{name}: …{frag}…')

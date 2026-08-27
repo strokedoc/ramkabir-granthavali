@@ -334,6 +334,7 @@ async function renderLibrary(tok) {
 async function renderToc(bookId, tok) {
   const book = await loadBook(bookId);
   const en = lang === "en" ? await loadEn(bookId) : null;
+  if (stale(tok)) return;
   setTitle(bt(book));
   let html = `<div class="reveal">`;
   book.sections.forEach((s, i) => {
@@ -369,7 +370,8 @@ async function renderReader(bookId, idx, tok) {
     return route();
   }
   const en = lang === "en" ? await loadEn(bookId) : null;
-  const e = enSec(en, idx);
+  if (stale(tok)) return;          // abandoned route must not retitle or
+  const e = enSec(en, idx);        // overwrite the resume position
   setTitle(bt(book));
   store.set("lastRead", { book: bookId, section: idx });
 
@@ -456,8 +458,9 @@ function pearlCard(tj) {
 }
 
 async function renderSaar(tok) {
-  setTitle(t("saarTitle"));
   const tj = await loadTeachings();
+  if (stale(tok)) return;
+  setTitle(t("saarTitle"));
   let html = `<div class="reveal">`;
   html += pearlCard(tj);
   html += `<a class="book-card" href="#/saar/story">
@@ -474,6 +477,7 @@ async function renderSaar(tok) {
 
 async function renderStory(tok) {
   const tj = await loadTeachings();
+  if (stale(tok)) return;
   setTitle(lang === "en" ? tj.story.title_en : tj.story.title_gu);
   const s = tj.story;
   const body = lang === "en" ? s.body_en : (s.body_gu || s.body_en);
@@ -494,7 +498,8 @@ async function renderStory(tok) {
 async function renderTheme(ti, tok) {
   const tj = await loadTeachings();
   const th = tj.themes[ti];
-  if (!th) return renderSaar();
+  if (!th) return renderSaar(tok);
+  if (stale(tok)) return;
   setTitle(lang === "en" ? th.title_en : th.title_gu);
   const intro = lang === "en" ? th.intro_en : (th.intro_gu || th.intro_en);
   let html = `<div class="reveal"><p class="theme-intro">${escapeHtml(intro)}</p>`;
@@ -513,7 +518,8 @@ async function renderTheme(ti, tok) {
 async function renderUnit(ti, ui, tok) {
   const tj = await loadTeachings();
   const th = tj.themes[ti], u = th && th.units[ui];
-  if (!u) return renderSaar();
+  if (!u) return renderSaar(tok);
+  if (stale(tok)) return;
   setTitle(lang === "en" ? th.title_en : th.title_gu);
   const src = u.source;
   const gloss = u.gloss.map((g, gi) => {
